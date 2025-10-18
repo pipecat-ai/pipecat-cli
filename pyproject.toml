@@ -1,0 +1,96 @@
+[build-system]
+requires = ["setuptools>=64", "setuptools_scm>=8"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pipecat-ai-cli"
+dynamic = ["version"]
+description = "CLI tool for scaffolding Pipecat AI voice agent projects"
+license = "BSD-2-Clause"
+license-files = ["LICENSE"]
+readme = "README.md"
+requires-python = ">=3.10"
+keywords = ["pipecat", "ai", "cli", "voice", "agents", "scaffolding"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Code Generators",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Multimedia :: Sound/Audio",
+    "Topic :: Communications :: Conferencing",
+]
+dependencies = [
+    "typer>=0.9.0,<1",
+    "rich>=13.0.0,<14",
+    "jinja2>=3.1.0,<4",
+    "questionary>=2.0.0,<3",
+    "ruff>=0.12.1,<1",
+    "pipecat-ai-tail>=0.0.1",
+    "pipecatcloud>=0.2.6",
+]
+
+[project.urls]
+Source = "https://github.com/pipecat-ai/pipecat-cli"
+Website = "https://pipecat.ai"
+Issues = "https://github.com/pipecat-ai/pipecat-cli/issues"
+
+[project.scripts]
+pipecat = "pipecat_cli.main:app"
+pc = "pipecat_cli.main:app"
+
+[dependency-groups]
+dev = [
+    "pytest~=8.4.1",
+    "pytest-cov~=7.0.0",
+    "pre-commit~=4.2.0",
+    "build~=1.2.2",
+    # Pipecat with all service extras for auto-generating imports and configs
+    "pipecat-ai[aic,anthropic,assemblyai,asyncai,aws,aws-nova-sonic,azure,cartesia,cerebras,deepseek,deepgram,elevenlabs,fal,fireworks,fish,gladia,google,grok,groq,heygen,hume,inworld,lmnt,mistral,moondream,neuphonic,nim,openai,openpipe,openrouter,perplexity,playht,qwen,rime,riva,sambanova,sarvam,silero,soniox,speechmatics,together]",
+    "tomli>=2.0.0; python_version<'3.11'",  # TOML parsing for tests
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+pipecat_cli = ["templates/*.jinja2"]
+
+[tool.setuptools_scm]
+local_scheme = "no-local-version"
+fallback_version = "0.0.0-dev"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
+pythonpath = ["src"]
+addopts = "-v --tb=short"
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+]
+
+[tool.ruff]
+exclude = [
+    ".git",
+    "__pycache__",
+    "dist",
+    "build",
+    "tests",  # Exclude tests from ruff
+    "src/pipecat_cli/templates/*.jinja2",  # Jinja2 templates, not Python files
+]
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "I",  # Import rules
+]
+
+[tool.coverage.run]
+command_line = "--module pytest"
+source = ["src"]
+omit = ["*/tests/*"]

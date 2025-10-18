@@ -1,0 +1,168 @@
+# {{ project_name }}
+
+A Pipecat AI voice agent built with {% if mode == 'cascade' %}a cascade pipeline (STT → LLM → TTS){% else %}a realtime speech-to-speech pipeline{% endif %}.
+
+## Configuration
+
+- **Bot Type**: {{ bot_type.title() }}
+- **Transport(s)**: {{ transport_labels|join(', ') }}
+{% if mode == 'cascade' %}
+- **Pipeline**: Cascade
+  - **STT**: {{ stt_label }}
+  - **LLM**: {{ llm_label }}
+  - **TTS**: {{ tts_label }}
+{% else %}
+- **Pipeline**: Realtime
+  - **Service**: {{ realtime_label }}
+{% endif %}
+{% if video_input or video_output or recording or transcription or smart_turn or enable_krisp %}
+- **Features**:
+{% if video_input %}
+  - Video Input
+{% endif %}
+{%- if video_output %}
+  - Video Output
+{% endif %}
+{%- if recording %}
+  - Audio Recording
+{% endif %}
+{%- if transcription %}
+  - Transcription
+{% endif %}
+{%- if smart_turn %}
+  - smart-turn v3
+{% endif %}
+{%- if enable_krisp %}
+  - Krisp Noise Cancellation
+{% endif %}
+{% endif %}
+
+## Setup
+
+### Server
+
+1. **Navigate to server directory**:
+   ```bash
+   cd server
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   uv sync
+   ```
+
+3. **Configure environment variables**:
+   ```bash
+   cp .env.example .env
+   # Edit .env and add your API keys
+   ```
+
+4. **Run the bot**:
+{% if has_telephony and has_webrtc %}
+   **For local development:**
+   {% for cmd in run_commands %}
+   {%- if cmd.label in ["SmallWebRTC", "Daily"] %}
+   - {{ cmd.label }}: `{{ cmd.command }}`
+   {% endif %}
+   {%- endfor %}
+
+   **For telephony deployment:**
+   - Run ngrok: `ngrok http 7860`
+   - Run bot:
+   {% for cmd in run_commands %}
+   {%- if cmd.label in ["Twilio", "Telnyx", "Plivo", "Exotel"] %}
+     - {{ cmd.label }}: `{{ cmd.command }}`
+   {% endif %}
+   {%- endfor %}
+{% elif has_telephony %}
+   - Run ngrok tunnel: `ngrok http 7860`
+   - Run your bot:
+   {% for cmd in run_commands %}
+   {%- if cmd.label %}
+     - {{ cmd.label }}: `{{ cmd.command }}`
+   {% else %}
+     - `{{ cmd.command }}`
+   {% endif %}
+   {%- endfor %}
+{% else %}
+   {% for cmd in run_commands %}
+   {%- if cmd.label %}
+   - {{ cmd.label }}: `{{ cmd.command }}`
+   {% else %}
+   - `{{ cmd.command }}`
+   {% endif %}
+   {%- endfor %}
+{% endif %}
+{% if generate_client %}
+
+### Client
+
+1. **Navigate to client directory**:
+   ```bash
+   cd client
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+
+3. **Run development server**:
+   ```bash
+   npm run dev
+   ```
+
+4. **Open browser**:
+   {% if client_server == "vite" %}
+   http://localhost:5173
+   {% elif client_server == "nextjs" %}
+   http://localhost:3000
+   {% endif %}
+{% endif %}
+
+## Project Structure
+
+```
+{{ project_name }}/
+{% if generate_client %}├── server/              # Python bot server
+│   ├── bot.py           # Main bot implementation
+│   ├── pyproject.toml   # Python dependencies
+│   ├── .env.example     # Environment variables template
+│   ├── .env             # Your API keys (git-ignored)
+{% if deploy_to_cloud %}│   ├── Dockerfile       # Container image for Pipecat Cloud
+│   └── pcc-deploy.toml  # Pipecat Cloud deployment config
+{% else %}│   └── ...
+{% endif %}├── client/              # {{ client_framework|title if client_framework else 'Client' }} application
+│   ├── src/             # Client source code
+│   ├── package.json     # Node dependencies
+│   └── ...
+{% else %}├── server/              # Python bot server
+│   ├── bot.py           # Main bot implementation
+│   ├── pyproject.toml   # Python dependencies
+│   ├── .env.example     # Environment variables template
+│   ├── .env             # Your API keys (git-ignored)
+{% if deploy_to_cloud %}│   ├── Dockerfile       # Container image for Pipecat Cloud
+│   └── pcc-deploy.toml  # Pipecat Cloud deployment config
+{% else %}│   └── ...
+{% endif %}{% endif %}├── .gitignore           # Git ignore patterns
+└── README.md            # This file
+```
+{% if deploy_to_cloud %}
+
+## Deploying to Pipecat Cloud
+
+This project is configured for deployment to Pipecat Cloud. You can learn how to deploy to Pipecat Cloud in the [Pipecat Quickstart Guide](https://docs.pipecat.ai/getting-started/quickstart#step-2%3A-deploy-to-production).
+
+Refer to the [Pipecat Cloud Documentation](https://docs.pipecat.ai/deployment/pipecat-cloud/introduction) to learn more about configuring, deploying, and managing your agents in Pipecat Cloud.
+
+{% endif %}
+
+## Learn More
+
+- [Pipecat Documentation](https://docs.pipecat.ai/)
+{% if generate_client and client_framework == "react" %}
+- [Voice UI Kit Documentation](https://voiceuikit.pipecat.ai/)
+{% endif %}
+- [Pipecat GitHub](https://github.com/pipecat-ai/pipecat)
+- [Pipecat Examples](https://github.com/pipecat-ai/pipecat-examples)
+- [Discord Community](https://discord.gg/pipecat)

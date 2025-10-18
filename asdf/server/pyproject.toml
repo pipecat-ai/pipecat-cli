@@ -1,0 +1,19 @@
+[project]
+name = "asdf"
+version = "0.1.0"
+description = "Voice AI bot built with Pipecat"
+requires-python = ">=3.10"
+dependencies = [
+    "pipecat-ai[cartesia,daily,deepgram,google,local-smart-turn-v3,runner,silero,webrtc]",
+    "pipecatcloud",
+]
+
+[dependency-groups]
+dev = [
+    "ruff~=0.12.1",
+]
+
+[tool.ruff]
+line-length = 100
+[tool.ruff.lint]
+select = ["I"]
