@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "pipecat-ai-cli"
 dynamic = ["version"]
-description = "CLI tool for scaffolding Pipecat AI voice agent projects"
+description = "CLI for building, deploying, and monitoring Pipecat voice agents"
 license = "BSD-2-Clause"
 license-files = ["LICENSE"]
 readme = "README.md"
