@@ -88,7 +88,7 @@ FEATURE_DEFINITIONS: dict[str, list[str]] = {
         "create_transport",
         "BaseTransport",
     ],
-    "rtvi": ["RTVIConfig", "RTVIObserver", "RTVIProcessor"],
+    "rtvi": ["RTVIObserver", "RTVIProcessor"],
 }
 
 
