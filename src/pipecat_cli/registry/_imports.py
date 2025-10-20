@@ -125,9 +125,7 @@ FEATURE_IMPORTS = {
         "from pipecat.runner.utils import create_transport",
         "from pipecat.transports.base_transport import BaseTransport",
     ],
-    "rtvi": [
-        "from pipecat.processors.frameworks.rtvi import RTVIConfig, RTVIObserver, RTVIProcessor"
-    ],
+    "rtvi": ["from pipecat.processors.frameworks.rtvi import RTVIObserver, RTVIProcessor"],
 }
 
 # Base imports always included in generated bot files

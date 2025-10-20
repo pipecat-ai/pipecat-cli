@@ -23,6 +23,22 @@ Run the bot using::
 
 load_dotenv(override=True)
 
+{% if recording %}
+
+async def save_audio_file(audio: bytes, filename: str, sample_rate: int, num_channels: int):
+    """Save audio data to a WAV file."""
+    if len(audio) > 0:
+        with io.BytesIO() as buffer:
+            with wave.open(buffer, "wb") as wf:
+                wf.setsampwidth(2)
+                wf.setnchannels(num_channels)
+                wf.setframerate(sample_rate)
+                wf.writeframes(audio)
+            async with aiofiles.open(filename, "wb") as file:
+                await file.write(buffer.getvalue())
+        logger.info(f"Audio saved to {filename}")
+{% endif %}
+
 
 async def run_bot(transport: BaseTransport, runner_args: RunnerArguments):
     """Main bot logic."""
@@ -54,7 +70,7 @@ async def run_bot(transport: BaseTransport, runner_args: RunnerArguments):
     {% endif %}
 
     {% if bot_type == 'web' %}
-    rtvi = RTVIProcessor(config=RTVIConfig(config=[]))
+    rtvi = RTVIProcessor()
     {% endif %}
     
     # Pipeline
@@ -100,6 +116,25 @@ async def run_bot(transport: BaseTransport, runner_args: RunnerArguments):
     async def on_client_disconnected(transport, client):
         logger.info("Client disconnected")
         await task.cancel()
+
+    {% if transcription %}
+    @transcript_processor.event_handler("on_transcript_update")
+    async def on_transcript_update(processor, frame):
+        for msg in frame.messages:
+            if isinstance(msg, TranscriptionMessage):
+                timestamp = f"[{msg.timestamp}] " if msg.timestamp else ""
+                line = f"{timestamp}{msg.role}: {msg.content}"
+                logger.info(f"Transcript: {line}")
+    {% endif %}
+
+    {% if recording %}
+    @audio_buffer.event_handler("on_audio_data")
+    async def on_audio_data(buffer, audio, sample_rate, num_channels):
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"recordings/merged_{timestamp}.wav"
+        os.makedirs("recordings", exist_ok=True)
+        await save_audio_file(audio, filename, sample_rate, num_channels)
+    {% endif %}
 
     runner = PipelineRunner(handle_sigint=runner_args.handle_sigint)
 
