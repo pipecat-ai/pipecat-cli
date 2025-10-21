@@ -9,8 +9,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Reordered the "Next Steps" to put the client steps first.
+
 - Aligned Google Vertex env names across services. Removed unnecessary text
   from the env.example file.
+
+### Fixed
+
+- Fixed an issue where the Vanilla JS client code required the
+  `@pipecat-ai/small-webrtc-transport`.
 
 ## [0.1.1] - 2025-10-20
 
