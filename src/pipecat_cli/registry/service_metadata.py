@@ -723,7 +723,7 @@ MANUAL_SERVICE_CONFIGS = {
         "AWSBedrockLLMService(\n"
         '        aws_region=os.getenv("AWS_REGION"),\n'
         '        model=os.getenv("AWS_BEDROCK_MODEL"),\n'
-        '        params=AWSBedrockLLMService.InputParams(temperature=0.8, latency="optimized")\n'
+        "        params=AWSBedrockLLMService.InputParams(temperature=0.8)\n"
         "    )"
     ),
     "aws_polly_tts": (
@@ -774,9 +774,9 @@ MANUAL_SERVICE_CONFIGS = {
     ),
     "gemini_vertex_live_realtime": (
         "llm = GeminiLiveVertexLLMService(\n"
-        '        credentials=os.getenv("GOOGLE_VERTEX_TEST_CREDENTIALS"),\n'
-        '        project_id=os.getenv("GOOGLE_CLOUD_PROJECT_ID"),\n'
-        '        location=os.getenv("GOOGLE_CLOUD_LOCATION"),\n'
+        '        credentials=os.getenv("GOOGLE_APPLICATION_CREDENTIALS"),\n'
+        '        project_id=os.getenv("GOOGLE_PROJECT_ID"),\n'
+        '        location=os.getenv("GOOGLE_LOCATION"),\n'
         '        voice_id=os.getenv("GOOGLE_VOICE_ID"),\n'
         '        system_instruction=os.getenv("GOOGLE_SYSTEM_INSTRUCTION"),\n'
         "    )"
