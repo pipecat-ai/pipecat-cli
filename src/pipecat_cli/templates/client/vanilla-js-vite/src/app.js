@@ -1,10 +1,9 @@
 import { PipecatClient, RTVIEvent } from '@pipecat-ai/client-js';
-import { DailyTransport } from '@pipecat-ai/daily-transport';
-import { SmallWebRTCTransport } from '@pipecat-ai/small-webrtc-transport';
 import {
   AVAILABLE_TRANSPORTS,
   DEFAULT_TRANSPORT,
   TRANSPORT_CONFIG,
+  createTransport,
 } from './config';
 
 class VoiceChatClient {
@@ -80,17 +79,8 @@ class VoiceChatClient {
     try {
       this.addEvent('connecting', `Using ${this.transportType} transport`);
 
-      // Create transport
-      let transport;
-      switch (this.transportType) {
-        case 'daily':
-          transport = new DailyTransport();
-          break;
-        case 'smallwebrtc':
-        default:
-          transport = new SmallWebRTCTransport();
-          break;
-      }
+      // Create transport using config
+      const transport = await createTransport(this.transportType);
 
       // Create client
       this.client = new PipecatClient({
