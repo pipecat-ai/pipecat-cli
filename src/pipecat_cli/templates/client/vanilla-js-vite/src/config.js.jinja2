@@ -15,3 +15,27 @@ export const TRANSPORT_CONFIG = {
   daily: { endpoint: 'http://localhost:7860/start' },
   smallwebrtc: { webrtcUrl: 'http://localhost:7860/api/offer' },
 };
+
+/**
+ * Create a transport instance based on the transport type
+ * Uses dynamic imports to only load the required transport library
+ */
+export async function createTransport(transportType) {
+  switch (transportType) {
+{% for transport in transports -%}
+{%- if transport.value == 'daily' %}
+    case 'daily': {
+      const { DailyTransport } = await import('@pipecat-ai/daily-transport');
+      return new DailyTransport();
+    }
+{% elif transport.value == 'smallwebrtc' %}
+    case 'smallwebrtc': {
+      const { SmallWebRTCTransport } = await import('@pipecat-ai/small-webrtc-transport');
+      return new SmallWebRTCTransport();
+    }
+{% endif -%}
+{%- endfor %}
+    default:
+      throw new Error(`Unsupported transport type: ${transportType}`);
+  }
+}
