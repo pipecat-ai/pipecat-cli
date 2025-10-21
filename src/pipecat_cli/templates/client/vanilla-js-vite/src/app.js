@@ -1,6 +1,4 @@
 import { PipecatClient, RTVIEvent } from '@pipecat-ai/client-js';
-import { DailyTransport } from '@pipecat-ai/daily-transport';
-import { SmallWebRTCTransport } from '@pipecat-ai/small-webrtc-transport';
 import {
   AVAILABLE_TRANSPORTS,
   DEFAULT_TRANSPORT,
@@ -34,8 +32,10 @@ class VoiceChatClient {
       option.textContent =
         transport.charAt(0).toUpperCase() + transport.slice(1);
       if (transport === 'smallwebrtc') {
+        import { SmallWebRTCTransport } from '@pipecat-ai/small-webrtc-transport';
         option.textContent = 'SmallWebRTC';
       } else if (transport === 'daily') {
+        import { DailyTransport } from '@pipecat-ai/daily-transport';
         option.textContent = 'Daily';
       }
       this.transportSelect.appendChild(option);
