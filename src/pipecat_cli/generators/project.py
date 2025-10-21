@@ -353,6 +353,13 @@ class ProjectGenerator:
             f"  • Go to your project: [bold cyan]cd {self.config.project_name}[/bold cyan]"
         )
 
+        # Client setup
+        if self.config.generate_client:
+            console.print("\n  [bold]Client setup:[/bold]")
+            console.print("  • Go to client: In a separate terminal window or tab [bold cyan]cd client[/bold cyan]")
+            console.print("  • Install dependencies: [bold cyan]npm install[/bold cyan]")
+            console.print("  • Run dev server: [bold cyan]npm run dev[/bold cyan]")
+
         # Server setup
         console.print("\n  [bold]Server setup:[/bold]")
         console.print("  • Go to server: [bold cyan]cd server[/bold cyan]")
@@ -401,13 +408,6 @@ class ProjectGenerator:
                     console.print(f"     • {cmd['label']}: [bold cyan]{cmd['command']}[/bold cyan]")
                 else:
                     console.print(f"     [bold cyan]{cmd['command']}[/bold cyan]")
-
-        # Client setup
-        if self.config.generate_client:
-            console.print("\n  [bold]Client setup:[/bold]")
-            console.print("  • Go to client: [bold cyan]cd client[/bold cyan]")
-            console.print("  • Install dependencies: [bold cyan]npm install[/bold cyan]")
-            console.print("  • Run dev server: [bold cyan]npm run dev[/bold cyan]")
 
         # Add cloud deployment info if applicable
         if self.config.deploy_to_cloud:

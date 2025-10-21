@@ -180,7 +180,7 @@ class VoiceChatClient {
   }
 
   updateMicButton(enabled) {
-    this.micStatus.textContent = enabled ? 'Mic On' : 'Mic Off';
+    this.micStatus.textContent = enabled ? 'Mic is On' : 'Mic is Off';
     this.micBtn.style.backgroundColor = enabled ? '#10b981' : '#1f2937';
   }
 
