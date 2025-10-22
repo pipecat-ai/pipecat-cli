@@ -161,6 +161,7 @@ class ProjectGenerator:
             "recording": self.config.recording,
             "transcription": self.config.transcription,
             "smart_turn": self.config.smart_turn,
+            "observability": self.config.enable_observability,
         }
 
         # Get imports
@@ -182,6 +183,7 @@ class ProjectGenerator:
             "transcription": self.config.transcription,
             "smart_turn": self.config.smart_turn,
             "enable_krisp": self.config.enable_krisp,
+            "enable_observability": self.config.enable_observability,
             "service_configs": ServiceRegistry.SERVICE_CONFIGS,
         }
 
@@ -224,6 +226,7 @@ class ProjectGenerator:
             "project_name": self.config.project_name,
             "pipecat_dependency": pipecat_dependency,
             "deploy_to_cloud": self.config.deploy_to_cloud,
+            "enable_observability": self.config.enable_observability,
         }
 
         content = template.render(**context)
@@ -305,6 +308,8 @@ class ProjectGenerator:
             "recording": self.config.recording,
             "transcription": self.config.transcription,
             "smart_turn": self.config.smart_turn,
+            "enable_krisp": self.config.enable_krisp,
+            "enable_observability": self.config.enable_observability,
             "deploy_to_cloud": self.config.deploy_to_cloud,
             "generate_client": self.config.generate_client,
             "client_framework": self.config.client_framework,
@@ -356,7 +361,9 @@ class ProjectGenerator:
         # Client setup
         if self.config.generate_client:
             console.print("\n  [bold]Client setup:[/bold]")
-            console.print("  • Go to client: In a separate terminal window or tab [bold cyan]cd client[/bold cyan]")
+            console.print(
+                "  • Go to client: In a separate terminal window or tab [bold cyan]cd client[/bold cyan]"
+            )
             console.print("  • Install dependencies: [bold cyan]npm install[/bold cyan]")
             console.print("  • Run dev server: [bold cyan]npm run dev[/bold cyan]")
 

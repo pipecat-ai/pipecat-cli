@@ -96,6 +96,9 @@ class ProjectConfig:
     deploy_to_cloud: bool = False
     enable_krisp: bool = False
 
+    # Observability
+    enable_observability: bool = False
+
 
 def ask_project_questions() -> ProjectConfig:
     """
@@ -442,7 +445,17 @@ def ask_project_questions() -> ProjectConfig:
         # Realtime mode doesn't use smart turn
         config.smart_turn = False
 
-    # Question 11: Pipecat Cloud deployment
+    # Question 11: Observability
+    config.enable_observability = questionary.confirm(
+        "Enable observability?",
+        default=False,
+        style=custom_style,
+    ).ask()
+    replace_question_with_answer(
+        "Enable observability?", "Yes" if config.enable_observability else "No"
+    )
+
+    # Question 12: Pipecat Cloud deployment
     config.deploy_to_cloud = questionary.confirm(
         "Deploy to Pipecat Cloud?",
         default=True,
@@ -452,7 +465,7 @@ def ask_project_questions() -> ProjectConfig:
         "Deploy to Pipecat Cloud?", "Yes" if config.deploy_to_cloud else "No"
     )
 
-    # Question 12: Krisp noise cancellation (only if deploying to cloud)
+    # Question 13: Krisp noise cancellation (only if deploying to cloud)
     if config.deploy_to_cloud:
         config.enable_krisp = questionary.confirm(
             "Enable Krisp noise cancellation?",

@@ -126,6 +126,10 @@ FEATURE_IMPORTS = {
         "from pipecat.transports.base_transport import BaseTransport",
     ],
     "rtvi": ["from pipecat.processors.frameworks.rtvi import RTVIObserver, RTVIProcessor"],
+    "observability": [
+        "from pipecat_whisker import WhiskerObserver",
+        "from pipecat_tail.observer import TailObserver",
+    ],
 }
 
 # Base imports always included in generated bot files

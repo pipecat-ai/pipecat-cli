@@ -245,3 +245,32 @@ class TestServiceLoader:
         assert ServiceLoader.validate_service_exists("deepgram_stt") is True
         assert ServiceLoader.validate_service_exists("daily") is True
         assert ServiceLoader.validate_service_exists("nonexistent") is False
+
+    def test_observability_feature_imports_exist(self):
+        """Test that observability feature imports are defined."""
+        assert "observability" in ServiceRegistry.FEATURE_IMPORTS
+        observability_imports = ServiceRegistry.FEATURE_IMPORTS["observability"]
+        assert len(observability_imports) == 2
+        assert any("WhiskerObserver" in imp for imp in observability_imports)
+        assert any("TailObserver" in imp for imp in observability_imports)
+
+    def test_get_imports_with_observability(self):
+        """Test that observability imports are included when enabled."""
+        services = {
+            "transports": ["daily"],
+            "stt": "deepgram_stt",
+            "llm": "openai_llm",
+            "tts": "cartesia_tts",
+        }
+        features = {
+            "observability": True,
+        }
+
+        imports = ServiceLoader.get_imports_for_services(services, features, "web")
+
+        # Check that observability imports are included
+        import_str = "\n".join(imports)
+        assert "WhiskerObserver" in import_str
+        assert "TailObserver" in import_str
+        assert "pipecat_whisker" in import_str
+        assert "pipecat_tail" in import_str

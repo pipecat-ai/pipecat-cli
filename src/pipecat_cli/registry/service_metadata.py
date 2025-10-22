@@ -89,6 +89,7 @@ FEATURE_DEFINITIONS: dict[str, list[str]] = {
         "BaseTransport",
     ],
     "rtvi": ["RTVIObserver", "RTVIProcessor"],
+    "observability": ["WhiskerObserver", "TailObserver"],
 }
 
 

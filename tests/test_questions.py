@@ -42,6 +42,7 @@ class TestProjectConfig:
         assert config.smart_turn is False
         assert config.deploy_to_cloud is False
         assert config.enable_krisp is False
+        assert config.enable_observability is False
         # Client-related defaults
         assert config.generate_client is False
         assert config.client_framework is None
