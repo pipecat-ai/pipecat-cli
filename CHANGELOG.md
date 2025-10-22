@@ -5,6 +5,13 @@ All notable changes to **Pipecat** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- Changes the DailyTransport client examples to use the /start endpoint to
+  start both local and production bots.
+
 ## [0.1.3] - 2025-10-22
 
 ### Added
