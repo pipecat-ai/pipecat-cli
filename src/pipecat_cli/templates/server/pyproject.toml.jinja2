@@ -8,6 +8,10 @@ dependencies = [
 {% if deploy_to_cloud %}
     "pipecatcloud",
 {% endif %}
+{% if enable_observability %}
+    "pipecat-ai-whisker",
+    "pipecat-ai-tail",
+{% endif %}
 ]
 
 [dependency-groups]

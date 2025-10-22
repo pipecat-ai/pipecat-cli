@@ -176,6 +176,17 @@ TEST_CONFIGS = [
         "deploy_to_cloud": True,
         "enable_krisp": True,
     },
+    # With observability
+    {
+        "name": "daily-with-observability",
+        "bot_type": "web",
+        "transports": ["daily"],
+        "mode": "cascade",
+        "stt_service": "deepgram_stt",
+        "llm_service": "openai_llm",
+        "tts_service": "cartesia_tts",
+        "enable_observability": True,
+    },
     # More telephony providers
     {
         "name": "plivo-cascade",
@@ -351,6 +362,7 @@ def test_project_generation(config_data, temp_output_dir):
         smart_turn=config_data.get("smart_turn", False),
         deploy_to_cloud=config_data.get("deploy_to_cloud", False),
         enable_krisp=config_data.get("enable_krisp", False),
+        enable_observability=config_data.get("enable_observability", False),
     )
 
     # Generate project
@@ -435,6 +447,16 @@ def test_project_generation(config_data, temp_output_dir):
     if config.deploy_to_cloud:
         assert "pipecatcloud" in pyproject_content
 
+    # Verify observability dependencies
+    if config.enable_observability:
+        assert "pipecat-ai-whisker" in pyproject_content
+        assert "pipecat-ai-tail" in pyproject_content
+        # Verify observability imports in bot.py
+        assert "WhiskerObserver" in bot_content
+        assert "TailObserver" in bot_content
+        assert "from pipecat_whisker import WhiskerObserver" in bot_content
+        assert "from pipecat_tail.observer import TailObserver" in bot_content
+
 
 @pytest.mark.slow
 @pytest.mark.parametrize(
@@ -466,6 +488,7 @@ def test_project_installable(config_data, temp_output_dir):
         smart_turn=config_data.get("smart_turn", False),
         deploy_to_cloud=config_data.get("deploy_to_cloud", False),
         enable_krisp=config_data.get("enable_krisp", False),
+        enable_observability=config_data.get("enable_observability", False),
     )
 
     # Generate project

@@ -273,6 +273,8 @@ def _get_external_module_path(class_name: str) -> str | None:
     """Get module path for external (non-pipecat) imports."""
     external_mappings = {
         "load_dotenv": "dotenv",
+        "WhiskerObserver": "pipecat_whisker",
+        "TailObserver": "pipecat_tail.observer",
     }
     return external_mappings.get(class_name)
 

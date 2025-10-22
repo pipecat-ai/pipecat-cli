@@ -119,8 +119,16 @@ async def run_bot(transport: BaseTransport, runner_args: RunnerArguments):
             enable_metrics=True,
             enable_usage_metrics=True,
         ),
-        {% if bot_type == 'web' %}
-        observers=[RTVIObserver(rtvi)],
+        {% if bot_type == 'web' or enable_observability %}
+        observers=[
+            {% if bot_type == 'web' %}
+            RTVIObserver(rtvi),
+            {% endif %}
+            {% if enable_observability %}
+            WhiskerObserver(pipeline),
+            TailObserver(),
+            {% endif %}
+        ],
         {% endif %}
     )
 

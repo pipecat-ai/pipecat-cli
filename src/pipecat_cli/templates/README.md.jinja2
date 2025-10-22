@@ -15,7 +15,7 @@ A Pipecat AI voice agent built with {% if mode == 'cascade' %}a cascade pipeline
 - **Pipeline**: Realtime
   - **Service**: {{ realtime_label }}
 {% endif %}
-{% if video_input or video_output or recording or transcription or smart_turn or enable_krisp %}
+{% if video_input or video_output or recording or transcription or smart_turn or enable_krisp or enable_observability %}
 - **Features**:
 {% if video_input %}
   - Video Input
@@ -35,6 +35,9 @@ A Pipecat AI voice agent built with {% if mode == 'cascade' %}a cascade pipeline
 {%- if enable_krisp %}
   - Krisp Noise Cancellation
 {% endif %}
+{%- if enable_observability %}
+  - Observability (Whisker + Tail)
+{% endif %}
 {% endif %}
 
 ## Setup
@@ -42,22 +45,26 @@ A Pipecat AI voice agent built with {% if mode == 'cascade' %}a cascade pipeline
 ### Server
 
 1. **Navigate to server directory**:
+
    ```bash
    cd server
    ```
 
 2. **Install dependencies**:
+
    ```bash
    uv sync
    ```
 
 3. **Configure environment variables**:
+
    ```bash
    cp .env.example .env
    # Edit .env and add your API keys
    ```
 
 4. **Run the bot**:
+
 {% if has_telephony and has_webrtc %}
    **For local development:**
    {% for cmd in run_commands %}
@@ -98,21 +105,25 @@ A Pipecat AI voice agent built with {% if mode == 'cascade' %}a cascade pipeline
 ### Client
 
 1. **Navigate to client directory**:
+
    ```bash
    cd client
    ```
 
 2. **Install dependencies**:
+
    ```bash
    npm install
    ```
 
 3. **Run development server**:
+
    ```bash
    npm run dev
    ```
 
 4. **Open browser**:
+
    {% if client_server == "vite" %}
    http://localhost:5173
    {% elif client_server == "nextjs" %}
@@ -155,6 +166,58 @@ This project is configured for deployment to Pipecat Cloud. You can learn how to
 
 Refer to the [Pipecat Cloud Documentation](https://docs.pipecat.ai/deployment/pipecat-cloud/introduction) to learn more about configuring, deploying, and managing your agents in Pipecat Cloud.
 
+{% endif %}
+{% if enable_observability %}
+## Observability
+
+This project includes observability tools to help you debug and monitor your bot:
+
+### Whisker - Live Pipeline Debugger
+
+**Whisker** is a live graphical debugger that lets you visualize pipelines and debug frames in real time.
+
+With Whisker you can:
+
+- 🗺️ View a live graph of your pipeline
+- ⚡ Watch frame processors flash in real time as frames pass through them
+- 📌 Select a processor to inspect the frames it has handled
+- 🔍 Filter frames by name to quickly find the ones you care about
+- 🧵 Select a frame to trace its full path through the pipeline
+- 💾 Save and load previous sessions for review and troubleshooting
+
+**To use Whisker:**
+
+1. Run an ngrok tunnel to expose your bot:
+
+   ```bash
+   ngrok http 9090
+   ```
+
+   > Tip: Use `--subdomain` for a repeatable ngrok URL
+
+2. Navigate to [https://whisker.pipecat.ai/](https://whisker.pipecat.ai/) and enter your ngrok URL (e.g., `your-subdomain.ngrok.io`)
+
+3. Once your bot is running, press connect
+
+### Tail - Terminal Dashboard
+
+**Tail** is a terminal dashboard that lets you monitor your Pipecat sessions in real time.
+
+With Tail you can:
+
+- 📜 Follow system logs in real time
+- 💬 Track conversations as they happen
+- 🔊 Monitor user and agent audio levels
+- 📈 Keep an eye on service metrics and usage
+
+**To use Tail:**
+
+1. Run your bot (in one terminal)
+
+2. Launch Tail in another terminal:
+   ```bash
+   pipecat tail
+   ```
 {% endif %}
 
 ## Learn More
