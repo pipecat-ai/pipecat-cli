@@ -116,13 +116,24 @@ A Pipecat AI voice agent built with {% if mode == 'cascade' %}a cascade pipeline
    npm install
    ```
 
-3. **Run development server**:
+3. **Configure environment variables**:
+
+   ```bash
+   cp env.example .env.local
+   # Edit .env.local if needed (defaults to localhost:7860)
+   ```
+
+   {% if client_server == "vite" %}
+   > **Note:** Environment variables in Vite are bundled into the client and exposed in the browser. For production applications that require secret protection, consider implementing a backend proxy server to handle API requests and manage sensitive credentials securely.
+   {% endif %}
+
+4. **Run development server**:
 
    ```bash
    npm run dev
    ```
 
-4. **Open browser**:
+5. **Open browser**:
 
    {% if client_server == "vite" %}
    http://localhost:5173

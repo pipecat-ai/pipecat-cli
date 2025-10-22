@@ -1,17 +1,20 @@
 import { NextResponse } from 'next/server';
 
 export async function POST() {
-  // Use BOT_START_URL from environment or fallback to localhost
   const botStartUrl =
     process.env.BOT_START_URL || 'http://localhost:7860/start';
 
+  if (!process.env.BOT_START_URL) {
+    console.warn(
+      'BOT_START_URL not configured, using default: http://localhost:7860/start'
+    );
+  }
+
   try {
-    // Prepare headers - make API key optional
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };
 
-    // Only add Authorization header if API key is provided
     if (process.env.BOT_START_PUBLIC_API_KEY) {
       headers.Authorization = `Bearer ${process.env.BOT_START_PUBLIC_API_KEY}`;
     }
