@@ -252,9 +252,16 @@ def format_feature_imports(pipecat_path: Path) -> list[str]:
 
         # Generate import statements
         import_statements = []
+        # Standard library modules that should use "import module" instead of "from module import"
+        standard_lib_modules = {"datetime", "io", "wave", "aiofiles"}
+
         for module_path, classes in sorted(module_to_classes.items()):
-            classes_str = ", ".join(classes)
-            import_statements.append(f"from {module_path} import {classes_str}")
+            # Check if this is a standard library module that should be imported directly
+            if module_path in standard_lib_modules and classes == [module_path]:
+                import_statements.append(f"import {module_path}")
+            else:
+                classes_str = ", ".join(classes)
+                import_statements.append(f"from {module_path} import {classes_str}")
 
         if len(import_statements) == 1:
             # Single import - keep on one line
@@ -275,6 +282,11 @@ def _get_external_module_path(class_name: str) -> str | None:
         "load_dotenv": "dotenv",
         "WhiskerObserver": "pipecat_whisker",
         "TailObserver": "pipecat_tail.observer",
+        # Standard library imports (these will be import statements, not from...import)
+        "datetime": "datetime",
+        "io": "io",
+        "wave": "wave",
+        "aiofiles": "aiofiles",
     }
     return external_mappings.get(class_name)
 
