@@ -6,7 +6,7 @@
 
 """Tail command implementation for Pipecat observability."""
 
-import sys
+import asyncio
 
 import typer
 from rich.console import Console
@@ -32,14 +32,14 @@ def tail_command(
     - Service metrics and usage stats
 
     Example:
-        pipecat tail                          # Connect to local bot
-        pipecat tail -u wss://bot.example.com # Connect to remote bot
+        pipecat tail                              # Connect to local bot
+        pipecat tail --url wss://bot.example.com  # Connect to remote bot
     """
     # Lazy import - only load pipecat-ai-tail when tail command is actually used
     # This allows the init command to run faster and removes Pipecat log lines
     # from printing while using the init command.
-    from pipecat_tail.cli import main as tail_main
+    from pipecat_tail.cli import PipecatTail
 
-    # Set up sys.argv for tail's argument parser
-    sys.argv = ["pipecat-tail", "-u", url]
-    tail_main()
+    # Create and run the tail dashboard using the Python API
+    app = PipecatTail(url=url)
+    asyncio.run(app.run())

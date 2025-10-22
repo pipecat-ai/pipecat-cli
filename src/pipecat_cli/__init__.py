@@ -11,4 +11,8 @@ This package provides command-line tools for:
 - Scaffolding new Pipecat projects with `pipecat init`
 - Monitoring live bots with `pipecat tail`
 - Deploying to Pipecat Cloud with `pipecat cloud`
+
+Python API:
+- Import from pipecat_cli.tail for real-time bot monitoring:
+  from pipecat_cli.tail import TailObserver, TailRunner
 """

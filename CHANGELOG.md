@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added Python API exports for `TailObserver` and `TailRunner` from
+  `pipecat-ai-tail`. Users can now import these from `pipecat_cli.tail`:
+  ```python
+  from pipecat_cli.tail import TailObserver, TailRunner
+  ```
+
 ### Changed
 
 - Reordered the "Next Steps" to put the client steps first.
