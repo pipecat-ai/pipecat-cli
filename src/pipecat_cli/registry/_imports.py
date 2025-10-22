@@ -100,9 +100,16 @@ IMPORTS = {
 # Additional imports for features (generated from FEATURE_DEFINITIONS)
 FEATURE_IMPORTS = {
     "recording": [
-        "from pipecat.processors.audio.audio_buffer_processor import AudioBufferProcessor"
+        "import aiofiles",
+        "import datetime",
+        "import io",
+        "from pipecat.processors.audio.audio_buffer_processor import AudioBufferProcessor",
+        "import wave",
     ],
-    "transcription": ["from pipecat.processors.transcript_processor import TranscriptProcessor"],
+    "transcription": [
+        "from pipecat.frames.frames import TranscriptionMessage, TranscriptionUpdateFrame",
+        "from pipecat.processors.transcript_processor import TranscriptProcessor",
+    ],
     "smart_turn": [
         "from pipecat.audio.turn.smart_turn.local_smart_turn_v3 import LocalSmartTurnAnalyzerV3",
         "from pipecat.audio.vad.silero import SileroVADAnalyzer",
@@ -127,8 +134,8 @@ FEATURE_IMPORTS = {
     ],
     "rtvi": ["from pipecat.processors.frameworks.rtvi import RTVIObserver, RTVIProcessor"],
     "observability": [
-        "from pipecat_whisker import WhiskerObserver",
         "from pipecat_tail.observer import TailObserver",
+        "from pipecat_whisker import WhiskerObserver",
     ],
 }
 

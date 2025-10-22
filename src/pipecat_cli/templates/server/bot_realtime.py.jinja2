@@ -127,7 +127,7 @@ async def run_bot(transport: BaseTransport, runner_args: RunnerArguments):
 
     {% if transcription %}
     @transcript_processor.event_handler("on_transcript_update")
-    async def on_transcript_update(processor, frame):
+    async def on_transcript_update(processor: TranscriptProcessor, frame: TranscriptionUpdateFrame):
         for msg in frame.messages:
             if isinstance(msg, TranscriptionMessage):
                 timestamp = f"[{msg.timestamp}] " if msg.timestamp else ""

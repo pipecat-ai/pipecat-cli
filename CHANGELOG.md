@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added Whisker and Tail as observability options for generated projects.
 
+### Fixed
+
+- Fixed an issue where recording and transcription features were missing
+  imports.
+
 ## [0.1.2] - 2025-10-21
 
 ### Added
