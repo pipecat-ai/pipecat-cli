@@ -4,11 +4,15 @@ Reusable event handlers for different transport types
 #}
 
 {# Standard event handlers for web/telephony #}
-{% macro standard_handlers() %}
+{% macro standard_handlers(recording=False) %}
     @transport.event_handler("on_client_connected")
     async def on_client_connected(transport, client):
         logger.info("Client connected")
-        # Kick off the conversation.
+        {% if recording %}
+        # Start recording audio
+        await audio_buffer.start_recording()
+        {% endif %}
+        # Kick off the conversation
         messages.append({"role": "system", "content": "Say hello and briefly introduce yourself."})
         await task.queue_frames([LLMRunFrame()])
 
@@ -19,10 +23,15 @@ Reusable event handlers for different transport types
 {% endmacro %}
 
 {# Daily PSTN dial-in event handlers #}
-{% macro daily_pstn_dialin_handlers() %}
+{% macro daily_pstn_dialin_handlers(recording=False) %}
     @transport.event_handler("on_first_participant_joined")
     async def on_first_participant_joined(transport, participant):
         logger.debug(f"First participant joined: {participant['id']}")
+        {% if recording %}
+        # Start recording audio
+        await audio_buffer.start_recording()
+        {% endif %}
+        # Kick off the conversation
         await task.queue_frames([LLMRunFrame()])
 
     @transport.event_handler("on_client_disconnected")
@@ -37,7 +46,7 @@ Reusable event handlers for different transport types
 {% endmacro %}
 
 {# Daily PSTN dial-out event handlers #}
-{% macro daily_pstn_dialout_handlers() %}
+{% macro daily_pstn_dialout_handlers(recording=False) %}
     @transport.event_handler("on_joined")
     async def on_joined(transport, data):
         await dialout_manager.attempt_dialout()
@@ -46,6 +55,10 @@ Reusable event handlers for different transport types
     async def on_dialout_answered(transport, data):
         logger.debug(f"Dial-out answered: {data}")
         dialout_manager.mark_successful()
+        {% if recording %}
+        # Start recording audio
+        await audio_buffer.start_recording()
+        {% endif %}
 
     @transport.event_handler("on_dialout_error")
     async def on_dialout_error(transport, data: Any):

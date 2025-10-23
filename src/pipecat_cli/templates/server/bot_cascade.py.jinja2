@@ -119,11 +119,11 @@ async def run_bot(transport: BaseTransport, runner_args: RunnerArguments):
     {% endif %}
     {# Event handlers - use macros based on transport type #}
     {% if 'daily_pstn_dialin' in transports %}
-{{ handlers.daily_pstn_dialin_handlers() }}
+{{ handlers.daily_pstn_dialin_handlers(recording) }}
     {% elif 'daily_pstn_dialout' in transports %}
-{{ handlers.daily_pstn_dialout_handlers() }}
+{{ handlers.daily_pstn_dialout_handlers(recording) }}
     {% else %}
-{{ handlers.standard_handlers() }}
+{{ handlers.standard_handlers(recording) }}
     {% endif %}
 
     {# Feature-specific event handlers #}
