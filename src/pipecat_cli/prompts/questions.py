@@ -85,6 +85,9 @@ class ProjectConfig:
     client_framework: Optional[str] = None  # "react"
     client_server: Optional[str] = None  # "vite" or "nextjs"
 
+    # Daily PSTN specific
+    daily_pstn_mode: Optional[str] = None  # "dial-in" or "dial-out"
+
     # Features
     video_input: bool = False
     video_output: bool = False
@@ -215,6 +218,24 @@ def ask_project_questions() -> ProjectConfig:
     )
     replace_question_with_answer("Transport:", primary_label)
 
+    # Question 3a: Daily PSTN mode (only if Daily PSTN is selected)
+    daily_pstn_mode = None
+    if primary_transport == "daily_pstn":
+        daily_pstn_mode = questionary.select(
+            "Daily PSTN mode:",
+            choices=[
+                Choice(title="Dial-in", value="dial-in"),
+                Choice(title="Dial-out", value="dial-out"),
+            ],
+            style=custom_style,
+        ).ask()
+
+        if not daily_pstn_mode:
+            raise KeyboardInterrupt("Project creation cancelled")
+
+        mode_display = "Dial-in" if daily_pstn_mode == "dial-in" else "Dial-out"
+        replace_question_with_answer("Daily PSTN mode:", mode_display)
+
     # Question 3b: Additional transport (different for web vs telephony)
     if bot_type == "web":
         # For web bots: offer to add another transport (commonly for local testing)
@@ -247,7 +268,7 @@ def ask_project_questions() -> ProjectConfig:
                     )
                     replace_question_with_answer("Additional transport:", backup_label)
 
-    elif bot_type == "telephony":
+    elif bot_type == "telephony" and primary_transport != "daily_pstn":
         # For telephony bots: offer to add WebRTC for local testing
         add_webrtc = questionary.confirm(
             "Add a WebRTC transport for local testing?",
@@ -260,6 +281,7 @@ def ask_project_questions() -> ProjectConfig:
         )
 
         if add_webrtc:
+            # Allows the user to choose between SmallWebRTC and Daily as a backup transport
             webrtc_choices = [
                 Choice(title="SmallWebRTC", value="smallwebrtc"),
                 Choice(title="Daily", value="daily"),
@@ -304,6 +326,7 @@ def ask_project_questions() -> ProjectConfig:
         generate_client=generate_client,
         client_framework=client_framework,
         client_server=client_server,
+        daily_pstn_mode=daily_pstn_mode,
     )
 
     # Conditional questions based on mode

@@ -1,0 +1,52 @@
+{#
+Helper Functions Macros
+Reusable utility functions and setup code used across templates
+#}
+
+{# Audio recording helper function #}
+{% macro save_audio_file_function() %}
+
+async def save_audio_file(audio: bytes, filename: str, sample_rate: int, num_channels: int):
+    """Save audio data to a WAV file."""
+    if len(audio) > 0:
+        with io.BytesIO() as buffer:
+            with wave.open(buffer, "wb") as wf:
+                wf.setsampwidth(2)
+                wf.setnchannels(num_channels)
+                wf.setframerate(sample_rate)
+                wf.writeframes(audio)
+            async with aiofiles.open(filename, "wb") as file:
+                await file.write(buffer.getvalue())
+        logger.info(f"Audio saved to {filename}")
+{% endmacro %}
+
+{# Context and message setup #}
+{% macro setup_context() %}
+    messages = [
+        {
+            "role": "system",
+            "content": "You are a friendly AI assistant. Respond naturally and keep your answers conversational.",
+        },
+    ]
+
+    context = LLMContext(messages)
+    context_aggregator = LLMContextAggregatorPair(context)
+{% endmacro %}
+
+{# Feature processors setup #}
+{% macro setup_feature_processors(recording, transcription, bot_type) %}
+    {% if recording %}
+    # Audio recording
+    audio_buffer = AudioBufferProcessor()
+    {% endif %}
+
+    {% if transcription %}
+    # Transcription processor
+    transcript_processor = TranscriptProcessor()
+    {% endif %}
+
+    {% if bot_type == 'web' %}
+    rtvi = RTVIProcessor()
+    {% endif %}
+{% endmacro %}
+

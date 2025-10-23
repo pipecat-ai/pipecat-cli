@@ -160,12 +160,12 @@ class ServiceRegistry:
             package="pipecat-ai[websocket]",
             class_name=["FastAPIWebsocketParams"],
         ),
-        # ServiceDefinition(
-        #     value="daily_telephony",
-        #     label="Daily",
-        #     package="pipecat-ai[daily]",
-        #     class_name=["DailyParams"],
-        # ),
+        ServiceDefinition(
+            value="daily_pstn",
+            label="Daily PSTN",
+            package="pipecat-ai[daily]",
+            class_name=["DailyParams"],
+        ),
     ]
 
     # Speech-to-Text Services

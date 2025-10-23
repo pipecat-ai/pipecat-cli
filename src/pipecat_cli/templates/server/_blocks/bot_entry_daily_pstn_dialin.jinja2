@@ -1,0 +1,35 @@
+{# Daily PSTN dial-in bot entry point #}
+    # Daily PSTN dial-in mode: parse agent request and configure dial-in settings
+    try:
+        request = AgentRequest.model_validate(runner_args.body)
+
+        daily_dialin_settings = DailyDialinSettings(
+            call_id=request.call_id, call_domain=request.call_domain
+        )
+
+        transport_params = DailyParams(
+            api_key=os.getenv("DAILY_API_KEY", ""),
+            dialin_settings=daily_dialin_settings,
+            audio_in_enabled=True,
+            audio_out_enabled=True,
+            {% if smart_turn %}
+            vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.2)),
+            turn_analyzer=LocalSmartTurnAnalyzerV3(),
+            {% else %}
+            vad_analyzer=SileroVADAnalyzer(),
+            {% endif %}
+        )
+
+        transport = DailyTransport(
+            request.room_url,
+            request.token,
+            "{{ project_name }}",
+            transport_params,
+        )
+
+        await run_bot(transport, runner_args)
+
+    except Exception as e:
+        logger.error(f"Error running bot: {e}")
+        raise e
+

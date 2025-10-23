@@ -2,6 +2,9 @@
 
 A Pipecat AI voice agent built with {% if mode == 'cascade' %}a cascade pipeline (STT → LLM → TTS){% else %}a realtime speech-to-speech pipeline{% endif %}.
 
+{% if 'daily_pstn' in transports %}
+{% include '_readme_blocks/how_it_works_daily_pstn.jinja2' %}
+{% endif %}
 ## Configuration
 
 - **Bot Type**: {{ bot_type.title() }}
@@ -40,6 +43,9 @@ A Pipecat AI voice agent built with {% if mode == 'cascade' %}a cascade pipeline
 {% endif %}
 {% endif %}
 
+{% if 'daily_pstn' in transports and daily_pstn_mode == 'dial-in' %}
+{% include '_readme_blocks/setup_daily_pstn_dialin.jinja2' %}
+{% else %}
 ## Setup
 
 ### Server
@@ -100,6 +106,7 @@ A Pipecat AI voice agent built with {% if mode == 'cascade' %}a cascade pipeline
    {% endif %}
    {%- endfor %}
 {% endif %}
+{% endif %}
 {% if generate_client %}
 
 ### Client
@@ -142,6 +149,9 @@ A Pipecat AI voice agent built with {% if mode == 'cascade' %}a cascade pipeline
    {% endif %}
 {% endif %}
 
+{% if 'daily_pstn' in transports and daily_pstn_mode == 'dial-in' %}
+{% include '_readme_blocks/project_structure_daily_pstn_dialin.jinja2' %}
+{% else %}
 ## Project Structure
 
 ```
@@ -149,7 +159,7 @@ A Pipecat AI voice agent built with {% if mode == 'cascade' %}a cascade pipeline
 {% if generate_client %}├── server/              # Python bot server
 │   ├── bot.py           # Main bot implementation
 │   ├── pyproject.toml   # Python dependencies
-│   ├── .env.example     # Environment variables template
+│   ├── env.example      # Environment variables template
 │   ├── .env             # Your API keys (git-ignored)
 {% if deploy_to_cloud %}│   ├── Dockerfile       # Container image for Pipecat Cloud
 │   └── pcc-deploy.toml  # Pipecat Cloud deployment config
@@ -169,6 +179,7 @@ A Pipecat AI voice agent built with {% if mode == 'cascade' %}a cascade pipeline
 {% endif %}{% endif %}├── .gitignore           # Git ignore patterns
 └── README.md            # This file
 ```
+{% endif %}
 {% if deploy_to_cloud %}
 
 ## Deploying to Pipecat Cloud

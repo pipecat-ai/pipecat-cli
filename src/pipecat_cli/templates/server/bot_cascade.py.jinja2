@@ -26,24 +26,23 @@ Run the bot using::
     uv run bot.py
 """
 
+{# Import macros for composition #}
+{% import 'server/_macros/event_handlers.jinja2' as handlers %}
+{% import 'server/_macros/pipeline_components.jinja2' as pipeline %}
+{% import 'server/_macros/helper_functions.jinja2' as helpers %}
+
+{# Standard imports #}
 {{ imports|join('\n') }}
+
+{# Daily PSTN dial-in specific imports #}
+{% if 'daily_pstn' in transports and daily_pstn_mode == 'dial-in' %}
+from server_utils import AgentRequest
+{% endif %}
 
 load_dotenv(override=True)
 
 {% if recording %}
-
-async def save_audio_file(audio: bytes, filename: str, sample_rate: int, num_channels: int):
-    """Save audio data to a WAV file."""
-    if len(audio) > 0:
-        with io.BytesIO() as buffer:
-            with wave.open(buffer, "wb") as wf:
-                wf.setsampwidth(2)
-                wf.setnchannels(num_channels)
-                wf.setframerate(sample_rate)
-                wf.writeframes(audio)
-            async with aiofiles.open(filename, "wb") as file:
-                await file.write(buffer.getvalue())
-        logger.info(f"Audio saved to {filename}")
+{{ helpers.save_audio_file_function() }}
 {% endif %}
 
 
@@ -66,52 +65,12 @@ async def run_bot(transport: BaseTransport, runner_args: RunnerArguments):
     llm = {{ service_configs[llm_service] }}
     {% endif %}
 
-    messages = [
-        {
-            "role": "system",
-            "content": "You are a friendly AI assistant. Respond naturally and keep your answers conversational.",
-        },
-    ]
+{{ helpers.setup_context() }}
 
-    context = LLMContext(messages)
-    context_aggregator = LLMContextAggregatorPair(context)
-
-    {% if recording %}
-    # Audio recording
-    audio_buffer = AudioBufferProcessor()
-    {% endif %}
-
-    {% if transcription %}
-    # Transcription processor
-    transcript_processor = TranscriptProcessor()
-    {% endif %}
-
-    {% if bot_type == 'web' %}
-    rtvi = RTVIProcessor()
-
-    {% endif %}
-    # Pipeline
-    pipeline = Pipeline([
-        transport.input(),
-        {% if bot_type == 'web' %}
-        rtvi,
-        {% endif %}
-        stt,
-        {% if transcription %}
-        transcript_processor.user(),
-        {% endif %}
-        context_aggregator.user(),
-        llm,
-        tts,
-        transport.output(),
-        {% if transcription %}
-        transcript_processor.assistant(),
-        {% endif %}
-        {% if recording %}
-        audio_buffer,
-        {% endif %}
-        context_aggregator.assistant(),
-    ])
+{{ helpers.setup_feature_processors(recording, transcription, bot_type) }}
+    
+    # Pipeline - assembled from reusable components
+{{ pipeline.cascade_pipeline(bot_type, transcription, recording) }}
 
     task = PipelineTask(
         pipeline,
@@ -132,35 +91,22 @@ async def run_bot(transport: BaseTransport, runner_args: RunnerArguments):
         {% endif %}
     )
 
-    @transport.event_handler("on_client_connected")
-    async def on_client_connected(transport, client):
-        logger.info("Client connected")
-        # Kick off the conversation.
-        messages.append({"role": "system", "content": "Say hello and briefly introduce yourself."})
-        await task.queue_frames([LLMRunFrame()])
+    {# Event handlers - use macros based on transport type #}
+    {% if 'daily_pstn' in transports and daily_pstn_mode == 'dial-in' %}
+{{ handlers.daily_pstn_dialin_handlers() }}
+    {% elif 'daily_pstn' in transports and daily_pstn_mode == 'dial-out' %}
+{{ handlers.daily_pstn_dialout_handlers() }}
+    {% else %}
+{{ handlers.standard_handlers() }}
+    {% endif %}
 
-    @transport.event_handler("on_client_disconnected")
-    async def on_client_disconnected(transport, client):
-        logger.info("Client disconnected")
-        await task.cancel()
-
+    {# Feature-specific event handlers #}
     {% if transcription %}
-    @transcript_processor.event_handler("on_transcript_update")
-    async def on_transcript_update(processor: TranscriptProcessor, frame: TranscriptionUpdateFrame):
-        for msg in frame.messages:
-            if isinstance(msg, TranscriptionMessage):
-                timestamp = f"[{msg.timestamp}] " if msg.timestamp else ""
-                line = f"{timestamp}{msg.role}: {msg.content}"
-                logger.info(f"Transcript: {line}")
+{{ handlers.transcription_handler() }}
     {% endif %}
 
     {% if recording %}
-    @audio_buffer.event_handler("on_audio_data")
-    async def on_audio_data(buffer, audio, sample_rate, num_channels):
-        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"recordings/merged_{timestamp}.wav"
-        os.makedirs("recordings", exist_ok=True)
-        await save_audio_file(audio, filename, sample_rate, num_channels)
+{{ handlers.recording_handler() }}
     {% endif %}
 
     runner = PipelineRunner(handle_sigint=runner_args.handle_sigint)
@@ -170,147 +116,12 @@ async def run_bot(transport: BaseTransport, runner_args: RunnerArguments):
 
 async def bot(runner_args: RunnerArguments):
     """Main bot entry point."""
-    {% if enable_krisp %}
-    # Krisp is available when deployed to Pipecat Cloud
-    if os.environ.get("ENV") != "local":
-        from pipecat.audio.filters.krisp_filter import KrispFilter
-
-        krisp_filter = KrispFilter()
-    else:
-        krisp_filter = None
+    {# Bot entry point - use blocks based on transport type #}
+    {% if 'daily_pstn' in transports and daily_pstn_mode == 'dial-in' %}
+{% include 'server/_blocks/bot_entry_daily_pstn_dialin.jinja2' %}
+    {% else %}
+{% include 'server/_blocks/bot_entry_standard.jinja2' %}
     {% endif %}
-
-    # We store functions so objects (e.g. SileroVADAnalyzer) don't get
-    # instantiated. The function will be called when the desired transport gets
-    # selected.
-    transport_params = {
-        {% if 'daily' in transports %}
-        "daily": lambda: DailyParams(
-            audio_in_enabled=True,
-            {% if enable_krisp %}
-            audio_in_filter=krisp_filter,
-            {% endif %}
-            audio_out_enabled=True,
-            {% if video_input %}
-            video_in_enabled=True,
-            {% endif %}
-            {% if video_output %}
-            video_out_enabled=True,
-            video_out_is_live=True,
-            video_out_width=1024,
-            video_out_height=768,
-            {% endif %}
-            {% if smart_turn %}
-            vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.2)),
-            turn_analyzer=LocalSmartTurnAnalyzerV3(),
-            {% else %}
-            vad_analyzer=SileroVADAnalyzer(),
-            {% endif %}
-        ),
-        {% endif %}
-        {% if 'smallwebrtc' in transports %}
-        "webrtc": lambda: TransportParams(
-            audio_in_enabled=True,
-            {% if enable_krisp %}
-            audio_in_filter=krisp_filter,
-            {% endif %}
-            audio_out_enabled=True,
-            {% if video_input %}
-            video_in_enabled=True,
-            {% endif %}
-            {% if video_output %}
-            video_out_is_live=True,
-            video_out_width=1024,
-            video_out_height=768,
-            {% endif %}
-            {% if smart_turn %}
-            vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.2)),
-            turn_analyzer=LocalSmartTurnAnalyzerV3(),
-            {% else %}
-            vad_analyzer=SileroVADAnalyzer(),
-            {% endif %}
-        ),
-        {% endif %}
-        {% if 'twilio' in transports %}
-        "twilio": lambda: FastAPIWebsocketParams(
-            audio_in_enabled=True,
-            {% if enable_krisp %}
-            audio_in_filter=krisp_filter,
-            {% endif %}
-            audio_out_enabled=True,
-            {% if smart_turn %}
-            vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.2)),
-            turn_analyzer=LocalSmartTurnAnalyzerV3(),
-            {% else %}
-            vad_analyzer=SileroVADAnalyzer(),
-            {% endif %}
-        ),
-        {% endif %}
-        {% if 'telnyx' in transports %}
-        "telnyx": lambda: FastAPIWebsocketParams(
-            audio_in_enabled=True,
-            {% if enable_krisp %}
-            audio_in_filter=krisp_filter,
-            {% endif %}
-            audio_out_enabled=True,
-            {% if smart_turn %}
-            vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.2)),
-            turn_analyzer=LocalSmartTurnAnalyzerV3(),
-            {% else %}
-            vad_analyzer=SileroVADAnalyzer(),
-            {% endif %}
-        ),
-        {% endif %}
-        {% if 'plivo' in transports %}
-        "plivo": lambda: FastAPIWebsocketParams(
-            audio_in_enabled=True,
-            {% if enable_krisp %}
-            audio_in_filter=krisp_filter,
-            {% endif %}
-            audio_out_enabled=True,
-            {% if smart_turn %}
-            vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.2)),
-            turn_analyzer=LocalSmartTurnAnalyzerV3(),
-            {% else %}
-            vad_analyzer=SileroVADAnalyzer(),
-            {% endif %}
-        ),
-        {% endif %}
-        {% if 'exotel' in transports %}
-        "exotel": lambda: FastAPIWebsocketParams(
-            audio_in_enabled=True,
-            {% if enable_krisp %}
-            audio_in_filter=krisp_filter,
-            {% endif %}
-            audio_out_enabled=True,
-            {% if smart_turn %}
-            vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.2)),
-            turn_analyzer=LocalSmartTurnAnalyzerV3(),
-            {% else %}
-            vad_analyzer=SileroVADAnalyzer(),
-            {% endif %}
-        ),
-        {% endif %}
-        {% if 'daily_telephony' in transports %}
-        "daily": lambda: DailyParams(
-            audio_in_enabled=True,
-            {% if enable_krisp %}
-            audio_in_filter=krisp_filter,
-            {% endif %}
-            audio_out_enabled=True,
-            {% if smart_turn %}
-            vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.2)),
-            turn_analyzer=LocalSmartTurnAnalyzerV3(),
-            {% else %}
-            vad_analyzer=SileroVADAnalyzer(),
-            {% endif %}
-        ),
-        {% endif %}
-    }
-
-    transport = await create_transport(runner_args, transport_params)
-
-    await run_bot(transport, runner_args)
 
 
 if __name__ == "__main__":
