@@ -1,0 +1,86 @@
+{#
+Event Handler Macros
+Reusable event handlers for different transport types
+#}
+
+{# Standard event handlers for web/telephony #}
+{% macro standard_handlers() %}
+    @transport.event_handler("on_client_connected")
+    async def on_client_connected(transport, client):
+        logger.info("Client connected")
+        # Kick off the conversation.
+        messages.append({"role": "system", "content": "Say hello and briefly introduce yourself."})
+        await task.queue_frames([LLMRunFrame()])
+
+    @transport.event_handler("on_client_disconnected")
+    async def on_client_disconnected(transport, client):
+        logger.info("Client disconnected")
+        await task.cancel()
+{% endmacro %}
+
+{# Daily PSTN dial-in event handlers #}
+{% macro daily_pstn_dialin_handlers() %}
+    @transport.event_handler("on_first_participant_joined")
+    async def on_first_participant_joined(transport, participant):
+        logger.debug(f"First participant joined: {participant['id']}")
+        await task.queue_frames([LLMRunFrame()])
+
+    @transport.event_handler("on_client_disconnected")
+    async def on_client_disconnected(transport, client):
+        logger.info(f"Client disconnected")
+        await task.cancel()
+
+    @transport.event_handler("on_dialin_error")
+    async def on_dialin_error(transport, data):
+        logger.error(f"Dial-in error: {data}")
+        await task.cancel()
+{% endmacro %}
+
+{# Daily PSTN dial-out event handlers #}
+{% macro daily_pstn_dialout_handlers() %}
+    @transport.event_handler("on_joined")
+    async def on_joined(transport, data):
+        await dialout_manager.attempt_dialout()
+
+    @transport.event_handler("on_dialout_answered")
+    async def on_dialout_answered(transport, data):
+        logger.debug(f"Dial-out answered: {data}")
+        dialout_manager.mark_successful()
+
+    @transport.event_handler("on_dialout_error")
+    async def on_dialout_error(transport, data: Any):
+        logger.error(f"Dial-out error, retrying: {data}")
+
+        if dialout_manager.should_retry():
+            await dialout_manager.attempt_dialout()
+        else:
+            logger.error(f"No more retries allowed, stopping bot.")
+            await task.cancel()
+
+    @transport.event_handler("on_client_disconnected")
+    async def on_client_disconnected(transport, client):
+        logger.info(f"Client disconnected")
+        await task.cancel()
+{% endmacro %}
+
+{# Transcription event handler (feature-based) #}
+{% macro transcription_handler() %}
+    @transcript_processor.event_handler("on_transcript_update")
+    async def on_transcript_update(processor: TranscriptProcessor, frame: TranscriptionUpdateFrame):
+        for msg in frame.messages:
+            if isinstance(msg, TranscriptionMessage):
+                timestamp = f"[{msg.timestamp}] " if msg.timestamp else ""
+                line = f"{timestamp}{msg.role}: {msg.content}"
+                logger.info(f"Transcript: {line}")
+{% endmacro %}
+
+{# Recording event handler (feature-based) #}
+{% macro recording_handler() %}
+    @audio_buffer.event_handler("on_audio_data")
+    async def on_audio_data(buffer, audio, sample_rate, num_channels):
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        filename = f"recordings/merged_{timestamp}.wav"
+        os.makedirs("recordings", exist_ok=True)
+        await save_audio_file(audio, filename, sample_rate, num_channels)
+{% endmacro %}
+

@@ -1,0 +1,56 @@
+{# Daily PSTN bot entry point (both dial-in and dial-out) #}
+{% if enable_krisp %}
+    # Krisp is available when deployed to Pipecat Cloud
+    if os.environ.get("ENV") != "local":
+        from pipecat.audio.filters.krisp_filter import KrispFilter
+
+        krisp_filter = KrispFilter()
+    else:
+        krisp_filter = None
+{% endif %}
+    try:
+        request = AgentRequest.model_validate(runner_args.body)
+
+{% if 'daily_pstn_dialin' in transports %}
+        # Configure dial-in settings
+        daily_dialin_settings = DailyDialinSettings(
+            call_id=request.call_id, call_domain=request.call_domain
+        )
+
+{% endif %}
+        transport_params = DailyParams(
+            api_key=os.getenv("DAILY_API_KEY", ""),
+{% if 'daily_pstn_dialin' in transports %}
+            dialin_settings=daily_dialin_settings,
+{% endif %}
+            audio_in_enabled=True,
+            {% if enable_krisp %}
+            audio_in_filter=krisp_filter,
+            {% endif %}
+            audio_out_enabled=True,
+            {% if smart_turn %}
+            vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.2)),
+            turn_analyzer=LocalSmartTurnAnalyzerV3(),
+            {% else %}
+            vad_analyzer=SileroVADAnalyzer(),
+            {% endif %}
+        )
+
+        transport = DailyTransport(
+            request.room_url,
+            request.token,
+            "Daily PSTN Bot",
+            transport_params,
+        )
+
+{% if 'daily_pstn_dialout' in transports %}
+        await run_bot(transport, runner_args, request.dialout_settings)
+{% else %}
+        await run_bot(transport, runner_args)
+{% endif %}
+
+    except Exception as e:
+        logger.error(f"Error running bot: {e}")
+        raise e
+
+

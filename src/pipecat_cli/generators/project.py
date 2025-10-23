@@ -104,6 +104,13 @@ class ProjectGenerator:
         # 1. Generate bot.py (in server/)
         self._generate_bot_file(server_path)
 
+        # 1b. Generate server.py and server_utils.py for Daily PSTN
+        if (
+            "daily_pstn_dialin" in self.config.transports
+            or "daily_pstn_dialout" in self.config.transports
+        ):
+            self._generate_server_files(server_path)
+
         # 2. Generate pyproject.toml (in server/)
         self._generate_pyproject(server_path)
 
@@ -132,6 +139,23 @@ class ProjectGenerator:
         self._format_python_files(server_path)
 
         return project_path
+
+    def _generate_server_files(self, project_path: Path) -> None:
+        """Generate server.py and server_utils.py for Daily PSTN."""
+        # Determine which templates to use based on mode
+        mode = self.config.daily_pstn_mode  # 'dial-in' or 'dial-out'
+        server_template_name = f"server/server_pstn_{mode.replace('-', '')}.py.jinja2"
+        utils_template_name = f"server/server_utils_pstn_{mode.replace('-', '')}.py.jinja2"
+
+        # Generate server.py
+        server_template = self.env.get_template(server_template_name)
+        server_content = server_template.render()
+        (project_path / "server.py").write_text(server_content)
+
+        # Generate server_utils.py
+        utils_template = self.env.get_template(utils_template_name)
+        utils_content = utils_template.render()
+        (project_path / "server_utils.py").write_text(utils_content)
 
     def _generate_bot_file(self, project_path: Path) -> None:
         """Generate the main bot.py file."""
@@ -185,6 +209,7 @@ class ProjectGenerator:
             "enable_krisp": self.config.enable_krisp,
             "enable_observability": self.config.enable_observability,
             "service_configs": ServiceRegistry.SERVICE_CONFIGS,
+            "daily_pstn_mode": self.config.daily_pstn_mode,
         }
 
         # Render and write
@@ -243,6 +268,7 @@ class ProjectGenerator:
             "llm_service": self.config.llm_service,
             "tts_service": self.config.tts_service,
             "realtime_service": self.config.realtime_service,
+            "daily_pstn_mode": self.config.daily_pstn_mode,
         }
 
         content = template.render(**context)
@@ -317,6 +343,7 @@ class ProjectGenerator:
             "run_commands": run_commands,
             "has_telephony": has_telephony,
             "has_webrtc": has_webrtc,
+            "daily_pstn_mode": self.config.daily_pstn_mode,
         }
 
         content = template.render(**context)
@@ -328,6 +355,7 @@ class ProjectGenerator:
 
         context = {
             "transports": self.config.transports,
+            "daily_pstn_mode": self.config.daily_pstn_mode,
         }
 
         content = template.render(**context)

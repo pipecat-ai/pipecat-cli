@@ -193,8 +193,17 @@ def generate_imports_dict() -> dict[str, list[str]]:
             value = transport.value
             class_names = transport.class_name
             import_stmt = discover_import(value, pipecat_path, class_names, "transports")
+
+            imports_list = []
             if import_stmt:
-                imports_dict[value] = [import_stmt]
+                imports_list.append(import_stmt)
+
+            # Add additional imports if specified
+            if transport.additional_imports:
+                imports_list.extend(transport.additional_imports)
+
+            if imports_list:
+                imports_dict[value] = imports_list
 
     # Generate imports for all service types
     for service_list in [
@@ -207,8 +216,17 @@ def generate_imports_dict() -> dict[str, list[str]]:
             value = service.value
             class_names = service.class_name
             import_stmt = discover_import(value, pipecat_path, class_names, "services")
+
+            imports_list = []
             if import_stmt:
-                imports_dict[value] = [import_stmt]
+                imports_list.append(import_stmt)
+
+            # Add additional imports if specified
+            if service.additional_imports:
+                imports_list.extend(service.additional_imports)
+
+            if imports_list:
+                imports_dict[value] = imports_list
 
     return imports_dict
 
@@ -312,8 +330,16 @@ def format_imports_dict(imports_dict: dict[str, list[str]], pipecat_path: Path) 
         for service in services:
             service_value = service.value
             if service_value in imports_dict:
-                import_stmt = imports_dict[service_value][0]
-                lines.append(f'        "{service_value}": ["{import_stmt}"],')
+                import_stmts = imports_dict[service_value]
+                if len(import_stmts) == 1:
+                    # Single import - keep on one line
+                    lines.append(f'        "{service_value}": ["{import_stmts[0]}"],')
+                else:
+                    # Multiple imports - format as multi-line list
+                    lines.append(f'        "{service_value}": [')
+                    for stmt in import_stmts:
+                        lines.append(f'            "{stmt}",')
+                    lines.append("        ],")
 
     lines.append("    }")
     lines.append("")

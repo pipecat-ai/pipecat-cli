@@ -1,0 +1,128 @@
+{# Standard bot entry point for web/telephony (non-PSTN) #}
+{% if enable_krisp %}
+    # Krisp is available when deployed to Pipecat Cloud
+    if os.environ.get("ENV") != "local":
+        from pipecat.audio.filters.krisp_filter import KrispFilter
+
+        krisp_filter = KrispFilter()
+    else:
+        krisp_filter = None
+{% endif %}
+
+    # We store functions so objects (e.g. SileroVADAnalyzer) don't get
+    # instantiated. The function will be called when the desired transport gets
+    # selected.
+    transport_params = {
+        {% if 'daily' in transports %}
+        "daily": lambda: DailyParams(
+            audio_in_enabled=True,
+            {% if enable_krisp %}
+            audio_in_filter=krisp_filter,
+            {% endif %}
+            audio_out_enabled=True,
+            {% if video_input %}
+            video_in_enabled=True,
+            {% endif %}
+            {% if video_output %}
+            video_out_enabled=True,
+            video_out_is_live=True,
+            video_out_width=1024,
+            video_out_height=768,
+            {% endif %}
+            {% if smart_turn %}
+            vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.2)),
+            turn_analyzer=LocalSmartTurnAnalyzerV3(),
+            {% else %}
+            vad_analyzer=SileroVADAnalyzer(),
+            {% endif %}
+        ),
+        {% endif %}
+        {% if 'smallwebrtc' in transports %}
+        "webrtc": lambda: TransportParams(
+            audio_in_enabled=True,
+            {% if enable_krisp %}
+            audio_in_filter=krisp_filter,
+            {% endif %}
+            audio_out_enabled=True,
+            {% if video_input %}
+            video_in_enabled=True,
+            {% endif %}
+            {% if video_output %}
+            video_out_is_live=True,
+            video_out_width=1024,
+            video_out_height=768,
+            {% endif %}
+            {% if smart_turn %}
+            vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.2)),
+            turn_analyzer=LocalSmartTurnAnalyzerV3(),
+            {% else %}
+            vad_analyzer=SileroVADAnalyzer(),
+            {% endif %}
+        ),
+        {% endif %}
+        {% if 'twilio' in transports %}
+        "twilio": lambda: FastAPIWebsocketParams(
+            audio_in_enabled=True,
+            {% if enable_krisp %}
+            audio_in_filter=krisp_filter,
+            {% endif %}
+            audio_out_enabled=True,
+            {% if smart_turn %}
+            vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.2)),
+            turn_analyzer=LocalSmartTurnAnalyzerV3(),
+            {% else %}
+            vad_analyzer=SileroVADAnalyzer(),
+            {% endif %}
+        ),
+        {% endif %}
+        {% if 'telnyx' in transports %}
+        "telnyx": lambda: FastAPIWebsocketParams(
+            audio_in_enabled=True,
+            {% if enable_krisp %}
+            audio_in_filter=krisp_filter,
+            {% endif %}
+            audio_out_enabled=True,
+            {% if smart_turn %}
+            vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.2)),
+            turn_analyzer=LocalSmartTurnAnalyzerV3(),
+            {% else %}
+            vad_analyzer=SileroVADAnalyzer(),
+            {% endif %}
+        ),
+        {% endif %}
+        {% if 'plivo' in transports %}
+        "plivo": lambda: FastAPIWebsocketParams(
+            audio_in_enabled=True,
+            {% if enable_krisp %}
+            audio_in_filter=krisp_filter,
+            {% endif %}
+            audio_out_enabled=True,
+            {% if smart_turn %}
+            vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.2)),
+            turn_analyzer=LocalSmartTurnAnalyzerV3(),
+            {% else %}
+            vad_analyzer=SileroVADAnalyzer(),
+            {% endif %}
+        ),
+        {% endif %}
+        {% if 'exotel' in transports %}
+        "exotel": lambda: FastAPIWebsocketParams(
+            audio_in_enabled=True,
+            {% if enable_krisp %}
+            audio_in_filter=krisp_filter,
+            {% endif %}
+            audio_out_enabled=True,
+            {% if smart_turn %}
+            vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.2)),
+            turn_analyzer=LocalSmartTurnAnalyzerV3(),
+            {% else %}
+            vad_analyzer=SileroVADAnalyzer(),
+            {% endif %}
+        ),
+        {% endif %}
+    }
+
+    transport = await create_transport(runner_args, transport_params)
+
+    await run_bot(transport, runner_args)
+

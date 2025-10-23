@@ -1,0 +1,120 @@
+{#
+Helper Functions Macros
+Reusable utility functions and setup code used across templates
+#}
+
+{# Audio recording helper function #}
+{% macro save_audio_file_function() %}
+
+async def save_audio_file(audio: bytes, filename: str, sample_rate: int, num_channels: int):
+    """Save audio data to a WAV file."""
+    if len(audio) > 0:
+        with io.BytesIO() as buffer:
+            with wave.open(buffer, "wb") as wf:
+                wf.setsampwidth(2)
+                wf.setnchannels(num_channels)
+                wf.setframerate(sample_rate)
+                wf.writeframes(audio)
+            async with aiofiles.open(filename, "wb") as file:
+                await file.write(buffer.getvalue())
+        logger.info(f"Audio saved to {filename}")
+{% endmacro %}
+
+{# Context and message setup #}
+{% macro setup_context() %}
+    messages = [
+        {
+            "role": "system",
+            "content": "You are a friendly AI assistant. Respond naturally and keep your answers conversational.",
+        },
+    ]
+
+    context = LLMContext(messages)
+    context_aggregator = LLMContextAggregatorPair(context)
+{% endmacro %}
+
+{# Feature processors setup #}
+{% macro setup_feature_processors(recording, transcription, bot_type) %}
+    {% if recording %}
+    # Audio recording
+    audio_buffer = AudioBufferProcessor()
+    {% endif %}
+
+    {% if transcription %}
+    # Transcription processor
+    transcript_processor = TranscriptProcessor()
+    {% endif %}
+
+    {% if bot_type == 'web' %}
+    rtvi = RTVIProcessor()
+    {% endif %}
+{% endmacro %}
+
+{# DialoutManager class for Daily PSTN dial-out #}
+{% macro dialout_manager_class() %}
+
+class DialoutManager:
+    """Manages dialout attempts with retry logic.
+
+    Handles the complexity of initiating outbound calls with automatic retry
+    on failure, up to a configurable maximum number of attempts.
+
+    Args:
+        transport: The Daily transport instance for making the dialout
+        dialout_settings: Settings containing phone number and optional caller ID
+        max_retries: Maximum number of dialout attempts (default: 5)
+    """
+
+    def __init__(
+        self,
+        transport: BaseTransport,
+        dialout_settings: DialoutSettings,
+        max_retries: Optional[int] = 5,
+    ):
+        self._transport = transport
+        self._phone_number = dialout_settings.phone_number
+        self._max_retries = max_retries
+        self._attempt_count = 0
+        self._is_successful = False
+
+    async def attempt_dialout(self) -> bool:
+        """Attempt to start a dialout call.
+
+        Initiates an outbound call if retry limit hasn't been reached and
+        no successful connection has been made yet.
+
+        Returns:
+            True if dialout attempt was initiated, False if max retries reached
+            or call already successful
+        """
+        if self._attempt_count >= self._max_retries:
+            logger.error(
+                f"Maximum retry attempts ({self._max_retries}) reached. Giving up on dialout."
+            )
+            return False
+
+        if self._is_successful:
+            logger.debug("Dialout already successful, skipping attempt")
+            return False
+
+        self._attempt_count += 1
+        logger.info(
+            f"Attempting dialout (attempt {self._attempt_count}/{self._max_retries}) to: {self._phone_number}"
+        )
+
+        await self._transport.start_dialout({"phoneNumber": self._phone_number})
+        return True
+
+    def mark_successful(self):
+        """Mark the dialout as successful to prevent further retry attempts."""
+        self._is_successful = True
+
+    def should_retry(self) -> bool:
+        """Check if another dialout attempt should be made.
+
+        Returns:
+            True if retry limit not reached and call not yet successful
+        """
+        return self._attempt_count < self._max_retries and not self._is_successful
+{% endmacro %}
+
