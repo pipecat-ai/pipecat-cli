@@ -15,5 +15,5 @@ export const DEFAULT_TRANSPORT: TransportType = '{{ transports[0].value }}';
 
 export const TRANSPORT_CONFIG: Record<TransportType, any> = {
   daily: { endpoint: '/api/start' },
-  smallwebrtc: { webrtcUrl: 'https://localhost:7860/api/offer' },
+  smallwebrtc: { webrtcRequestParams: { endpoint: 'http://localhost:7860/api/offer' }  },
 };
