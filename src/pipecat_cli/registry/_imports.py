@@ -20,8 +20,14 @@ IMPORTS = {
     "telnyx": ["from pipecat.transports.websocket.fastapi import FastAPIWebsocketParams"],
     "plivo": ["from pipecat.transports.websocket.fastapi import FastAPIWebsocketParams"],
     "exotel": ["from pipecat.transports.websocket.fastapi import FastAPIWebsocketParams"],
-    "daily_pstn": [
-        "from pipecat.transports.daily.transport import DailyParams, DailyDialinSettings, DailyTransport"
+    "daily_pstn_dialin": [
+        "from pipecat.transports.daily.transport import DailyParams, DailyDialinSettings, DailyTransport",
+        "from server_utils import AgentRequest",
+    ],
+    "daily_pstn_dialout": [
+        "from pipecat.transports.daily.transport import DailyParams, DailyTransport",
+        "from server_utils import AgentRequest, DialoutSettings",
+        "from typing import Any, Optional",
     ],
     # STT Services
     "assemblyai_stt": ["from pipecat.services.assemblyai.stt import AssemblyAISTTService"],

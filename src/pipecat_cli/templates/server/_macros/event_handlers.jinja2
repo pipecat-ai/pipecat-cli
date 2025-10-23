@@ -36,21 +36,26 @@ Reusable event handlers for different transport types
         await task.cancel()
 {% endmacro %}
 
-{# Daily PSTN dial-out event handlers (placeholder for future) #}
+{# Daily PSTN dial-out event handlers #}
 {% macro daily_pstn_dialout_handlers() %}
-    @transport.event_handler("on_dialout_connected")
-    async def on_dialout_connected(transport, data):
-        logger.info(f"Dial-out connected: {data}")
-        await task.queue_frames([LLMRunFrame()])
+    @transport.event_handler("on_joined")
+    async def on_joined(transport, data):
+        await dialout_manager.attempt_dialout()
 
     @transport.event_handler("on_dialout_answered")
     async def on_dialout_answered(transport, data):
-        logger.info(f"Call answered: {data}")
+        logger.debug(f"Dial-out answered: {data}")
+        dialout_manager.mark_successful()
 
     @transport.event_handler("on_dialout_error")
-    async def on_dialout_error(transport, data):
-        logger.error(f"Dial-out error: {data}")
-        await task.cancel()
+    async def on_dialout_error(transport, data: Any):
+        logger.error(f"Dial-out error, retrying: {data}")
+
+        if dialout_manager.should_retry():
+            await dialout_manager.attempt_dialout()
+        else:
+            logger.error(f"No more retries allowed, stopping bot.")
+            await task.cancel()
 
     @transport.event_handler("on_client_disconnected")
     async def on_client_disconnected(transport, client):

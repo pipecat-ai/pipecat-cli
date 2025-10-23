@@ -34,9 +34,11 @@ Run the bot using::
 {# Standard imports #}
 {{ imports|join('\n') }}
 
-{# Daily PSTN dial-in specific imports #}
-{% if 'daily_pstn' in transports and daily_pstn_mode == 'dial-in' %}
+{# Daily PSTN specific imports #}
+{% if 'daily_pstn_dialin' in transports %}
 from server_utils import AgentRequest
+{% elif 'daily_pstn_dialout' in transports %}
+from server_utils import AgentRequest, DialoutSettings
 {% endif %}
 
 load_dotenv(override=True)
@@ -45,9 +47,28 @@ load_dotenv(override=True)
 {{ helpers.save_audio_file_function() }}
 {% endif %}
 
+{% if 'daily_pstn_dialout' in transports %}
+{{ helpers.dialout_manager_class() }}
+{% endif %}
 
+{% if 'daily_pstn_dialout' in transports %}
+async def run_bot(
+    transport: BaseTransport, runner_args: RunnerArguments, dialout_settings: DialoutSettings
+) -> None:
+    """Run the voice bot for an outbound call.
+
+    Sets up the bot pipeline with STT, LLM, and TTS services, then initiates
+    the dialout and handles the conversation with retry logic.
+
+    Args:
+        transport: Daily transport for the call
+        runner_args: Runner arguments including handle_sigint
+        dialout_settings: Phone number and optional caller ID for the outbound call
+    """
+{% else %}
 async def run_bot(transport: BaseTransport, runner_args: RunnerArguments):
     """Main bot logic."""
+{% endif %}
     logger.info("Starting bot")
 
     # Speech-to-Text service
@@ -91,10 +112,15 @@ async def run_bot(transport: BaseTransport, runner_args: RunnerArguments):
         {% endif %}
     )
 
+    {% if 'daily_pstn_dialout' in transports %}
+    # Initialize dialout manager
+    dialout_manager = DialoutManager(transport, dialout_settings)
+
+    {% endif %}
     {# Event handlers - use macros based on transport type #}
-    {% if 'daily_pstn' in transports and daily_pstn_mode == 'dial-in' %}
+    {% if 'daily_pstn_dialin' in transports %}
 {{ handlers.daily_pstn_dialin_handlers() }}
-    {% elif 'daily_pstn' in transports and daily_pstn_mode == 'dial-out' %}
+    {% elif 'daily_pstn_dialout' in transports %}
 {{ handlers.daily_pstn_dialout_handlers() }}
     {% else %}
 {{ handlers.standard_handlers() }}
@@ -117,8 +143,8 @@ async def run_bot(transport: BaseTransport, runner_args: RunnerArguments):
 async def bot(runner_args: RunnerArguments):
     """Main bot entry point."""
     {# Bot entry point - use blocks based on transport type #}
-    {% if 'daily_pstn' in transports and daily_pstn_mode == 'dial-in' %}
-{% include 'server/_blocks/bot_entry_daily_pstn_dialin.jinja2' %}
+    {% if 'daily_pstn_dialin' in transports or 'daily_pstn_dialout' in transports %}
+{% include 'server/_blocks/bot_entry_daily_pstn.jinja2' %}
     {% else %}
 {% include 'server/_blocks/bot_entry_standard.jinja2' %}
     {% endif %}

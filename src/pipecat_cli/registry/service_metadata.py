@@ -51,6 +51,7 @@ class ServiceDefinition:
         include_params: Parameters to include in generated config even if they have defaults
         manual_config: If True, config must be manually written (not auto-generated)
         recommended: If True, this service is marked as recommended in prompts
+        additional_imports: List of full import statements that can't be auto-discovered
     """
 
     value: str
@@ -61,6 +62,7 @@ class ServiceDefinition:
     include_params: list[str] | None = None
     manual_config: bool = False
     recommended: bool = False
+    additional_imports: list[str] | None = None
 
     def __post_init__(self):
         """Validate service definition after initialization."""
@@ -161,10 +163,23 @@ class ServiceRegistry:
             class_name=["FastAPIWebsocketParams"],
         ),
         ServiceDefinition(
-            value="daily_pstn",
-            label="Daily PSTN",
+            value="daily_pstn_dialin",
+            label="Daily PSTN (Dial-in)",
             package="pipecat-ai[daily]",
-            class_name=["DailyParams"],
+            class_name=["DailyParams", "DailyDialinSettings", "DailyTransport"],
+            additional_imports=[
+                "from server_utils import AgentRequest",
+            ],
+        ),
+        ServiceDefinition(
+            value="daily_pstn_dialout",
+            label="Daily PSTN (Dial-out)",
+            package="pipecat-ai[daily]",
+            class_name=["DailyParams", "DailyTransport"],
+            additional_imports=[
+                "from server_utils import AgentRequest, DialoutSettings",
+                "from typing import Any, Optional",
+            ],
         ),
     ]
 

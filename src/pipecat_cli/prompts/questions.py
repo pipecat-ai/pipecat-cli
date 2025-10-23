@@ -192,12 +192,28 @@ def ask_project_questions() -> ProjectConfig:
 
     # Question 3: Primary transport selection
     transport_options = ServiceLoader.get_transport_options(bot_type)
+
+    # For Daily PSTN, show a single option and ask for mode separately
+    # Filter out the mode-specific variants and show just "Daily PSTN"
+    display_transport_options = []
+    seen_daily_pstn = False
+    for svc in transport_options:
+        if svc.value in ["daily_pstn_dialin", "daily_pstn_dialout"]:
+            if not seen_daily_pstn:
+                # Create a generic "Daily PSTN" option
+                display_transport_options.append(
+                    type("ServiceDef", (), {"label": "Daily PSTN", "value": "daily_pstn"})()
+                )
+                seen_daily_pstn = True
+        else:
+            display_transport_options.append(svc)
+
     transport_choices = [
         Choice(
             title=svc.label,
             value=svc.value,
         )
-        for svc in transport_options
+        for svc in display_transport_options
     ]
 
     primary_transport = questionary.select(
@@ -209,23 +225,14 @@ def ask_project_questions() -> ProjectConfig:
     if not primary_transport:
         raise KeyboardInterrupt("Project creation cancelled")
 
-    transports = [primary_transport]
-
-    # Get label for display
-    primary_label = next(
-        (svc.label for svc in transport_options if svc.value == primary_transport),
-        primary_transport,
-    )
-    replace_question_with_answer("Transport:", primary_label)
-
-    # Question 3a: Daily PSTN mode (only if Daily PSTN is selected)
+    # Question 3a: If Daily PSTN selected, ask for mode
     daily_pstn_mode = None
     if primary_transport == "daily_pstn":
         daily_pstn_mode = questionary.select(
             "Daily PSTN mode:",
             choices=[
-                Choice(title="Dial-in", value="dial-in"),
-                Choice(title="Dial-out", value="dial-out"),
+                Choice(title="Dial-in (Receive calls)", value="dial-in"),
+                Choice(title="Dial-out (Make calls)", value="dial-out"),
             ],
             style=custom_style,
         ).ask()
@@ -235,6 +242,18 @@ def ask_project_questions() -> ProjectConfig:
 
         mode_display = "Dial-in" if daily_pstn_mode == "dial-in" else "Dial-out"
         replace_question_with_answer("Daily PSTN mode:", mode_display)
+
+        # Map mode to actual service value
+        primary_transport = f"daily_pstn_{daily_pstn_mode.replace('-', '')}"
+
+    transports = [primary_transport]
+
+    # Get label for display
+    primary_label = next(
+        (svc.label for svc in transport_options if svc.value == primary_transport),
+        primary_transport,
+    )
+    replace_question_with_answer("Transport:", primary_label)
 
     # Question 3b: Additional transport (different for web vs telephony)
     if bot_type == "web":
@@ -268,7 +287,10 @@ def ask_project_questions() -> ProjectConfig:
                     )
                     replace_question_with_answer("Additional transport:", backup_label)
 
-    elif bot_type == "telephony" and primary_transport != "daily_pstn":
+    elif bot_type == "telephony" and primary_transport not in [
+        "daily_pstn_dialin",
+        "daily_pstn_dialout",
+    ]:
         # For telephony bots: offer to add WebRTC for local testing
         add_webrtc = questionary.confirm(
             "Add a WebRTC transport for local testing?",

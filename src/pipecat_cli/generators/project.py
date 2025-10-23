@@ -104,8 +104,11 @@ class ProjectGenerator:
         # 1. Generate bot.py (in server/)
         self._generate_bot_file(server_path)
 
-        # 1b. Generate server.py and server_utils.py for Daily PSTN dial-in
-        if "daily_pstn" in self.config.transports and self.config.daily_pstn_mode == "dial-in":
+        # 1b. Generate server.py and server_utils.py for Daily PSTN
+        if (
+            "daily_pstn_dialin" in self.config.transports
+            or "daily_pstn_dialout" in self.config.transports
+        ):
             self._generate_server_files(server_path)
 
         # 2. Generate pyproject.toml (in server/)
@@ -138,14 +141,19 @@ class ProjectGenerator:
         return project_path
 
     def _generate_server_files(self, project_path: Path) -> None:
-        """Generate server.py and server_utils.py for Daily PSTN dial-in."""
+        """Generate server.py and server_utils.py for Daily PSTN."""
+        # Determine which templates to use based on mode
+        mode = self.config.daily_pstn_mode  # 'dial-in' or 'dial-out'
+        server_template_name = f"server/server_pstn_{mode.replace('-', '')}.py.jinja2"
+        utils_template_name = f"server/server_utils_pstn_{mode.replace('-', '')}.py.jinja2"
+
         # Generate server.py
-        server_template = self.env.get_template("server/server.py.jinja2")
+        server_template = self.env.get_template(server_template_name)
         server_content = server_template.render()
         (project_path / "server.py").write_text(server_content)
 
         # Generate server_utils.py
-        utils_template = self.env.get_template("server/server_utils.py.jinja2")
+        utils_template = self.env.get_template(utils_template_name)
         utils_content = utils_template.render()
         (project_path / "server_utils.py").write_text(utils_content)
 

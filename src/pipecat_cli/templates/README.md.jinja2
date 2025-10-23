@@ -2,7 +2,7 @@
 
 A Pipecat AI voice agent built with {% if mode == 'cascade' %}a cascade pipeline (STT → LLM → TTS){% else %}a realtime speech-to-speech pipeline{% endif %}.
 
-{% if 'daily_pstn' in transports %}
+{% if 'daily_pstn_dialin' in transports or 'daily_pstn_dialout' in transports %}
 {% include '_readme_blocks/how_it_works_daily_pstn.jinja2' %}
 {% endif %}
 ## Configuration
@@ -43,8 +43,8 @@ A Pipecat AI voice agent built with {% if mode == 'cascade' %}a cascade pipeline
 {% endif %}
 {% endif %}
 
-{% if 'daily_pstn' in transports and daily_pstn_mode == 'dial-in' %}
-{% include '_readme_blocks/setup_daily_pstn_dialin.jinja2' %}
+{% if 'daily_pstn_dialin' in transports or 'daily_pstn_dialout' in transports %}
+{% include '_readme_blocks/setup_daily_pstn.jinja2' %}
 {% else %}
 ## Setup
 
@@ -149,8 +149,8 @@ A Pipecat AI voice agent built with {% if mode == 'cascade' %}a cascade pipeline
    {% endif %}
 {% endif %}
 
-{% if 'daily_pstn' in transports and daily_pstn_mode == 'dial-in' %}
-{% include '_readme_blocks/project_structure_daily_pstn_dialin.jinja2' %}
+{% if 'daily_pstn_dialin' in transports or 'daily_pstn_dialout' in transports %}
+{% include '_readme_blocks/project_structure_daily_pstn.jinja2' %}
 {% else %}
 ## Project Structure
 
