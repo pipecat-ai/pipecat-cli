@@ -28,7 +28,7 @@ app.command(name="init", help="Initialize a new Pipecat project")(init.init_comm
 app.command(name="tail", help="Monitor Pipecat sessions in real-time")(tail.tail_command)
 
 # Automatically load pipecat-cli extensions.
-for ep in importlib.metadata.entry_points().get("pipecat_cli.extensions", []):
+for ep in importlib.metadata.entry_points(group="pipecat_cli.extensions"):
     extension = ep.load()
     app.add_typer(extension, name=ep.name)
 
