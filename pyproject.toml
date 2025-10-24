@@ -25,13 +25,11 @@ classifiers = [
     "Topic :: Communications :: Conferencing",
 ]
 dependencies = [
-    "typer>=0.9.0,<1",
+    "typer>=0.20.0,<1",
     "rich>=13.0.0,<14",
     "jinja2>=3.1.0,<4",
     "questionary>=2.0.0,<3",
     "ruff>=0.12.1,<1",
-    "pipecat-ai-tail>=0.0.1",
-    "pipecatcloud>=0.2.8",
 ]
 
 [project.urls]
