@@ -1,0 +1,28 @@
+{# SmallWebRTC bot entry point #}
+            webrtc_connection: SmallWebRTCConnection = runner_args.webrtc_connection
+
+            transport = SmallWebRTCTransport(
+                webrtc_connection=webrtc_connection,
+                params=TransportParams(
+                    audio_in_enabled=True,
+                    {% if enable_krisp %}
+                    audio_in_filter=krisp_filter,
+                    {% endif %}
+                    audio_out_enabled=True,
+                    {% if video_input %}
+                    video_in_enabled=True,
+                    {% endif %}
+                    {% if video_output %}
+                    video_out_is_live=True,
+                    video_out_width=1024,
+                    video_out_height=768,
+                    {% endif %}
+                    {% if smart_turn %}
+                    vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.2)),
+                    turn_analyzer=LocalSmartTurnAnalyzerV3(),
+                    {% else %}
+                    vad_analyzer=SileroVADAnalyzer(),
+                    {% endif %}
+                ),
+            )
+

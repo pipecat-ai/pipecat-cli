@@ -1,13 +1,4 @@
 {# Daily PSTN bot entry point (both dial-in and dial-out) #}
-{% if enable_krisp %}
-    # Krisp is available when deployed to Pipecat Cloud
-    if os.environ.get("ENV") != "local":
-        from pipecat.audio.filters.krisp_filter import KrispFilter
-
-        krisp_filter = KrispFilter()
-    else:
-        krisp_filter = None
-{% endif %}
     try:
         request = AgentRequest.model_validate(runner_args.body)
 

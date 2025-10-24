@@ -1,0 +1,30 @@
+{# Plivo bot entry point #}
+            # Parse Plivo websocket
+            _, call_data = await parse_telephony_websocket(runner_args.websocket)
+
+            serializer = PlivoFrameSerializer(
+                stream_id=call_data["stream_id"],
+                call_id=call_data["call_id"],
+                auth_id=os.getenv("PLIVO_AUTH_ID", ""),
+                auth_token=os.getenv("PLIVO_AUTH_TOKEN", ""),
+            )
+
+            transport = FastAPIWebsocketTransport(
+                websocket=runner_args.websocket,
+                params=FastAPIWebsocketParams(
+                    audio_in_enabled=True,
+                    {% if enable_krisp %}
+                    audio_in_filter=krisp_filter,
+                    {% endif %}
+                    audio_out_enabled=True,
+                    add_wav_header=False,
+                    {% if smart_turn %}
+                    vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.2)),
+                    turn_analyzer=LocalSmartTurnAnalyzerV3(),
+                    {% else %}
+                    vad_analyzer=SileroVADAnalyzer(),
+                    {% endif %}
+                    serializer=serializer,
+                ),
+            )
+

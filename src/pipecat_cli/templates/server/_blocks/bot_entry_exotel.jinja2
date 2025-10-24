@@ -1,0 +1,28 @@
+{# Exotel bot entry point #}
+            # Parse Exotel websocket
+            _, call_data = await parse_telephony_websocket(runner_args.websocket)
+
+            serializer = ExotelFrameSerializer(
+                stream_sid=call_data["stream_id"],
+                call_sid=call_data["call_id"],
+            )
+
+            transport = FastAPIWebsocketTransport(
+                websocket=runner_args.websocket,
+                params=FastAPIWebsocketParams(
+                    audio_in_enabled=True,
+                    {% if enable_krisp %}
+                    audio_in_filter=krisp_filter,
+                    {% endif %}
+                    audio_out_enabled=True,
+                    add_wav_header=False,
+                    {% if smart_turn %}
+                    vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.2)),
+                    turn_analyzer=LocalSmartTurnAnalyzerV3(),
+                    {% else %}
+                    vad_analyzer=SileroVADAnalyzer(),
+                    {% endif %}
+                    serializer=serializer,
+                ),
+            )
+

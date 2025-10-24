@@ -47,6 +47,10 @@ A Pipecat AI voice agent built with {% if mode == 'cascade' %}a cascade pipeline
 {% include '_readme_blocks/setup_daily_pstn.jinja2' %}
 {% else %}
 ## Setup
+{% if 'twilio' in transports %}
+
+{% include '_readme_blocks/setup_twilio.jinja2' %}
+{% endif %}
 
 ### Server
 

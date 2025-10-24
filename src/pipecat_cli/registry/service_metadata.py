@@ -87,7 +87,6 @@ FEATURE_DEFINITIONS: dict[str, list[str]] = {
         "load_dotenv",
         "LLMRunFrame",
         "RunnerArguments",
-        "create_transport",
         "BaseTransport",
     ],
     "rtvi": ["RTVIObserver", "RTVIProcessor"],
@@ -126,13 +125,18 @@ class ServiceRegistry:
             value="daily",
             label="Daily (WebRTC)",
             package="pipecat-ai[daily]",
-            class_name=["DailyParams"],
+            class_name=["DailyTransport", "DailyParams", "DailyRunnerArguments"],
         ),
         ServiceDefinition(
             value="smallwebrtc",
             label="SmallWebRTC",
             package="pipecat-ai[webrtc]",
-            class_name=["TransportParams"],
+            class_name=[
+                "SmallWebRTCTransport",
+                "TransportParams",
+                "SmallWebRTCConnection",
+                "SmallWebRTCRunnerArguments",
+            ],
         ),
     ]
 
@@ -142,25 +146,58 @@ class ServiceRegistry:
             value="twilio",
             label="Twilio",
             package="pipecat-ai[websocket]",
-            class_name=["FastAPIWebsocketParams"],
+            class_name=[
+                "FastAPIWebsocketTransport",
+                "FastAPIWebsocketParams",
+                "TwilioFrameSerializer",
+                "WebSocketRunnerArguments",
+            ],
+            additional_imports=[
+                "import aiohttp",
+                "from pipecat.runner.utils import parse_telephony_websocket",
+            ],
         ),
         ServiceDefinition(
             value="telnyx",
             label="Telnyx",
             package="pipecat-ai[websocket]",
-            class_name=["FastAPIWebsocketParams"],
+            class_name=[
+                "FastAPIWebsocketTransport",
+                "FastAPIWebsocketParams",
+                "TelnyxFrameSerializer",
+                "WebSocketRunnerArguments",
+            ],
+            additional_imports=[
+                "from pipecat.runner.utils import parse_telephony_websocket",
+            ],
         ),
         ServiceDefinition(
             value="plivo",
             label="Plivo",
             package="pipecat-ai[websocket]",
-            class_name=["FastAPIWebsocketParams"],
+            class_name=[
+                "FastAPIWebsocketTransport",
+                "FastAPIWebsocketParams",
+                "PlivoFrameSerializer",
+                "WebSocketRunnerArguments",
+            ],
+            additional_imports=[
+                "from pipecat.runner.utils import parse_telephony_websocket",
+            ],
         ),
         ServiceDefinition(
             value="exotel",
             label="Exotel",
             package="pipecat-ai[websocket]",
-            class_name=["FastAPIWebsocketParams"],
+            class_name=[
+                "FastAPIWebsocketTransport",
+                "FastAPIWebsocketParams",
+                "ExotelFrameSerializer",
+                "WebSocketRunnerArguments",
+            ],
+            additional_imports=[
+                "from pipecat.runner.utils import parse_telephony_websocket",
+            ],
         ),
         ServiceDefinition(
             value="daily_pstn_dialin",

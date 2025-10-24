@@ -19,6 +19,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   cloud = "pipecatcloud.cli.entry_point:entrypoint_cli_typer"
   ```
 
+### Changed
+
+- Updated Twilio example to include calling the Twilio REST API to get the
+  caller's phone number. This example can be extended to fetch custom data for
+  the bot.
+
 ### Fixed
 
 - Fixed an issue where `audio_buffer.start_recording()` was missing from

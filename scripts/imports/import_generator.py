@@ -70,10 +70,19 @@ def find_class_in_directory(
     if max_depth <= 0:
         return None
 
+    # Paths to exclude from search
+    EXCLUDED_PATHS = [
+        "openai_realtime_beta",  # Skip beta/deprecated OpenAI realtime implementation
+    ]
+
     try:
         for item in directory.iterdir():
             # Skip __pycache__ and hidden directories
             if item.name.startswith((".", "__pycache__")):
+                continue
+
+            # Skip excluded paths
+            if any(excluded in str(item) for excluded in EXCLUDED_PATHS):
                 continue
 
             if item.is_file() and item.suffix == ".py":
@@ -127,11 +136,12 @@ def discover_import(
     pipecat_path: Path,
     class_names: list[str] | str | None = None,
     search_subdir: str | None = None,
-) -> str | None:
+) -> list[str]:
     """
     Unified function to discover import statements for any pipecat component.
 
     Uses recursive directory search to find classes/functions anywhere in the codebase.
+    Now supports multiple classes from different modules!
 
     Args:
         identifier: Component identifier (for error messages)
@@ -140,35 +150,49 @@ def discover_import(
         search_subdir: Optional subdirectory to search in (e.g., "services", "transports")
 
     Returns:
-        Full import statement or None if not found
+        List of import statements (one per module), or empty list if not found
     """
     if not class_names:
         print(f"  # Warning: No class_name provided for {identifier}, skipping", file=sys.stderr)
-        return None
+        return []
 
     # Normalize to list
     classes = class_names if isinstance(class_names, list) else [class_names]
 
-    # Use the first class name to find the file
-    primary_class = classes[0]
-
     # Determine search directory
     search_dir = pipecat_path / search_subdir if search_subdir else pipecat_path
 
-    # Search recursively for the class
-    if search_dir.exists():
-        result = find_class_in_directory(search_dir, primary_class)
-        if result:
-            _, module_path = result
-            # Import all requested class names from the discovered module
-            classes_str = ", ".join(classes)
-            return f"from {module_path} import {classes_str}"
+    # Find each class and group by module
+    module_to_classes: dict[str, list[str]] = {}
+    not_found = []
 
-    print(
-        f"  # Warning: Could not find class {primary_class} for {identifier} in {search_dir}",
-        file=sys.stderr,
-    )
-    return None
+    for class_name in classes:
+        if search_dir.exists():
+            result = find_class_in_directory(search_dir, class_name)
+            if result:
+                _, module_path = result
+                if module_path not in module_to_classes:
+                    module_to_classes[module_path] = []
+                module_to_classes[module_path].append(class_name)
+            else:
+                not_found.append(class_name)
+        else:
+            not_found.append(class_name)
+
+    # Warn about classes that weren't found
+    if not_found:
+        print(
+            f"  # Warning: Could not find classes {', '.join(not_found)} for {identifier} in {search_dir}",
+            file=sys.stderr,
+        )
+
+    # Generate import statements (one per module)
+    import_statements = []
+    for module_path, class_list in sorted(module_to_classes.items()):
+        classes_str = ", ".join(class_list)
+        import_statements.append(f"from {module_path} import {classes_str}")
+
+    return import_statements
 
 
 def extract_package_name(package_str: str) -> str:
@@ -192,11 +216,13 @@ def generate_imports_dict() -> dict[str, list[str]]:
         for transport in transport_list:
             value = transport.value
             class_names = transport.class_name
-            import_stmt = discover_import(value, pipecat_path, class_names, "transports")
+            # Search entire pipecat directory (not just transports/) to find serializers too
+            import_stmts = discover_import(value, pipecat_path, class_names, None)
 
             imports_list = []
-            if import_stmt:
-                imports_list.append(import_stmt)
+            # discover_import now returns a list of import statements
+            if import_stmts:
+                imports_list.extend(import_stmts)
 
             # Add additional imports if specified
             if transport.additional_imports:
@@ -215,11 +241,12 @@ def generate_imports_dict() -> dict[str, list[str]]:
         for service in service_list:
             value = service.value
             class_names = service.class_name
-            import_stmt = discover_import(value, pipecat_path, class_names, "services")
+            import_stmts = discover_import(value, pipecat_path, class_names, "services")
 
             imports_list = []
-            if import_stmt:
-                imports_list.append(import_stmt)
+            # discover_import now returns a list of import statements
+            if import_stmts:
+                imports_list.extend(import_stmts)
 
             # Add additional imports if specified
             if service.additional_imports:
