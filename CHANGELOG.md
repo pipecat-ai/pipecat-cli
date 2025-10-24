@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added support for extensions. Other packages can now register commands that
+  are automatically discovered by pipecat-cli, making it easy to extend pipecat
+  with additional subcommands. For example, the following adds the Pipecat Cloud
+  `cloud` command.
+
+  ```
+  [project.entry-points."pipecat_cli.extensions"]
+  cloud = "pipecatcloud.cli.entry_point:entrypoint_cli_typer"
+  ```
+
 ### Fixed
 
 - Fixed an issue where `audio_buffer.start_recording()` was missing from
