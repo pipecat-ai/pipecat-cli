@@ -31,7 +31,7 @@ dependencies = [
     "questionary>=2.0.0,<3",
     "ruff>=0.12.1,<1",
     "pipecat-ai-tail>=0.0.1",
-    "pipecatcloud>=0.2.6",
+    "pipecatcloud>=0.2.8",
 ]
 
 [project.urls]
