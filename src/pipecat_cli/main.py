@@ -6,13 +6,13 @@
 
 """Main CLI entry point for Pipecat CLI."""
 
+import importlib
 from importlib.metadata import version
 
 import typer
 from rich.console import Console
 
 from pipecat_cli.commands import init, tail
-from pipecat_cli.commands.cloud import cloud_app
 
 app = typer.Typer(
     name="pipecat",
@@ -27,9 +27,10 @@ console = Console()
 app.command(name="init", help="Initialize a new Pipecat project")(init.init_command)
 app.command(name="tail", help="Monitor Pipecat sessions in real-time")(tail.tail_command)
 
-# Multi-level command groups use app.add_typer() to register sub-applications
-# This allows commands like: pipecat cloud auth, pipecat cloud deploy, etc.
-app.add_typer(cloud_app, name="cloud")
+# Automatically load pipecat-cli extensions.
+for ep in importlib.metadata.entry_points().get("pipecat_cli.extensions", []):
+    extension = ep.load()
+    app.add_typer(extension, name=ep.name)
 
 
 def version_callback(value: bool):
