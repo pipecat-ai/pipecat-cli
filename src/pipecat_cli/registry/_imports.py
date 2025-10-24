@@ -13,13 +13,42 @@ Source: scripts/imports/import_generator.py
 # Import statements mapping for services and transports
 IMPORTS = {
     # Transports - WebRTC
-    "daily": ["from pipecat.transports.daily.transport import DailyParams"],
-    "smallwebrtc": ["from pipecat.transports.base_transport import TransportParams"],
+    "daily": [
+        "from pipecat.runner.types import DailyRunnerArguments",
+        "from pipecat.transports.daily.transport import DailyTransport, DailyParams",
+    ],
+    "smallwebrtc": [
+        "from pipecat.runner.types import SmallWebRTCRunnerArguments",
+        "from pipecat.transports.base_transport import TransportParams",
+        "from pipecat.transports.smallwebrtc.connection import SmallWebRTCConnection",
+        "from pipecat.transports.smallwebrtc.transport import SmallWebRTCTransport",
+    ],
     # Transports - Telephony
-    "twilio": ["from pipecat.transports.websocket.fastapi import FastAPIWebsocketParams"],
-    "telnyx": ["from pipecat.transports.websocket.fastapi import FastAPIWebsocketParams"],
-    "plivo": ["from pipecat.transports.websocket.fastapi import FastAPIWebsocketParams"],
-    "exotel": ["from pipecat.transports.websocket.fastapi import FastAPIWebsocketParams"],
+    "twilio": [
+        "from pipecat.runner.types import WebSocketRunnerArguments",
+        "from pipecat.serializers.twilio import TwilioFrameSerializer",
+        "from pipecat.transports.websocket.fastapi import FastAPIWebsocketTransport, FastAPIWebsocketParams",
+        "import aiohttp",
+        "from pipecat.runner.utils import parse_telephony_websocket",
+    ],
+    "telnyx": [
+        "from pipecat.runner.types import WebSocketRunnerArguments",
+        "from pipecat.serializers.telnyx import TelnyxFrameSerializer",
+        "from pipecat.transports.websocket.fastapi import FastAPIWebsocketTransport, FastAPIWebsocketParams",
+        "from pipecat.runner.utils import parse_telephony_websocket",
+    ],
+    "plivo": [
+        "from pipecat.runner.types import WebSocketRunnerArguments",
+        "from pipecat.serializers.plivo import PlivoFrameSerializer",
+        "from pipecat.transports.websocket.fastapi import FastAPIWebsocketTransport, FastAPIWebsocketParams",
+        "from pipecat.runner.utils import parse_telephony_websocket",
+    ],
+    "exotel": [
+        "from pipecat.runner.types import WebSocketRunnerArguments",
+        "from pipecat.serializers.exotel import ExotelFrameSerializer",
+        "from pipecat.transports.websocket.fastapi import FastAPIWebsocketTransport, FastAPIWebsocketParams",
+        "from pipecat.runner.utils import parse_telephony_websocket",
+    ],
     "daily_pstn_dialin": [
         "from pipecat.transports.daily.transport import DailyParams, DailyDialinSettings, DailyTransport",
         "from server_utils import AgentRequest",
@@ -93,7 +122,8 @@ IMPORTS = {
     # Realtime Services
     "aws_nova_realtime": ["from pipecat.services.aws.nova_sonic.llm import AWSNovaSonicLLMService"],
     "azure_realtime": [
-        "from pipecat.services.azure.realtime.llm import AzureRealtimeLLMService, SessionProperties, InputAudioTranscription"
+        "from pipecat.services.azure.realtime.llm import AzureRealtimeLLMService",
+        "from pipecat.services.openai.realtime.events import SessionProperties, InputAudioTranscription",
     ],
     "gemini_live_realtime": [
         "from pipecat.services.google.gemini_live.llm import GeminiLiveLLMService"
@@ -102,7 +132,8 @@ IMPORTS = {
         "from pipecat.services.google.gemini_live.llm_vertex import GeminiLiveVertexLLMService"
     ],
     "openai_realtime": [
-        "from pipecat.services.openai.realtime.llm import OpenAIRealtimeLLMService, SessionProperties, AudioConfiguration, AudioInput, InputAudioTranscription, SemanticTurnDetection, InputAudioNoiseReduction"
+        "from pipecat.services.openai.realtime.events import SessionProperties, AudioConfiguration, AudioInput, InputAudioTranscription, SemanticTurnDetection, InputAudioNoiseReduction",
+        "from pipecat.services.openai.realtime.llm import OpenAIRealtimeLLMService",
     ],
 }
 
@@ -138,7 +169,6 @@ FEATURE_IMPORTS = {
         "from dotenv import load_dotenv",
         "from pipecat.frames.frames import LLMRunFrame",
         "from pipecat.runner.types import RunnerArguments",
-        "from pipecat.runner.utils import create_transport",
         "from pipecat.transports.base_transport import BaseTransport",
     ],
     "rtvi": ["from pipecat.processors.frameworks.rtvi import RTVIObserver, RTVIProcessor"],

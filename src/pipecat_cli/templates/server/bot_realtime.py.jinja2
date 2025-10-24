@@ -40,6 +40,10 @@ load_dotenv(override=True)
 {{ helpers.save_audio_file_function() }}
 {% endif %}
 
+{% if 'twilio' in transports %}
+{{ helpers.get_call_info_function() }}
+{% endif %}
+
 {% if 'daily_pstn_dialout' in transports %}
 {{ helpers.dialout_manager_class() }}
 {% endif %}
@@ -125,11 +129,50 @@ async def run_bot(transport: BaseTransport, runner_args: RunnerArguments):
 
 async def bot(runner_args: RunnerArguments):
     """Main bot entry point."""
-    {# Bot entry point - use blocks based on transport type #}
+    {% if enable_krisp %}
+    # Krisp is available when deployed to Pipecat Cloud
+    if os.environ.get("ENV") != "local":
+        from pipecat.audio.filters.krisp_filter import KrispFilter
+
+        krisp_filter = KrispFilter()
+    else:
+        krisp_filter = None
+    {% endif %}
+
+    transport = None
+
+    {# Bot entry point - use match/case for clean transport selection #}
     {% if 'daily_pstn_dialin' in transports or 'daily_pstn_dialout' in transports %}
+    {# Daily PSTN has its own special flow with server.py, so it doesn't use match/case #}
 {% include 'server/_blocks/bot_entry_daily_pstn.jinja2' %}
     {% else %}
-{% include 'server/_blocks/bot_entry_standard.jinja2' %}
+    {# For other transports, use match/case on runner_args type #}
+    match runner_args:
+        {% if 'daily' in transports %}
+        case DailyRunnerArguments():
+{% include 'server/_blocks/bot_entry_daily_webrtc.jinja2' %}
+        {% endif %}
+        {% if 'smallwebrtc' in transports %}
+        case SmallWebRTCRunnerArguments():
+{% include 'server/_blocks/bot_entry_smallwebrtc.jinja2' %}
+        {% endif %}
+        {% if 'twilio' in transports or 'telnyx' in transports or 'plivo' in transports or 'exotel' in transports %}
+        case WebSocketRunnerArguments():
+            {% if 'twilio' in transports %}
+{% include 'server/_blocks/bot_entry_twilio.jinja2' %}
+            {% elif 'telnyx' in transports %}
+{% include 'server/_blocks/bot_entry_telnyx.jinja2' %}
+            {% elif 'plivo' in transports %}
+{% include 'server/_blocks/bot_entry_plivo.jinja2' %}
+            {% elif 'exotel' in transports %}
+{% include 'server/_blocks/bot_entry_exotel.jinja2' %}
+            {% endif %}
+        {% endif %}
+        case _:
+            logger.error(f"Unsupported runner arguments type: {type(runner_args)}")
+            return
+
+    await run_bot(transport, runner_args)
     {% endif %}
 
 

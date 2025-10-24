@@ -1,0 +1,37 @@
+{# Twilio bot entry point with call info fetching #}
+            # Parse Twilio websocket and fetch call information
+            _, call_data = await parse_telephony_websocket(runner_args.websocket)
+
+            # Fetch call information from Twilio REST API
+            # With the call information, you can make a request to your API to get the user's information
+            # and inject that information into your bot's configuration.
+            call_info = await get_call_info(call_data["call_id"])
+            if call_info:
+                logger.info(f"Call from: {call_info.get('from_number')} to: {call_info.get('to_number')}")
+
+            serializer = TwilioFrameSerializer(
+                stream_sid=call_data["stream_id"],
+                call_sid=call_data["call_id"],
+                account_sid=os.getenv("TWILIO_ACCOUNT_SID", ""),
+                auth_token=os.getenv("TWILIO_AUTH_TOKEN", ""),
+            )
+
+            transport = FastAPIWebsocketTransport(
+                websocket=runner_args.websocket,
+                params=FastAPIWebsocketParams(
+                    audio_in_enabled=True,
+                    {% if enable_krisp %}
+                    audio_in_filter=krisp_filter,
+                    {% endif %}
+                    audio_out_enabled=True,
+                    add_wav_header=False,
+                    {% if smart_turn %}
+                    vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.2)),
+                    turn_analyzer=LocalSmartTurnAnalyzerV3(),
+                    {% else %}
+                    vad_analyzer=SileroVADAnalyzer(),
+                    {% endif %}
+                    serializer=serializer,
+                ),
+            )
+
