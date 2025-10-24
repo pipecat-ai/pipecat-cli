@@ -29,6 +29,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   websocket connection message. The From number can be used to ID the user in
   order to customize the bot.
 
+### Removed
+
+- Removed `TailObserver` and `TailRunner` exports. Use `pipecat_tail` package
+  directly.
+
 ### Fixed
 
 - Fixed an issue where `audio_buffer.start_recording()` was missing from
