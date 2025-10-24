@@ -12,7 +12,7 @@ from importlib.metadata import version
 import typer
 from rich.console import Console
 
-from pipecat_cli.commands import init, tail
+from pipecat_cli.commands import init
 
 app = typer.Typer(
     name="pipecat",
@@ -25,13 +25,19 @@ console = Console()
 # Register commands
 # Single-level commands use app.command() decorator
 app.command(name="init", help="Initialize a new Pipecat project")(init.init_command)
-app.command(name="tail", help="Monitor Pipecat sessions in real-time")(tail.tail_command)
 
-# Automatically load pipecat-cli extensions.
+# Load pipecat-cli extensions.
+extensions = []
 for ep in importlib.metadata.entry_points(group="pipecat_cli.extensions"):
     extension = ep.load()
-    app.add_typer(extension, name=ep.name)
+    extensions.append((ep.name, extension))
 
+# Sort by extension name (first tuple element)
+extensions.sort(key=lambda x: x[0].lower())
+
+# Add extensions.
+for name, extension in extensions:
+    app.add_typer(extension, name=name)
 
 def version_callback(value: bool):
     """Print version and exit."""
@@ -44,7 +50,7 @@ def version_callback(value: bool):
         raise typer.Exit()
 
 
-@app.callback(invoke_without_command=True)
+@app.callback()
 def main(
     ctx: typer.Context,
     version_flag: bool = typer.Option(
@@ -57,15 +63,7 @@ def main(
     ),
 ):
     """Pipecat CLI - Build AI voice agents with ease."""
-    if ctx.invoked_subcommand is None:
-        console.print("\n[bold cyan]🎙️  Pipecat CLI[/bold cyan]")
-        console.print("\nScaffold AI voice agent projects with minimal boilerplate.\n")
-        console.print("Available commands:")
-        console.print("  [bold]pipecat init[/bold]   - Initialize a new Pipecat project")
-        console.print("  [bold]pipecat tail[/bold]   - Monitor bots in real-time")
-        console.print("  [bold]pipecat cloud[/bold]  - Deploy and manage bots on Pipecat Cloud")
-        console.print("\nRun [bold]pipecat --help[/bold] for more information.\n")
-
+    pass
 
 if __name__ == "__main__":
     app()
