@@ -30,12 +30,16 @@ dependencies = [
     "jinja2>=3.1.0,<4",
     "questionary>=2.0.0,<3",
     "ruff>=0.12.1,<1",
+    "pipecatcloud>=0.2.10"
 ]
 
 [project.urls]
 Source = "https://github.com/pipecat-ai/pipecat-cli"
 Website = "https://pipecat.ai"
 Issues = "https://github.com/pipecat-ai/pipecat-cli/issues"
+
+[project.optional-dependencies]
+tail = [ "pipecat-ai-tail>=0.0.2" ]
 
 [project.scripts]
 pipecat = "pipecat_cli.main:app"
