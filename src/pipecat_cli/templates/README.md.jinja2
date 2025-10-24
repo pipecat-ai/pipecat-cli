@@ -51,6 +51,10 @@ A Pipecat AI voice agent built with {% if mode == 'cascade' %}a cascade pipeline
 
 {% include '_readme_blocks/setup_twilio.jinja2' %}
 {% endif %}
+{% if 'telnyx' in transports %}
+
+{% include '_readme_blocks/setup_telnyx.jinja2' %}
+{% endif %}
 
 ### Server
 

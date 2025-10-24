@@ -25,6 +25,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   caller's phone number. This example can be extended to fetch custom data for
   the bot.
 
+- Updated Telnyx example to include extracting the From number from the
+  websocket connection message. The From number can be used to ID the user in
+  order to customize the bot.
+
 ### Fixed
 
 - Fixed an issue where `audio_buffer.start_recording()` was missing from
