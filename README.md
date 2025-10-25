@@ -20,6 +20,14 @@ This installs the CLI globally. If you don't have `uv`, you can also use `pipx i
 
 > **Tip:** All commands can use either `pipecat` or the shorter `pc` alias.
 
+**Optional: Install Tail Dashboard**
+
+To use the `pipecat tail` monitoring dashboard, install with the `tail` extra:
+
+```bash
+uv tool install "pipecat-ai-cli[tail]"
+```
+
 ## Create a New Project
 
 Create a new Pipecat project interactively:
@@ -54,25 +62,6 @@ mybot/
 └── README.md                # Project setup instructions
 ```
 
-## Monitor Your Bot
-
-Use the built-in Tail dashboard to monitor your bot in real-time:
-
-```bash
-# Connect to local bot (default: ws://localhost:9292)
-pipecat tail
-
-# Connect to remote session
-pipecat tail --url wss://your-bot.example.com
-```
-
-Tail provides:
-
-- 📜 Real-time system logs
-- 💬 Live conversation tracking
-- 🔊 Audio level monitoring
-- 📈 Service metrics and usage stats
-
 ## Deploy to Pipecat Cloud
 
 Deploy and manage your bot in production with [Pipecat Cloud](https://www.daily.co/products/pipecat-cloud/):
@@ -101,6 +90,27 @@ Cloud commands provide:
 **Note:** When you enable "Deploy to Pipecat Cloud" during project creation, the necessary Docker and deployment config files are automatically generated.
 
 Learn more in the [Pipecat Cloud documentation](https://docs.pipecat.ai/deployment/pipecat-cloud/introduction).
+
+## Monitor Your Bot
+
+Use the built-in Tail dashboard to monitor your bot in real-time:
+
+```bash
+# Connect to local bot (default: ws://localhost:9292)
+pipecat tail
+
+# Connect to remote session
+pipecat tail --url wss://your-bot.example.com
+```
+
+> **Note:** The `tail` command requires the optional `tail` extra. Install with `uv tool install "pipecat-ai-cli[tail]"` if not already installed.
+
+Tail provides:
+
+- 📜 Real-time system logs
+- 💬 Live conversation tracking
+- 🔊 Audio level monitoring
+- 📈 Service metrics and usage stats
 
 ## 📚 Next steps
 
