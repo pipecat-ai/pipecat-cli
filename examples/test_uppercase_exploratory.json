@@ -1,0 +1,6 @@
+{
+  "input_frames": [
+    {"type": "TextFrame", "text": "hello world"},
+    {"type": "TextFrame", "text": "testing 123"}
+  ]
+}
