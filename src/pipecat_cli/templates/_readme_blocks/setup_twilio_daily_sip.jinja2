@@ -41,11 +41,12 @@ ngrok http 8080
    ```xml
    <?xml version="1.0" encoding="UTF-8"?>
    <Response>
-     <Dial callerId="+1234567890">{{ '{{' }}#e164{{ '}}' }}{{ '{{' }}To{{ '}}' }}{{ '{{' }}/e164{{ '}}' }}</Dial>
+     <Dial answerOnBridge="true" callerId="+1234567890">{{ '{{' }}#e164{{ '}}' }}{{ '{{' }}To{{ '}}' }}{{ '{{' }}/e164{{ '}}' }}</Dial>
    </Response>
    ```
 
    - callerId must be a valid number that you own on [Twilio](https://console.twilio.com/us1/develop/phone-numbers/manage/incoming)
+   - answerOnBridge="true|false". Setting to "true" waits until the call is answered before establishing the connection  
    - Save the file. We will use this when creating the SIP domain
 
 4. Create and configure a SIP domain
