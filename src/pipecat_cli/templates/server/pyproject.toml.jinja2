@@ -12,6 +12,9 @@ dependencies = [
     "pipecat-ai-whisker",
     "pipecat-ai-tail",
 {% endif %}
+{% if 'twilio_daily_sip_dialin' in transports %}
+    "twilio",
+{% endif %}
 ]
 
 [dependency-groups]

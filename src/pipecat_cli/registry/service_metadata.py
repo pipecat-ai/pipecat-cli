@@ -158,6 +158,44 @@ class ServiceRegistry:
             ],
         ),
         ServiceDefinition(
+            value="twilio_daily_sip_dialin",
+            label="Twilio + Daily SIP (Dial-in)",
+            package="pipecat-ai[daily]",
+            class_name=["DailyParams", "DailyTransport"],
+            additional_imports=[
+                "from server_utils import AgentRequest",
+            ],
+        ),
+        ServiceDefinition(
+            value="twilio_daily_sip_dialout",
+            label="Twilio + Daily SIP (Dial-out)",
+            package="pipecat-ai[daily]",
+            class_name=["DailyParams", "DailyTransport"],
+            additional_imports=[
+                "from server_utils import AgentRequest, DialoutSettings",
+                "from typing import Any, Optional",
+            ],
+        ),
+        ServiceDefinition(
+            value="daily_pstn_dialin",
+            label="Daily PSTN (Dial-in)",
+            package="pipecat-ai[daily]",
+            class_name=["DailyParams", "DailyDialinSettings", "DailyTransport"],
+            additional_imports=[
+                "from server_utils import AgentRequest",
+            ],
+        ),
+        ServiceDefinition(
+            value="daily_pstn_dialout",
+            label="Daily PSTN (Dial-out)",
+            package="pipecat-ai[daily]",
+            class_name=["DailyParams", "DailyTransport"],
+            additional_imports=[
+                "from server_utils import AgentRequest, DialoutSettings",
+                "from typing import Any, Optional",
+            ],
+        ),
+        ServiceDefinition(
             value="telnyx",
             label="Telnyx",
             package="pipecat-ai[websocket]",
@@ -197,25 +235,6 @@ class ServiceRegistry:
             ],
             additional_imports=[
                 "from pipecat.runner.utils import parse_telephony_websocket",
-            ],
-        ),
-        ServiceDefinition(
-            value="daily_pstn_dialin",
-            label="Daily PSTN (Dial-in)",
-            package="pipecat-ai[daily]",
-            class_name=["DailyParams", "DailyDialinSettings", "DailyTransport"],
-            additional_imports=[
-                "from server_utils import AgentRequest",
-            ],
-        ),
-        ServiceDefinition(
-            value="daily_pstn_dialout",
-            label="Daily PSTN (Dial-out)",
-            package="pipecat-ai[daily]",
-            class_name=["DailyParams", "DailyTransport"],
-            additional_imports=[
-                "from server_utils import AgentRequest, DialoutSettings",
-                "from typing import Any, Optional",
             ],
         ),
     ]
