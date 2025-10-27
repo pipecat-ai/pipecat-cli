@@ -88,6 +88,9 @@ class ProjectConfig:
     # Daily PSTN specific
     daily_pstn_mode: Optional[str] = None  # "dial-in" or "dial-out"
 
+    # Twilio + Daily SIP specific
+    twilio_daily_sip_mode: Optional[str] = None  # "dial-in" or "dial-out"
+
     # Features
     video_input: bool = False
     video_output: bool = False
@@ -193,10 +196,11 @@ def ask_project_questions() -> ProjectConfig:
     # Question 3: Primary transport selection
     transport_options = ServiceLoader.get_transport_options(bot_type)
 
-    # For Daily PSTN, show a single option and ask for mode separately
-    # Filter out the mode-specific variants and show just "Daily PSTN"
+    # For Daily PSTN and Twilio + Daily SIP, show a single option and ask for mode separately
+    # Filter out the mode-specific variants and show just "Daily PSTN" and "Twilio + Daily SIP"
     display_transport_options = []
     seen_daily_pstn = False
+    seen_twilio_daily_sip = False
     for svc in transport_options:
         if svc.value in ["daily_pstn_dialin", "daily_pstn_dialout"]:
             if not seen_daily_pstn:
@@ -205,6 +209,17 @@ def ask_project_questions() -> ProjectConfig:
                     type("ServiceDef", (), {"label": "Daily PSTN", "value": "daily_pstn"})()
                 )
                 seen_daily_pstn = True
+        elif svc.value in ["twilio_daily_sip_dialin", "twilio_daily_sip_dialout"]:
+            if not seen_twilio_daily_sip:
+                # Create a generic "Twilio + Daily SIP" option
+                display_transport_options.append(
+                    type(
+                        "ServiceDef",
+                        (),
+                        {"label": "Twilio + Daily SIP", "value": "twilio_daily_sip"},
+                    )()
+                )
+                seen_twilio_daily_sip = True
         else:
             display_transport_options.append(svc)
 
@@ -227,6 +242,8 @@ def ask_project_questions() -> ProjectConfig:
 
     # Question 3a: If Daily PSTN selected, ask for mode
     daily_pstn_mode = None
+    twilio_daily_sip_mode = None
+
     if primary_transport == "daily_pstn":
         daily_pstn_mode = questionary.select(
             "Daily PSTN mode:",
@@ -245,6 +262,25 @@ def ask_project_questions() -> ProjectConfig:
 
         # Map mode to actual service value
         primary_transport = f"daily_pstn_{daily_pstn_mode.replace('-', '')}"
+
+    elif primary_transport == "twilio_daily_sip":
+        twilio_daily_sip_mode = questionary.select(
+            "Twilio + Daily SIP mode:",
+            choices=[
+                Choice(title="Dial-in (Receive calls)", value="dial-in"),
+                Choice(title="Dial-out (Make calls)", value="dial-out"),
+            ],
+            style=custom_style,
+        ).ask()
+
+        if not twilio_daily_sip_mode:
+            raise KeyboardInterrupt("Project creation cancelled")
+
+        mode_display = "Dial-in" if twilio_daily_sip_mode == "dial-in" else "Dial-out"
+        replace_question_with_answer("Twilio + Daily SIP mode:", mode_display)
+
+        # Map mode to actual service value
+        primary_transport = f"twilio_daily_sip_{twilio_daily_sip_mode.replace('-', '')}"
 
     transports = [primary_transport]
 
@@ -290,6 +326,8 @@ def ask_project_questions() -> ProjectConfig:
     elif bot_type == "telephony" and primary_transport not in [
         "daily_pstn_dialin",
         "daily_pstn_dialout",
+        "twilio_daily_sip_dialin",
+        "twilio_daily_sip_dialout",
     ]:
         # For telephony bots: offer to add WebRTC for local testing
         add_webrtc = questionary.confirm(
@@ -349,6 +387,7 @@ def ask_project_questions() -> ProjectConfig:
         client_framework=client_framework,
         client_server=client_server,
         daily_pstn_mode=daily_pstn_mode,
+        twilio_daily_sip_mode=twilio_daily_sip_mode,
     )
 
     # Conditional questions based on mode

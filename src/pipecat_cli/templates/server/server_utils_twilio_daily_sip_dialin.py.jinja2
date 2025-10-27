@@ -4,14 +4,6 @@
 # SPDX-License-Identifier: BSD 2-Clause License
 #
 
-"""Utilities for Daily PSTN webhook handling and bot management.
-
-This module provides data models and functions for:
-- Parsing Daily PSTN webhook data
-- Creating Daily rooms for incoming calls
-- Starting bots in production (Pipecat Cloud) or local development mode
-"""
-
 import os
 
 import aiohttp
@@ -21,73 +13,61 @@ from pipecat.runner.daily import DailyRoomConfig, configure
 from pydantic import BaseModel
 
 
-class DailyCallData(BaseModel):
-    """Data received from Daily PSTN webhook.
+class TwilioCallData(BaseModel):
+    """Data received from Twilio call webhook.
 
     Attributes:
+        call_sid: Unique identifier for the call
         from_phone: The caller's phone number
         to_phone: The dialed phone number
-        call_id: Unique identifier for the call
-        call_domain: Daily domain for the call
     """
 
+    call_sid: str
     from_phone: str
     to_phone: str
-    call_id: str
-    call_domain: str
 
 
 class AgentRequest(BaseModel):
     """Request data sent to bot start endpoint.
 
-    Add any custom data here needed for the agent. For example,
-    you may add an API call to your backend to get the customer's
-    name or other information.
-
     Attributes:
         room_url: Daily room URL for the bot to join
         token: Authentication token for the Daily room
-        call_id: Unique identifier for the call
-        call_domain: Daily domain for the call
+        call_sid: Unique identifier for the call
+        sip_uri: SIP URI for the call
     """
 
     room_url: str
     token: str
-    call_id: str
-    call_domain: str
-    # Include any custom data here needed for the agent
+    call_sid: str
+    sip_uri: str
 
 
-async def call_data_from_request(request: Request) -> DailyCallData:
-    """Parse and validate Daily PSTN webhook data from incoming request.
+async def twilio_call_data_from_request(request: Request):
+    # Get form data from Twilio webhook
+    form_data = await request.form()
+    data = dict(form_data)
 
-    Args:
-        request: FastAPI request object containing webhook data
+    # Extract call ID (required to forward the call later)
+    call_sid = data.get("CallSid")
+    if not call_sid:
+        raise HTTPException(status_code=400, detail="Missing CallSid in request")
 
-    Returns:
-        DailyCallData: Parsed and validated call data
+    # Extract the caller's phone number
+    from_phone = data.get("From")
+    if not from_phone:
+        raise HTTPException(status_code=400, detail="Missing From in request")
 
-    Raises:
-        HTTPException: If required fields are missing from the webhook data
-    """
-    data = await request.json()
-    print(data)
+    # Extract the caller's phone number
+    to_phone = data.get("To")
+    if not to_phone:
+        raise HTTPException(status_code=400, detail="Missing To in request")
 
-    if not all(key in data for key in ["From", "To", "callId", "callDomain"]):
-        raise HTTPException(
-            status_code=400, detail="Missing properties 'From', 'To', 'callId', 'callDomain'"
-        )
-
-    return DailyCallData(
-        from_phone=str(data.get("From")),
-        to_phone=str(data.get("To")),
-        call_id=data.get("callId"),
-        call_domain=data.get("callDomain"),
-    )
+    return TwilioCallData(call_sid=call_sid, from_phone=from_phone, to_phone=to_phone)
 
 
 async def create_daily_room(
-    call_data: DailyCallData, session: aiohttp.ClientSession
+    call_data: TwilioCallData, session: aiohttp.ClientSession
 ) -> DailyRoomConfig:
     """Create a Daily room configured for PSTN dial-in.
 
@@ -105,7 +85,7 @@ async def create_daily_room(
         return await configure(session, sip_caller_phone=call_data.from_phone)
     except Exception as e:
         logger.error(f"Error creating Daily room: {e}")
-        raise HTTPException(status_code=500, detail=f"Failed to create Daily room: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to create Daily room: {e!s}")
 
 
 async def start_bot_production(agent_request: AgentRequest, session: aiohttp.ClientSession):
@@ -127,7 +107,7 @@ async def start_bot_production(agent_request: AgentRequest, session: aiohttp.Cli
             detail="PIPECAT_API_KEY and PIPECAT_AGENT_NAME required for production mode",
         )
 
-    logger.debug(f"Starting bot via Pipecat Cloud for call {agent_request.call_id}")
+    logger.debug(f"Starting bot via Pipecat Cloud for call {agent_request.call_sid}")
 
     body_data = agent_request.model_dump(exclude_none=True)
 
@@ -164,7 +144,7 @@ async def start_bot_local(agent_request: AgentRequest, session: aiohttp.ClientSe
 
     local_server_url = os.getenv("LOCAL_SERVER_URL", "http://localhost:7860")
 
-    logger.debug(f"Starting bot via local /start endpoint for call {agent_request.call_id}")
+    logger.debug(f"Starting bot via local /start endpoint for call {agent_request.call_sid}")
 
     body_data = agent_request.model_dump(exclude_none=True)
 
@@ -183,3 +163,4 @@ async def start_bot_local(agent_request: AgentRequest, session: aiohttp.ClientSe
                 detail=f"Failed to start bot via local /start endpoint: {error_text}",
             )
         logger.debug(f"Bot started successfully via local /start endpoint")
+

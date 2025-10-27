@@ -4,11 +4,11 @@
 # SPDX-License-Identifier: BSD 2-Clause License
 #
 
-"""Utilities for Daily PSTN webhook handling and bot management.
+"""Utilities for Daily PSTN dial-out handling and bot management.
 
 This module provides data models and functions for:
-- Parsing Daily PSTN webhook data
-- Creating Daily rooms for incoming calls
+- Parsing dial-out request data
+- Creating Daily rooms for outgoing calls
 - Starting bots in production (Pipecat Cloud) or local development mode
 """
 
@@ -21,78 +21,77 @@ from pipecat.runner.daily import DailyRoomConfig, configure
 from pydantic import BaseModel
 
 
-class DailyCallData(BaseModel):
-    """Data received from Daily PSTN webhook.
+class DialoutSettings(BaseModel):
+    """Settings for outbound call.
 
     Attributes:
-        from_phone: The caller's phone number
-        to_phone: The dialed phone number
-        call_id: Unique identifier for the call
-        call_domain: Daily domain for the call
+        sip_uri: The SIP URI to dial
     """
 
-    from_phone: str
-    to_phone: str
-    call_id: str
-    call_domain: str
+    sip_uri: str
+    # Include any custom data here needed for the call
+
+
+class DialoutRequest(BaseModel):
+    """Request data for initiating a dial-out call.
+
+    Add any custom data here needed for the call. For example,
+    you may add customer information, campaign data, or call context.
+
+    Attributes:
+        dialout_settings: Settings for the outbound call
+    """
+
+    dialout_settings: DialoutSettings
 
 
 class AgentRequest(BaseModel):
     """Request data sent to bot start endpoint.
 
-    Add any custom data here needed for the agent. For example,
-    you may add an API call to your backend to get the customer's
-    name or other information.
-
     Attributes:
         room_url: Daily room URL for the bot to join
         token: Authentication token for the Daily room
-        call_id: Unique identifier for the call
-        call_domain: Daily domain for the call
+        dialout_settings: Settings for the outbound call
     """
 
     room_url: str
     token: str
-    call_id: str
-    call_domain: str
+    dialout_settings: DialoutSettings
     # Include any custom data here needed for the agent
 
 
-async def call_data_from_request(request: Request) -> DailyCallData:
-    """Parse and validate Daily PSTN webhook data from incoming request.
+async def dialout_request_from_request(request: Request) -> DialoutRequest:
+    """Parse and validate dial-out request data.
 
     Args:
-        request: FastAPI request object containing webhook data
+        request: FastAPI request object containing dial-out data
 
     Returns:
-        DailyCallData: Parsed and validated call data
+        DialoutRequest: Parsed and validated dial-out request
 
     Raises:
-        HTTPException: If required fields are missing from the webhook data
+        HTTPException: If required fields are missing from the request data
     """
     data = await request.json()
-    print(data)
 
-    if not all(key in data for key in ["From", "To", "callId", "callDomain"]):
+    if not data.get("dialout_settings"):
         raise HTTPException(
-            status_code=400, detail="Missing properties 'From', 'To', 'callId', 'callDomain'"
+            status_code=400, detail="Missing 'dialout_settings' in the request body"
         )
 
-    return DailyCallData(
-        from_phone=str(data.get("From")),
-        to_phone=str(data.get("To")),
-        call_id=data.get("callId"),
-        call_domain=data.get("callDomain"),
-    )
+    try:
+        return DialoutRequest.model_validate(data)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=f"Invalid request data: {str(e)}")
 
 
 async def create_daily_room(
-    call_data: DailyCallData, session: aiohttp.ClientSession
+    dialout_request: DialoutRequest, session: aiohttp.ClientSession
 ) -> DailyRoomConfig:
-    """Create a Daily room configured for PSTN dial-in.
+    """Create a Daily room configured for SIP dial-out.
 
     Args:
-        call_data: Call data containing caller phone number and call details
+        dialout_request: Dial-out request containing SIP URI
         session: Shared aiohttp session for making HTTP requests
 
     Returns:
@@ -101,8 +100,16 @@ async def create_daily_room(
     Raises:
         HTTPException: If room creation fails
     """
+    sip_uri = dialout_request.dialout_settings.sip_uri
+
+    if sip_uri.startswith("sip:") and "@" in sip_uri:
+        phone_part = sip_uri[4:]  # Remove 'sip:' prefix
+        sip_caller_phone = phone_part.split("@")[0]  # Get everything before '@'
+    else:
+        raise HTTPException(status_code=400, detail="Invalid SIP URI")
+
     try:
-        return await configure(session, sip_caller_phone=call_data.from_phone)
+        return await configure(session, sip_caller_phone=sip_caller_phone)
     except Exception as e:
         logger.error(f"Error creating Daily room: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to create Daily room: {str(e)}")
@@ -112,7 +119,7 @@ async def start_bot_production(agent_request: AgentRequest, session: aiohttp.Cli
     """Start the bot via Pipecat Cloud API for production deployment.
 
     Args:
-        agent_request: Agent configuration with room_url, token, and call details
+        agent_request: Agent configuration with room_url, token, and dialout settings
         session: Shared aiohttp session for making HTTP requests
 
     Raises:
@@ -127,7 +134,9 @@ async def start_bot_production(agent_request: AgentRequest, session: aiohttp.Cli
             detail="PIPECAT_API_KEY and PIPECAT_AGENT_NAME required for production mode",
         )
 
-    logger.debug(f"Starting bot via Pipecat Cloud for call {agent_request.call_id}")
+    logger.debug(
+        f"Starting bot via Pipecat Cloud for dial-out to {agent_request.dialout_settings.sip_uri}"
+    )
 
     body_data = agent_request.model_dump(exclude_none=True)
 
@@ -148,23 +157,24 @@ async def start_bot_production(agent_request: AgentRequest, session: aiohttp.Cli
                 status_code=500,
                 detail=f"Failed to start bot via Pipecat Cloud: {error_text}",
             )
-        logger.debug(f"Bot started successfully via Pipecat Cloud")
+        logger.debug("Bot started successfully via Pipecat Cloud")
 
 
 async def start_bot_local(agent_request: AgentRequest, session: aiohttp.ClientSession):
     """Start the bot via local /start endpoint for development.
 
     Args:
-        agent_request: Agent configuration with room_url, token, and call details
+        agent_request: Agent configuration with room_url, token, and dialout settings
         session: Shared aiohttp session for making HTTP requests
 
     Raises:
         HTTPException: If LOCAL_SERVER_URL is not set or API call fails
     """
-
     local_server_url = os.getenv("LOCAL_SERVER_URL", "http://localhost:7860")
 
-    logger.debug(f"Starting bot via local /start endpoint for call {agent_request.call_id}")
+    logger.debug(
+        f"Starting bot via local /start endpoint for dial-out to {agent_request.dialout_settings.sip_uri}"
+    )
 
     body_data = agent_request.model_dump(exclude_none=True)
 
@@ -182,4 +192,5 @@ async def start_bot_local(agent_request: AgentRequest, session: aiohttp.ClientSe
                 status_code=500,
                 detail=f"Failed to start bot via local /start endpoint: {error_text}",
             )
-        logger.debug(f"Bot started successfully via local /start endpoint")
+        logger.debug("Bot started successfully via local /start endpoint")
+

@@ -104,10 +104,12 @@ class ProjectGenerator:
         # 1. Generate bot.py (in server/)
         self._generate_bot_file(server_path)
 
-        # 1b. Generate server.py and server_utils.py for Daily PSTN
+        # 1b. Generate server.py and server_utils.py for Daily PSTN and Twilio + Daily SIP
         if (
             "daily_pstn_dialin" in self.config.transports
             or "daily_pstn_dialout" in self.config.transports
+            or "twilio_daily_sip_dialin" in self.config.transports
+            or "twilio_daily_sip_dialout" in self.config.transports
         ):
             self._generate_server_files(server_path)
 
@@ -141,11 +143,25 @@ class ProjectGenerator:
         return project_path
 
     def _generate_server_files(self, project_path: Path) -> None:
-        """Generate server.py and server_utils.py for Daily PSTN."""
-        # Determine which templates to use based on mode
-        mode = self.config.daily_pstn_mode  # 'dial-in' or 'dial-out'
-        server_template_name = f"server/server_pstn_{mode.replace('-', '')}.py.jinja2"
-        utils_template_name = f"server/server_utils_pstn_{mode.replace('-', '')}.py.jinja2"
+        """Generate server.py and server_utils.py for Daily PSTN or Twilio + Daily SIP."""
+        # Determine which templates to use based on transport type and mode
+        if self.config.daily_pstn_mode:
+            # Daily PSTN
+            mode = self.config.daily_pstn_mode  # 'dial-in' or 'dial-out'
+            server_template_name = f"server/server_pstn_{mode.replace('-', '')}.py.jinja2"
+            utils_template_name = f"server/server_utils_pstn_{mode.replace('-', '')}.py.jinja2"
+        elif self.config.twilio_daily_sip_mode:
+            # Twilio + Daily SIP
+            mode = self.config.twilio_daily_sip_mode  # 'dial-in' or 'dial-out'
+            server_template_name = (
+                f"server/server_twilio_daily_sip_{mode.replace('-', '')}.py.jinja2"
+            )
+            utils_template_name = (
+                f"server/server_utils_twilio_daily_sip_{mode.replace('-', '')}.py.jinja2"
+            )
+        else:
+            # Shouldn't happen, but provide a fallback
+            return
 
         # Generate server.py
         server_template = self.env.get_template(server_template_name)
@@ -210,6 +226,7 @@ class ProjectGenerator:
             "enable_observability": self.config.enable_observability,
             "service_configs": ServiceRegistry.SERVICE_CONFIGS,
             "daily_pstn_mode": self.config.daily_pstn_mode,
+            "twilio_daily_sip_mode": self.config.twilio_daily_sip_mode,
         }
 
         # Render and write
@@ -252,6 +269,7 @@ class ProjectGenerator:
             "pipecat_dependency": pipecat_dependency,
             "deploy_to_cloud": self.config.deploy_to_cloud,
             "enable_observability": self.config.enable_observability,
+            "transports": self.config.transports,
         }
 
         content = template.render(**context)
@@ -269,6 +287,7 @@ class ProjectGenerator:
             "tts_service": self.config.tts_service,
             "realtime_service": self.config.realtime_service,
             "daily_pstn_mode": self.config.daily_pstn_mode,
+            "twilio_daily_sip_mode": self.config.twilio_daily_sip_mode,
         }
 
         content = template.render(**context)
@@ -344,6 +363,7 @@ class ProjectGenerator:
             "has_telephony": has_telephony,
             "has_webrtc": has_webrtc,
             "daily_pstn_mode": self.config.daily_pstn_mode,
+            "twilio_daily_sip_mode": self.config.twilio_daily_sip_mode,
         }
 
         content = template.render(**context)
@@ -356,6 +376,7 @@ class ProjectGenerator:
         context = {
             "transports": self.config.transports,
             "daily_pstn_mode": self.config.daily_pstn_mode,
+            "twilio_daily_sip_mode": self.config.twilio_daily_sip_mode,
         }
 
         content = template.render(**context)
@@ -378,13 +399,43 @@ class ProjectGenerator:
         console.print("\n[bold green]✨ Project created successfully![/bold green]")
         console.print(f"   [cyan]{project_path}[/cyan]\n")
 
-        # Determine run command based on transport
-        run_commands = self._get_run_commands()
-
         console.print("[bold]Next steps:[/bold]\n")
         console.print(
             f"  • Go to your project: [bold cyan]cd {self.config.project_name}[/bold cyan]"
         )
+
+        # Check if this is Daily PSTN or Twilio + Daily SIP (special handling)
+        is_daily_pstn = any(
+            t in ["daily_pstn_dialin", "daily_pstn_dialout"] for t in self.config.transports
+        )
+        is_twilio_daily_sip = any(
+            t in ["twilio_daily_sip_dialin", "twilio_daily_sip_dialout"]
+            for t in self.config.transports
+        )
+
+        if is_daily_pstn or is_twilio_daily_sip:
+            # Special instructions for Daily PSTN and Twilio + Daily SIP
+            console.print("\n  [bold]Server setup:[/bold]")
+            console.print("  • Go to server: [bold cyan]cd server[/bold cyan]")
+            console.print("  • Install dependencies: [bold cyan]uv sync[/bold cyan]")
+            console.print("  • Create .env file: [bold cyan]cp .env.example .env[/bold cyan]")
+            console.print("  • [bold]Edit .env and add your API keys[/bold]")
+            console.print("\n  [bold]See README.md for detailed setup instructions[/bold]")
+            console.print("  • Configure webhooks/SIP domains as described in the README")
+            console.print("  • Run the multi-terminal workflow (server.py + bot.py)")
+
+            if self.config.deploy_to_cloud:
+                console.print(
+                    "\n[dim]See https://docs.pipecat.ai/deployment/pipecat-cloud for deployment info.[/dim]\n"
+                )
+            else:
+                console.print(
+                    "\n[dim]Check the README for local development and production deployment.[/dim]\n"
+                )
+            return
+
+        # Determine run command based on transport
+        run_commands = self._get_run_commands()
 
         # Client setup
         if self.config.generate_client:

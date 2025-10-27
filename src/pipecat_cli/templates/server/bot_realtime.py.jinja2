@@ -27,11 +27,16 @@ Run the bot using::
 {# Standard imports #}
 {{ imports|join('\n') }}
 
-{# Daily PSTN specific imports #}
-{% if 'daily_pstn_dialin' in transports %}
+{# Daily PSTN and Twilio + Daily SIP specific imports #}
+{% if 'daily_pstn_dialin' in transports or 'twilio_daily_sip_dialin' in transports %}
 from server_utils import AgentRequest
-{% elif 'daily_pstn_dialout' in transports %}
+{% elif 'daily_pstn_dialout' in transports or 'twilio_daily_sip_dialout' in transports %}
 from server_utils import AgentRequest, DialoutSettings
+{% endif %}
+
+{# Twilio Client import for Twilio + Daily SIP dial-in #}
+{% if 'twilio_daily_sip_dialin' in transports %}
+from twilio.rest import Client
 {% endif %}
 
 load_dotenv(override=True)
@@ -44,13 +49,13 @@ load_dotenv(override=True)
 {{ helpers.get_call_info_function() }}
 {% endif %}
 
-{% if 'daily_pstn_dialout' in transports %}
-{{ helpers.dialout_manager_class() }}
+{% if 'daily_pstn_dialout' in transports or 'twilio_daily_sip_dialout' in transports %}
+{{ helpers.dialout_manager_class(transports) }}
 {% endif %}
 
-{% if 'daily_pstn_dialout' in transports %}
+{% if 'daily_pstn_dialout' in transports or 'twilio_daily_sip_dialout' in transports %}
 async def run_bot(
-    transport: BaseTransport, runner_args: RunnerArguments, dialout_settings: DialoutSettings
+    transport: BaseTransport, dialout_settings: DialoutSettings
 ) -> None:
     """Run the voice bot for an outbound call.
 
@@ -59,11 +64,10 @@ async def run_bot(
 
     Args:
         transport: Daily transport for the call
-        runner_args: Runner arguments including handle_sigint
         dialout_settings: Phone number and optional caller ID for the outbound call
     """
 {% else %}
-async def run_bot(transport: BaseTransport, runner_args: RunnerArguments):
+async def run_bot(transport: BaseTransport):
     """Main bot logic."""
 {% endif %}
     logger.info("Starting bot")
@@ -99,7 +103,7 @@ async def run_bot(transport: BaseTransport, runner_args: RunnerArguments):
         {% endif %}
     )
 
-    {% if 'daily_pstn_dialout' in transports %}
+    {% if 'daily_pstn_dialout' in transports or 'twilio_daily_sip_dialout' in transports %}
     # Initialize dialout manager
     dialout_manager = DialoutManager(transport, dialout_settings)
 
@@ -109,6 +113,10 @@ async def run_bot(transport: BaseTransport, runner_args: RunnerArguments):
 {{ handlers.daily_pstn_dialin_handlers(recording) }}
     {% elif 'daily_pstn_dialout' in transports %}
 {{ handlers.daily_pstn_dialout_handlers(recording) }}
+    {% elif 'twilio_daily_sip_dialin' in transports %}
+{{ handlers.twilio_daily_sip_dialin_handlers(recording) }}
+    {% elif 'twilio_daily_sip_dialout' in transports %}
+{{ handlers.twilio_daily_sip_dialout_handlers(recording) }}
     {% else %}
 {{ handlers.standard_handlers(recording) }}
     {% endif %}
@@ -122,7 +130,7 @@ async def run_bot(transport: BaseTransport, runner_args: RunnerArguments):
 {{ handlers.recording_handler() }}
     {% endif %}
 
-    runner = PipelineRunner(handle_sigint=runner_args.handle_sigint)
+    runner = PipelineRunner(handle_sigint=False)
 
     await runner.run(task)
 
@@ -137,15 +145,18 @@ async def bot(runner_args: RunnerArguments):
         krisp_filter = KrispFilter()
     else:
         krisp_filter = None
+
     {% endif %}
-
-    transport = None
-
     {# Bot entry point - use match/case for clean transport selection #}
     {% if 'daily_pstn_dialin' in transports or 'daily_pstn_dialout' in transports %}
     {# Daily PSTN has its own special flow with server.py, so it doesn't use match/case #}
 {% include 'server/_blocks/bot_entry_daily_pstn.jinja2' %}
+    {% elif 'twilio_daily_sip_dialin' in transports or 'twilio_daily_sip_dialout' in transports %}
+    {# Twilio + Daily SIP has its own special flow with server.py, so it doesn't use match/case #}
+{% include 'server/_blocks/bot_entry_twilio_daily_sip.jinja2' %}
     {% else %}
+    transport = None
+
     {# For other transports, use match/case on runner_args type #}
     match runner_args:
         {% if 'daily' in transports %}
@@ -172,7 +183,7 @@ async def bot(runner_args: RunnerArguments):
             logger.error(f"Unsupported runner arguments type: {type(runner_args)}")
             return
 
-    await run_bot(transport, runner_args)
+    await run_bot(transport)
     {% endif %}
 
 

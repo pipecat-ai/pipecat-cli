@@ -76,10 +76,6 @@ async def dialout_request_from_request(request: Request) -> DialoutRequest:
     """
     data = await request.json()
 
-    # Handle webhook test requests
-    if "test" in data:
-        raise HTTPException(status_code=200, detail={"test": True})
-
     if not data.get("dialout_settings"):
         raise HTTPException(
             status_code=400, detail="Missing 'dialout_settings' in the request body"
@@ -193,4 +189,3 @@ async def start_bot_local(agent_request: AgentRequest, session: aiohttp.ClientSe
                 detail=f"Failed to start bot via local /start endpoint: {error_text}",
             )
         logger.debug("Bot started successfully via local /start endpoint")
-

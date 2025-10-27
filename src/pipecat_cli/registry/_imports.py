@@ -58,6 +58,15 @@ IMPORTS = {
         "from server_utils import AgentRequest, DialoutSettings",
         "from typing import Any, Optional",
     ],
+    "twilio_daily_sip_dialin": [
+        "from pipecat.transports.daily.transport import DailyParams, DailyTransport",
+        "from server_utils import AgentRequest",
+    ],
+    "twilio_daily_sip_dialout": [
+        "from pipecat.transports.daily.transport import DailyParams, DailyTransport",
+        "from server_utils import AgentRequest, DialoutSettings",
+        "from typing import Any, Optional",
+    ],
     # STT Services
     "assemblyai_stt": ["from pipecat.services.assemblyai.stt import AssemblyAISTTService"],
     "aws_transcribe_stt": ["from pipecat.services.aws.stt import AWSTranscribeSTTService"],

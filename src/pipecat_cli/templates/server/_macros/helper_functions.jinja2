@@ -96,8 +96,8 @@ async def get_call_info(call_sid: str) -> dict:
         return {}
 {% endmacro %}
 
-{# DialoutManager class for Daily PSTN dial-out #}
-{% macro dialout_manager_class() %}
+{# DialoutManager class for dial-out (Daily PSTN and Twilio + Daily SIP) #}
+{% macro dialout_manager_class(transports) %}
 
 class DialoutManager:
     """Manages dialout attempts with retry logic.
@@ -107,7 +107,7 @@ class DialoutManager:
 
     Args:
         transport: The Daily transport instance for making the dialout
-        dialout_settings: Settings containing phone number and optional caller ID
+        dialout_settings: Settings containing {% if 'twilio_daily_sip_dialout' in transports %}SIP URI{% else %}phone number and optional caller ID{% endif %}
         max_retries: Maximum number of dialout attempts (default: 5)
     """
 
@@ -118,7 +118,11 @@ class DialoutManager:
         max_retries: Optional[int] = 5,
     ):
         self._transport = transport
+        {% if 'twilio_daily_sip_dialout' in transports %}
+        self._sip_uri = dialout_settings.sip_uri
+        {% else %}
         self._phone_number = dialout_settings.phone_number
+        {% endif %}
         self._max_retries = max_retries
         self._attempt_count = 0
         self._is_successful = False
@@ -144,11 +148,19 @@ class DialoutManager:
             return False
 
         self._attempt_count += 1
+        {% if 'twilio_daily_sip_dialout' in transports %}
+        logger.info(
+            f"Attempting dialout (attempt {self._attempt_count}/{self._max_retries}) to: {self._sip_uri}"
+        )
+
+        await self._transport.start_dialout({"sipUri": self._sip_uri})
+        {% else %}
         logger.info(
             f"Attempting dialout (attempt {self._attempt_count}/{self._max_retries}) to: {self._phone_number}"
         )
 
         await self._transport.start_dialout({"phoneNumber": self._phone_number})
+        {% endif %}
         return True
 
     def mark_successful(self):

@@ -4,6 +4,8 @@ A Pipecat AI voice agent built with {% if mode == 'cascade' %}a cascade pipeline
 
 {% if 'daily_pstn_dialin' in transports or 'daily_pstn_dialout' in transports %}
 {% include '_readme_blocks/how_it_works_daily_pstn.jinja2' %}
+{% elif 'twilio_daily_sip_dialin' in transports or 'twilio_daily_sip_dialout' in transports %}
+{% include '_readme_blocks/how_it_works_twilio_daily_sip.jinja2' %}
 {% endif %}
 ## Configuration
 
@@ -45,6 +47,8 @@ A Pipecat AI voice agent built with {% if mode == 'cascade' %}a cascade pipeline
 
 {% if 'daily_pstn_dialin' in transports or 'daily_pstn_dialout' in transports %}
 {% include '_readme_blocks/setup_daily_pstn.jinja2' %}
+{% elif 'twilio_daily_sip_dialin' in transports or 'twilio_daily_sip_dialout' in transports %}
+{% include '_readme_blocks/setup_twilio_daily_sip.jinja2' %}
 {% else %}
 ## Setup
 {% if 'twilio' in transports %}
@@ -159,6 +163,8 @@ A Pipecat AI voice agent built with {% if mode == 'cascade' %}a cascade pipeline
 
 {% if 'daily_pstn_dialin' in transports or 'daily_pstn_dialout' in transports %}
 {% include '_readme_blocks/project_structure_daily_pstn.jinja2' %}
+{% elif 'twilio_daily_sip_dialin' in transports or 'twilio_daily_sip_dialout' in transports %}
+{% include '_readme_blocks/project_structure_twilio_daily_sip.jinja2' %}
 {% else %}
 ## Project Structure
 
