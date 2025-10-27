@@ -5,9 +5,11 @@ All notable changes to **Pipecat** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.1.5] - 2025-10-27
 
 ### Added
+
+- Added support for Daily SIP + Twilio dial-in and dial-out use cases.
 
 - Added support for extensions. Other packages can now register commands that
   are automatically discovered by pipecat-cli, making it easy to extend pipecat
