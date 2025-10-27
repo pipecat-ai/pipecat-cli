@@ -57,7 +57,7 @@ load_dotenv(override=True)
 
 {% if 'daily_pstn_dialout' in transports %}
 async def run_bot(
-    transport: BaseTransport, runner_args: RunnerArguments, dialout_settings: DialoutSettings
+    transport: BaseTransport, dialout_settings: DialoutSettings
 ) -> None:
     """Run the voice bot for an outbound call.
 
@@ -66,11 +66,10 @@ async def run_bot(
 
     Args:
         transport: Daily transport for the call
-        runner_args: Runner arguments including handle_sigint
         dialout_settings: Phone number and optional caller ID for the outbound call
     """
 {% else %}
-async def run_bot(transport: BaseTransport, runner_args: RunnerArguments):
+async def run_bot(transport: BaseTransport):
     """Main bot logic."""
 {% endif %}
     logger.info("Starting bot")
@@ -139,7 +138,7 @@ async def run_bot(transport: BaseTransport, runner_args: RunnerArguments):
 {{ handlers.recording_handler() }}
     {% endif %}
 
-    runner = PipelineRunner(handle_sigint=runner_args.handle_sigint)
+    runner = PipelineRunner(handle_sigint=False)
 
     await runner.run(task)
 
@@ -189,7 +188,7 @@ async def bot(runner_args: RunnerArguments):
             logger.error(f"Unsupported runner arguments type: {type(runner_args)}")
             return
 
-    await run_bot(transport, runner_args)
+    await run_bot(transport)
     {% endif %}
 
 
