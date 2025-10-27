@@ -36,8 +36,6 @@ from server_utils import (
 
 load_dotenv()
 
-# ----------------- API ----------------- #
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -118,12 +116,8 @@ async def health_check():
     return {"status": "healthy"}
 
 
-# ----------------- Main ----------------- #
-
-
 if __name__ == "__main__":
     # Run the server
     port = int(os.getenv("PORT", "8080"))
     logger.info(f"Starting server on port {port}")
     uvicorn.run("server:app", host="0.0.0.0", port=port, reload=True)
-
