@@ -12,7 +12,7 @@ from importlib.metadata import version
 import typer
 from rich.console import Console
 
-from pipecat_cli.commands import init
+from pipecat_cli.commands import init, test
 
 app = typer.Typer(
     name="pipecat",
@@ -25,6 +25,7 @@ console = Console()
 # Register commands
 # Single-level commands use app.command() decorator
 app.command(name="init", help="Initialize a new Pipecat project")(init.init_command)
+app.command(name="test", help="Test a custom frame processor")(test.test_command)
 
 # Load pipecat-cli extensions.
 extensions = []
@@ -38,6 +39,7 @@ extensions.sort(key=lambda x: x[0].lower())
 # Add extensions.
 for name, extension in extensions:
     app.add_typer(extension, name=name)
+
 
 def version_callback(value: bool):
     """Print version and exit."""
@@ -64,6 +66,7 @@ def main(
 ):
     """Pipecat CLI - Build AI voice agents with ease."""
     pass
+
 
 if __name__ == "__main__":
     app()

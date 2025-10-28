@@ -1,0 +1,10 @@
+{
+  "input_frames": [
+    {"type": "TextFrame", "text": "hello world"},
+    {"type": "TextFrame", "text": "testing 123"}
+  ],
+  "expected_output": [
+    {"type": "TextFrame", "text": "HELLO WORLD"},
+    {"type": "TextFrame", "text": "TESTING 123"}
+  ]
+}
