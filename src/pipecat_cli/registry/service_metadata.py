@@ -490,7 +490,7 @@ class ServiceRegistry:
         ServiceDefinition(
             value="ollama_llm",
             label="Ollama",
-            package="pipecat-ai[ollama]",
+            package="pipecat-ai",
             class_name=["OLLamaLLMService"],
             env_prefix="OLLAMA",
             include_params=["model"],
@@ -723,7 +723,7 @@ class ServiceRegistry:
         ServiceDefinition(
             value="aws_nova_realtime",
             label="AWS Nova Sonic",
-            package="pipecat-ai[aws]",
+            package="pipecat-ai[aws-nova-sonic]",
             class_name=["AWSNovaSonicLLMService"],
             env_prefix="AWS",
             include_params=[],
