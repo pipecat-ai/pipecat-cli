@@ -42,6 +42,13 @@ Reusable pipeline stages that can be composed together
         tts,
 {% endmacro %}
 
+{# Video service stage (avatars) #}
+{% macro video_stage(video_service) %}
+{% if video_service %}
+        video,
+{% endif %}
+{% endmacro %}
+
 {# Transport output stage #}
 {% macro output_stage() %}
         transport.output(),
@@ -67,7 +74,7 @@ Reusable pipeline stages that can be composed together
 {% endmacro %}
 
 {# Complete cascade pipeline assembly #}
-{% macro cascade_pipeline(bot_type, transcription, recording) %}
+{% macro cascade_pipeline(bot_type, transcription, recording, video_service) %}
     pipeline = Pipeline([
 {{ input_stage() }}
 {{ rtvi_stage(bot_type) }}
@@ -76,6 +83,7 @@ Reusable pipeline stages that can be composed together
 {{ context_user_stage() }}
 {{ llm_stage() }}
 {{ tts_stage() }}
+{{ video_stage(video_service) }}
 {{ output_stage() }}
 {{ transcription_assistant_stage(transcription) }}
 {{ recording_stage(recording) }}
@@ -84,13 +92,14 @@ Reusable pipeline stages that can be composed together
 {% endmacro %}
 
 {# Complete realtime pipeline assembly #}
-{% macro realtime_pipeline(bot_type, transcription, recording) %}
+{% macro realtime_pipeline(bot_type, transcription, recording, video_service) %}
     pipeline = Pipeline([
 {{ input_stage() }}
 {{ rtvi_stage(bot_type) }}
 {{ context_user_stage() }}
 {{ transcription_user_stage(transcription) }}
 {{ llm_stage() }}
+{{ video_stage(video_service) }}
 {{ output_stage() }}
 {{ transcription_assistant_stage(transcription) }}
 {{ recording_stage(recording) }}

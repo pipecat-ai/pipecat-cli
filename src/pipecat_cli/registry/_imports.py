@@ -31,6 +31,24 @@ IMPORTS = {
         "import aiohttp",
         "from pipecat.runner.utils import parse_telephony_websocket",
     ],
+    "twilio_daily_sip_dialin": [
+        "from pipecat.transports.daily.transport import DailyParams, DailyTransport",
+        "from server_utils import AgentRequest",
+    ],
+    "twilio_daily_sip_dialout": [
+        "from pipecat.transports.daily.transport import DailyParams, DailyTransport",
+        "from server_utils import AgentRequest, DialoutSettings",
+        "from typing import Any, Optional",
+    ],
+    "daily_pstn_dialin": [
+        "from pipecat.transports.daily.transport import DailyParams, DailyDialinSettings, DailyTransport",
+        "from server_utils import AgentRequest",
+    ],
+    "daily_pstn_dialout": [
+        "from pipecat.transports.daily.transport import DailyParams, DailyTransport",
+        "from server_utils import AgentRequest, DialoutSettings",
+        "from typing import Any, Optional",
+    ],
     "telnyx": [
         "from pipecat.runner.types import WebSocketRunnerArguments",
         "from pipecat.serializers.telnyx import TelnyxFrameSerializer",
@@ -48,24 +66,6 @@ IMPORTS = {
         "from pipecat.serializers.exotel import ExotelFrameSerializer",
         "from pipecat.transports.websocket.fastapi import FastAPIWebsocketTransport, FastAPIWebsocketParams",
         "from pipecat.runner.utils import parse_telephony_websocket",
-    ],
-    "daily_pstn_dialin": [
-        "from pipecat.transports.daily.transport import DailyParams, DailyDialinSettings, DailyTransport",
-        "from server_utils import AgentRequest",
-    ],
-    "daily_pstn_dialout": [
-        "from pipecat.transports.daily.transport import DailyParams, DailyTransport",
-        "from server_utils import AgentRequest, DialoutSettings",
-        "from typing import Any, Optional",
-    ],
-    "twilio_daily_sip_dialin": [
-        "from pipecat.transports.daily.transport import DailyParams, DailyTransport",
-        "from server_utils import AgentRequest",
-    ],
-    "twilio_daily_sip_dialout": [
-        "from pipecat.transports.daily.transport import DailyParams, DailyTransport",
-        "from server_utils import AgentRequest, DialoutSettings",
-        "from typing import Any, Optional",
     ],
     # STT Services
     "assemblyai_stt": ["from pipecat.services.assemblyai.stt import AssemblyAISTTService"],
@@ -144,6 +144,10 @@ IMPORTS = {
         "from pipecat.services.openai.realtime.events import SessionProperties, AudioConfiguration, AudioInput, InputAudioTranscription, SemanticTurnDetection, InputAudioNoiseReduction",
         "from pipecat.services.openai.realtime.llm import OpenAIRealtimeLLMService",
     ],
+    # Video Services
+    "heygen_video": ["from pipecat.services.heygen.video import HeyGenVideoService"],
+    "tavus_video": ["from pipecat.services.tavus.video import TavusVideoService"],
+    "simli_video": ["from pipecat.services.simli.video import SimliVideoService"],
 }
 
 # Additional imports for features (generated from FEATURE_DEFINITIONS)

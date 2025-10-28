@@ -80,6 +80,9 @@ class ProjectConfig:
     # Realtime service
     realtime_service: Optional[str] = None
 
+    # Video service (avatars, for web/mobile bots)
+    video_service: Optional[str] = None
+
     # Client (for web/mobile bots)
     generate_client: bool = False
     client_framework: Optional[str] = None  # "react"
@@ -477,6 +480,42 @@ def ask_project_questions() -> ProjectConfig:
         )
         replace_question_with_answer("Realtime service:", realtime_label)
 
+    # Question 5e: Video service (only for web/mobile bots)
+    if config.bot_type == "web":
+        use_video_service = questionary.confirm(
+            "Use video avatar service?",
+            default=False,
+            style=custom_style,
+        ).ask()
+        replace_question_with_answer(
+            "Use video avatar service?", "Yes" if use_video_service else "No"
+        )
+
+        if use_video_service:
+            video_choices = [
+                Choice(
+                    title=svc.label,
+                    value=svc.value,
+                )
+                for svc in ServiceRegistry.VIDEO_SERVICES
+            ]
+            config.video_service = questionary.select(
+                "Video avatar service:",
+                choices=video_choices,
+                style=custom_style,
+            ).ask()
+
+            if config.video_service:
+                video_label = next(
+                    (
+                        svc.label
+                        for svc in ServiceRegistry.VIDEO_SERVICES
+                        if svc.value == config.video_service
+                    ),
+                    config.video_service,
+                )
+                replace_question_with_answer("Video avatar service:", video_label)
+
     # Question 6: Video input (only for web/mobile bots)
     if config.bot_type == "web":
         config.video_input = questionary.confirm(
@@ -489,14 +528,18 @@ def ask_project_questions() -> ProjectConfig:
         # Telephony bots don't support video
         config.video_input = False
 
-    # Question 7: Video output (only for web/mobile bots)
+    # Question 7: Video output (only for web/mobile bots, skip if video service selected)
     if config.bot_type == "web":
-        config.video_output = questionary.confirm(
-            "Video output?",
-            default=False,
-            style=custom_style,
-        ).ask()
-        replace_question_with_answer("Video output?", "Yes" if config.video_output else "No")
+        if config.video_service:
+            # Video service requires video output, enable automatically
+            config.video_output = True
+        else:
+            config.video_output = questionary.confirm(
+                "Video output?",
+                default=False,
+                style=custom_style,
+            ).ask()
+            replace_question_with_answer("Video output?", "Yes" if config.video_output else "No")
     else:
         # Telephony bots don't support video
         config.video_output = False

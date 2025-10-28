@@ -66,6 +66,14 @@ async def run_bot(
         transport: Daily transport for the call
         dialout_settings: Phone number and optional caller ID for the outbound call
     """
+{% elif needs_session %}
+async def run_bot(transport: BaseTransport, session: aiohttp.ClientSession) -> None:
+    """Main bot logic.
+    
+    Args:
+        transport: The transport instance
+        session: Shared aiohttp session for services that require it
+    """
 {% else %}
 async def run_bot(transport: BaseTransport):
     """Main bot logic."""
@@ -77,12 +85,17 @@ async def run_bot(transport: BaseTransport):
     {{ service_configs[realtime_service] }}
     {% endif %}
 
+    # Video service (avatar)
+    {% if video_service and video_service in service_configs %}
+    video = {{ service_configs[video_service] }}
+    {% endif %}
+
 {{ helpers.setup_context() }}
 
 {{ helpers.setup_feature_processors(recording, transcription, bot_type) }}
     
     # Pipeline - assembled from reusable components
-{{ pipeline.realtime_pipeline(bot_type, transcription, recording) }}
+{{ pipeline.realtime_pipeline(bot_type, transcription, recording, video_service) }}
 
     task = PipelineTask(
         pipeline,
@@ -183,7 +196,12 @@ async def bot(runner_args: RunnerArguments):
             logger.error(f"Unsupported runner arguments type: {type(runner_args)}")
             return
 
+{% if needs_session %}
+    async with aiohttp.ClientSession() as session:
+        await run_bot(transport, session)
+{% else %}
     await run_bot(transport)
+{% endif %}
     {% endif %}
 
 

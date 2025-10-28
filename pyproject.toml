@@ -52,7 +52,7 @@ dev = [
     "pre-commit~=4.2.0",
     "build~=1.2.2",
     # Pipecat with all service extras for auto-generating imports and configs
-    "pipecat-ai[aic,anthropic,assemblyai,asyncai,aws,aws-nova-sonic,azure,cartesia,cerebras,deepseek,deepgram,elevenlabs,fal,fireworks,fish,gladia,google,grok,groq,heygen,hume,inworld,lmnt,mistral,moondream,neuphonic,nim,openai,openpipe,openrouter,perplexity,playht,qwen,rime,riva,sambanova,sarvam,silero,soniox,speechmatics,together,webrtc,websocket]",
+    "pipecat-ai[aic,anthropic,assemblyai,asyncai,aws,aws-nova-sonic,azure,cartesia,cerebras,daily,deepseek,deepgram,elevenlabs,fal,fireworks,fish,gladia,google,grok,groq,heygen,hume,inworld,lmnt,mistral,moondream,neuphonic,nim,openai,openpipe,openrouter,perplexity,playht,qwen,rime,riva,sambanova,sarvam,silero,simli,soniox,speechmatics,tavus,together,webrtc,websocket]",
     "tomli>=2.0.0; python_version<'3.11'",  # TOML parsing for tests
     "setuptools~=78.1.1",
     "setuptools_scm~=8.3.1",

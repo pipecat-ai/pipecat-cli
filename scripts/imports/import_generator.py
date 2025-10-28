@@ -237,6 +237,7 @@ def generate_imports_dict() -> dict[str, list[str]]:
         ServiceRegistry.LLM_SERVICES,
         ServiceRegistry.TTS_SERVICES,
         ServiceRegistry.REALTIME_SERVICES,
+        ServiceRegistry.VIDEO_SERVICES,
     ]:
         for service in service_list:
             value = service.value
@@ -349,6 +350,7 @@ def format_imports_dict(imports_dict: dict[str, list[str]], pipecat_path: Path) 
         ("# LLM Services", ServiceRegistry.LLM_SERVICES),
         ("# TTS Services", ServiceRegistry.TTS_SERVICES),
         ("# Realtime Services", ServiceRegistry.REALTIME_SERVICES),
+        ("# Video Services", ServiceRegistry.VIDEO_SERVICES),
     ]
 
     # Process each category

@@ -106,6 +106,17 @@ def preview_imports():
             print(f'    # TODO: "{service_value}": [...],  # Could not discover import')
     print()
 
+    # Print Video imports
+    print("    # Video Services")
+    for service in ServiceRegistry.VIDEO_SERVICES:
+        service_value = service.value
+        if service_value in imports_dict:
+            import_stmt = imports_dict[service_value][0]
+            print(f'    "{service_value}": ["{import_stmt}"],')
+        else:
+            print(f'    # TODO: "{service_value}": [...],  # Could not discover import')
+    print()
+
     # Print feature imports
     print("    # Feature Imports")
     for line in format_feature_imports(pipecat_path):

@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added an option to add a video (avatar) service to your pipeline.
+
 ### Fixed
 
 - Fixed an issue where the AWS Nova Sonic Pipecat dependency wasn't installed.
