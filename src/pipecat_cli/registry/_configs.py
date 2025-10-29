@@ -61,10 +61,10 @@ SERVICE_CONFIGS = {
     "speechmatics_stt": 'SpeechmaticsSTTService(api_key=os.getenv("SPEECHMATICS_API_KEY"))',
     "ultravox_stt": (
         "UltravoxSTTService(\n"
-        '        model_name=os.getenv("ULTRAVOX_MODEL_NAME"),\n'
-        '        hf_token=os.getenv("HF_TOKEN"),\n'
-        '        region=os.getenv("ULTRAVOX_REGION")\n'
-        "    )\n"
+        '    model_name=os.getenv("ULTRAVOX_MODEL_NAME"),\n'
+        '    hf_token=os.getenv("HF_TOKEN"),\n'
+        '    region=os.getenv("ULTRAVOX_REGION")\n'
+        ")\n"
     ),
     "whisper_stt": 'WhisperSTTService(model=os.getenv("OPENAI_MODEL"))',
     # LLM Services
@@ -76,10 +76,10 @@ SERVICE_CONFIGS = {
     ),
     "aws_bedrock_llm": (
         "AWSBedrockLLMService(\n"
-        '        aws_region=os.getenv("AWS_REGION"),\n'
-        '        model=os.getenv("AWS_BEDROCK_MODEL"),\n'
-        "        params=AWSBedrockLLMService.InputParams(temperature=0.8)\n"
-        "    )\n"
+        '    aws_region=os.getenv("AWS_REGION"),\n'
+        '    model=os.getenv("AWS_BEDROCK_MODEL"),\n'
+        "    params=AWSBedrockLLMService.InputParams(temperature=0.8)\n"
+        ")\n"
     ),
     "azure_llm": (
         "AzureLLMService(\n"
@@ -195,10 +195,10 @@ SERVICE_CONFIGS = {
     ),
     "aws_polly_tts": (
         "AWSPollyTTSService(\n"
-        '        region=os.getenv("AWS_REGION"),\n'
-        '        voice_id=os.getenv("AWS_VOICE_ID"),\n'
-        '        params=AWSPollyTTSService.InputParams(engine="generative"),\n'
-        "    )\n"
+        '    region=os.getenv("AWS_REGION"),\n'
+        '    voice_id=os.getenv("AWS_VOICE_ID"),\n'
+        '    params=AWSPollyTTSService.InputParams(engine="generative"),\n'
+        ")\n"
     ),
     "azure_tts": (
         "AzureTTSService(\n"
@@ -318,32 +318,32 @@ SERVICE_CONFIGS = {
     # Realtime Services
     "aws_nova_realtime": (
         "llm = AWSNovaSonicLLMService(\n"
-        '        secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),\n'
-        '        access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),\n'
-        '        region=os.getenv("AWS_REGION"),\n'
-        '        session_token=os.getenv("AWS_SESSION_TOKEN"),\n'
-        '        voice_id=os.getenv("AWS_VOICE_ID"),\n'
-        "    )\n"
+        '    secret_access_key=os.getenv("AWS_SECRET_ACCESS_KEY"),\n'
+        '    access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),\n'
+        '    region=os.getenv("AWS_REGION"),\n'
+        '    session_token=os.getenv("AWS_SESSION_TOKEN"),\n'
+        '    voice_id=os.getenv("AWS_VOICE_ID"),\n'
+        ")\n"
     ),
     "azure_realtime": (
         "session_properties = SessionProperties(\n"
-        '        input_audio_transcription=InputAudioTranscription(model="whisper-1"),\n'
-        '        instructions=os.getenv("AZURE_INSTRUCTIONS"),\n'
-        "    )\n"
-        "    llm = AzureRealtimeLLMService(\n"
-        '        api_key=os.getenv("AZURE_REALTIME_API_KEY"),\n'
-        '        base_url=os.getenv("AZURE_REALTIME_BASE_URL"),\n'
-        "        session_properties=session_properties,\n"
-        "        start_audio_paused=False,\n"
-        "    )\n"
+        '    input_audio_transcription=InputAudioTranscription(model="whisper-1"),\n'
+        '    instructions=os.getenv("AZURE_INSTRUCTIONS"),\n'
+        ")\n"
+        "llm = AzureRealtimeLLMService(\n"
+        '    api_key=os.getenv("AZURE_REALTIME_API_KEY"),\n'
+        '    base_url=os.getenv("AZURE_REALTIME_BASE_URL"),\n'
+        "    session_properties=session_properties,\n"
+        "    start_audio_paused=False,\n"
+        ")\n"
     ),
     "gemini_live_realtime": (
         "llm = GeminiLiveLLMService(\n"
-        '        api_key=os.getenv("GOOGLE_API_KEY"),\n'
-        '        model=os.getenv("GOOGLE_MODEL"),\n'
-        '        voice_id=os.getenv("GOOGLE_VOICE_ID"),\n'
-        '        system_instruction=os.getenv("GOOGLE_SYSTEM_INSTRUCTION"),\n'
-        "    )\n"
+        '    api_key=os.getenv("GOOGLE_API_KEY"),\n'
+        '    model=os.getenv("GOOGLE_MODEL"),\n'
+        '    voice_id=os.getenv("GOOGLE_VOICE_ID"),\n'
+        '    system_instruction=os.getenv("GOOGLE_SYSTEM_INSTRUCTION"),\n'
+        ")\n"
     ),
     "gemini_vertex_live_realtime": (
         "llm = GeminiLiveVertexLLMService(\n"
@@ -352,34 +352,34 @@ SERVICE_CONFIGS = {
         '        location=os.getenv("GOOGLE_LOCATION"),\n'
         '        voice_id=os.getenv("GOOGLE_VOICE_ID"),\n'
         '        system_instruction=os.getenv("GOOGLE_SYSTEM_INSTRUCTION"),\n'
-        "    )\n"
+        ")\n"
     ),
     "openai_realtime": (
         "session_properties = SessionProperties(\n"
-        "        audio=AudioConfiguration(\n"
-        "            input=AudioInput(\n"
-        "                transcription=InputAudioTranscription(),\n"
-        "                turn_detection=SemanticTurnDetection(),\n"
-        '                noise_reduction=InputAudioNoiseReduction(type="near_field"),\n'
-        "            )\n"
-        "        ),\n"
-        '        instructions=os.getenv("OPENAI_INSTRUCTIONS"),\n'
-        "    )\n"
-        "    llm = OpenAIRealtimeLLMService(\n"
-        '        api_key=os.getenv("OPENAI_API_KEY"),\n'
-        "        session_properties=session_properties,\n"
-        "        start_audio_paused=False,\n"
-        "    )\n"
+        "    audio=AudioConfiguration(\n"
+        "        input=AudioInput(\n"
+        "            transcription=InputAudioTranscription(),\n"
+        "            turn_detection=SemanticTurnDetection(),\n"
+        '            noise_reduction=InputAudioNoiseReduction(type="near_field"),\n'
+        "        )\n"
+        "    ),\n"
+        '    instructions=os.getenv("OPENAI_INSTRUCTIONS"),\n'
+        ")\n"
+        "llm = OpenAIRealtimeLLMService(\n"
+        '    api_key=os.getenv("OPENAI_API_KEY"),\n'
+        "    session_properties=session_properties,\n"
+        "    start_audio_paused=False,\n"
+        ")\n"
     ),
     # Video Services
     "heygen_video": (
-        "heyGen = HeyGenVideoService(\n"
-        '        api_key=os.getenv("HEYGEN_API_KEY"),\n'
-        "        session=session,\n"
-        "        session_request=NewSessionRequest(\n"
-        '            avatar_id="HEYGEN_AVATAR_ID", version="v2", quality=AvatarQuality.high\n'
-        "        ),\n"
-        "    )\n"
+        "HeyGenVideoService(\n"
+        '    api_key=os.getenv("HEYGEN_API_KEY"),\n'
+        "    session=session,\n"
+        "    session_request=NewSessionRequest(\n"
+        '        avatar_id="HEYGEN_AVATAR_ID", version="v2", quality=AvatarQuality.high\n'
+        "    ),\n"
+        ")\n"
     ),
     "tavus_video": (
         "TavusVideoService(\n"

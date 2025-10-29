@@ -66,13 +66,13 @@ async def run_bot(
         transport: Daily transport for the call
         dialout_settings: Phone number and optional caller ID for the outbound call
     """
-{% elif needs_session %}
-async def run_bot(transport: BaseTransport, session: aiohttp.ClientSession) -> None:
-    """Main bot logic.
-    
+{% elif 'twilio_daily_sip_dialin' in transports %}
+async def run_bot(transport: BaseTransport, request: AgentRequest) -> None:
+    """Run the voice bot with the given parameters.
+
     Args:
-        transport: The transport instance
-        session: Shared aiohttp session for services that require it
+        transport: The Daily transport instance
+        request: The agent request containing the call details
     """
 {% else %}
 async def run_bot(transport: BaseTransport):
@@ -80,72 +80,14 @@ async def run_bot(transport: BaseTransport):
 {% endif %}
     logger.info("Starting bot")
 
-    # Realtime LLM service (handles STT, LLM, and TTS internally)
-    {% if realtime_service and realtime_service in service_configs %}
-    {{ service_configs[realtime_service] }}
-    {% endif %}
-
-    # Video service (avatar)
-    {% if video_service and video_service in service_configs %}
-    video = {{ service_configs[video_service] }}
-    {% endif %}
-
-{{ helpers.setup_context() }}
-
-{{ helpers.setup_feature_processors(recording, transcription, bot_type) }}
-    
-    # Pipeline - assembled from reusable components
-{{ pipeline.realtime_pipeline(bot_type, transcription, recording, video_service) }}
-
-    task = PipelineTask(
-        pipeline,
-        params=PipelineParams(
-            enable_metrics=True,
-            enable_usage_metrics=True,
-        ),
-        {% if bot_type == 'web' or enable_observability %}
-        observers=[
-            {% if bot_type == 'web' %}
-            RTVIObserver(rtvi),
-            {% endif %}
-            {% if enable_observability %}
-            WhiskerObserver(pipeline),
-            TailObserver(),
-            {% endif %}
-        ],
-        {% endif %}
-    )
-
-    {% if 'daily_pstn_dialout' in transports or 'twilio_daily_sip_dialout' in transports %}
-    # Initialize dialout manager
-    dialout_manager = DialoutManager(transport, dialout_settings)
-
-    {% endif %}
-    {# Event handlers - use macros based on transport type #}
-    {% if 'daily_pstn_dialin' in transports %}
-{{ handlers.daily_pstn_dialin_handlers(recording) }}
-    {% elif 'daily_pstn_dialout' in transports %}
-{{ handlers.daily_pstn_dialout_handlers(recording) }}
-    {% elif 'twilio_daily_sip_dialin' in transports %}
-{{ handlers.twilio_daily_sip_dialin_handlers(recording) }}
-    {% elif 'twilio_daily_sip_dialout' in transports %}
-{{ handlers.twilio_daily_sip_dialout_handlers(recording) }}
-    {% else %}
-{{ handlers.standard_handlers(recording) }}
-    {% endif %}
-
-    {# Feature-specific event handlers #}
-    {% if transcription %}
-{{ handlers.transcription_handler() }}
-    {% endif %}
-
-    {% if recording %}
-{{ handlers.recording_handler() }}
-    {% endif %}
-
-    runner = PipelineRunner(handle_sigint=False)
-
-    await runner.run(task)
+{% if needs_session %}
+    async with aiohttp.ClientSession() as session:
+{% set indent_level = 8 %}
+{% include 'server/_blocks/run_bot_logic_realtime.jinja2' with context %}
+{% else %}
+{% set indent_level = 4 %}
+{% include 'server/_blocks/run_bot_logic_realtime.jinja2' with context %}
+{% endif %}
 
 
 async def bot(runner_args: RunnerArguments):
@@ -196,12 +138,7 @@ async def bot(runner_args: RunnerArguments):
             logger.error(f"Unsupported runner arguments type: {type(runner_args)}")
             return
 
-{% if needs_session %}
-    async with aiohttp.ClientSession() as session:
-        await run_bot(transport, session)
-{% else %}
     await run_bot(transport)
-{% endif %}
     {% endif %}
 
 
