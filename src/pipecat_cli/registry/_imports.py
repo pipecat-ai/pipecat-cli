@@ -145,7 +145,10 @@ IMPORTS = {
         "from pipecat.services.openai.realtime.llm import OpenAIRealtimeLLMService",
     ],
     # Video Services
-    "heygen_video": ["from pipecat.services.heygen.video import HeyGenVideoService"],
+    "heygen_video": [
+        "from pipecat.services.heygen.video import HeyGenVideoService",
+        "from pipecat.services.heygen.api import AvatarQuality, NewSessionRequest",
+    ],
     "tavus_video": ["from pipecat.services.tavus.video import TavusVideoService"],
     "simli_video": ["from pipecat.services.simli.video import SimliVideoService"],
 }

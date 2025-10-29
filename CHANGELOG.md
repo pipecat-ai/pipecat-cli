@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Added an option to add a video (avatar) service to your pipeline.
 
+### Changed
+
+- Updated the question flow to lump features into a single gate, allowing a
+  user to more easily select default feature options.
+
 ### Fixed
 
 - Fixed an issue where the AWS Nova Sonic Pipecat dependency wasn't installed.

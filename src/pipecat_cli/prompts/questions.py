@@ -480,109 +480,144 @@ def ask_project_questions() -> ProjectConfig:
         )
         replace_question_with_answer("Realtime service:", realtime_label)
 
-    # Question 5e: Video service (only for web/mobile bots)
-    if config.bot_type == "web":
-        use_video_service = questionary.confirm(
-            "Use video avatar service?",
-            default=False,
-            style=custom_style,
-        ).ask()
-        replace_question_with_answer(
-            "Use video avatar service?", "Yes" if use_video_service else "No"
-        )
-
-        if use_video_service:
-            video_choices = [
-                Choice(
-                    title=svc.label,
-                    value=svc.value,
-                )
-                for svc in ServiceRegistry.VIDEO_SERVICES
-            ]
-            config.video_service = questionary.select(
-                "Video avatar service:",
-                choices=video_choices,
-                style=custom_style,
-            ).ask()
-
-            if config.video_service:
-                video_label = next(
-                    (
-                        svc.label
-                        for svc in ServiceRegistry.VIDEO_SERVICES
-                        if svc.value == config.video_service
-                    ),
-                    config.video_service,
-                )
-                replace_question_with_answer("Video avatar service:", video_label)
-
-    # Question 6: Video input (only for web/mobile bots)
-    if config.bot_type == "web":
-        config.video_input = questionary.confirm(
-            "Video input?",
-            default=False,
-            style=custom_style,
-        ).ask()
-        replace_question_with_answer("Video input?", "Yes" if config.video_input else "No")
-    else:
-        # Telephony bots don't support video
-        config.video_input = False
-
-    # Question 7: Video output (only for web/mobile bots, skip if video service selected)
-    if config.bot_type == "web":
-        if config.video_service:
-            # Video service requires video output, enable automatically
-            config.video_output = True
-        else:
-            config.video_output = questionary.confirm(
-                "Video output?",
-                default=False,
-                style=custom_style,
-            ).ask()
-            replace_question_with_answer("Video output?", "Yes" if config.video_output else "No")
-    else:
-        # Telephony bots don't support video
-        config.video_output = False
-
-    # Question 8: Recording
-    config.recording = questionary.confirm(
-        "Audio recording?",
-        default=False,
-        style=custom_style,
-    ).ask()
-    replace_question_with_answer("Audio recording?", "Yes" if config.recording else "No")
-
-    # Question 9: Transcription
-    config.transcription = questionary.confirm(
-        "Transcription logging?",
-        default=False,
-        style=custom_style,
-    ).ask()
-    replace_question_with_answer("Transcription logging?", "Yes" if config.transcription else "No")
-
-    # Question 10: Smart Turn V3 (only for cascade mode)
+    # Question 6: Feature customization gate
+    console.print("\n[bold]Default feature settings:[/bold]")
+    console.print("  • Audio recording: [dim]No[/dim]")
+    console.print("  • Transcription logging: [dim]No[/dim]")
     if config.mode == "cascade":
-        config.smart_turn = questionary.confirm(
-            "Smart turn-taking? (recommended)",
-            default=True,
-            style=custom_style,
-        ).ask()
-        replace_question_with_answer("Smart turn-taking?", "Yes" if config.smart_turn else "No")
-    else:
-        # Realtime mode doesn't use smart turn
-        config.smart_turn = False
+        console.print("  • Smart turn-taking: [green]Yes[/green] [dim](recommended)[/dim]")
+    if config.bot_type == "web":
+        console.print("  • Video avatar service: [dim]No[/dim]")
+        console.print("  • Video input: [dim]No[/dim]")
+        console.print("  • Video output: [dim]No[/dim]")
+    console.print("  • Observability: [dim]No[/dim]")
 
-    # Question 11: Observability
-    config.enable_observability = questionary.confirm(
-        "Enable observability?",
+    customize_features = questionary.confirm(
+        "Customize feature settings?",
         default=False,
         style=custom_style,
     ).ask()
     replace_question_with_answer(
-        "Enable observability?", "Yes" if config.enable_observability else "No"
+        "Customize feature settings?", "Yes" if customize_features else "No"
     )
 
-    # Question 12: Pipecat Cloud deployment
+    if customize_features:
+        # Question 6a: Recording
+        config.recording = questionary.confirm(
+            "Audio recording?",
+            default=False,
+            style=custom_style,
+        ).ask()
+        replace_question_with_answer("Audio recording?", "Yes" if config.recording else "No")
+
+        # Question 6b: Transcription
+        config.transcription = questionary.confirm(
+            "Transcription logging?",
+            default=False,
+            style=custom_style,
+        ).ask()
+        replace_question_with_answer(
+            "Transcription logging?", "Yes" if config.transcription else "No"
+        )
+
+        # Question 6c: Smart Turn V3 (only for cascade mode)
+        if config.mode == "cascade":
+            config.smart_turn = questionary.confirm(
+                "Smart turn-taking? (recommended)",
+                default=True,
+                style=custom_style,
+            ).ask()
+            replace_question_with_answer("Smart turn-taking?", "Yes" if config.smart_turn else "No")
+        else:
+            # Realtime mode doesn't use smart turn
+            config.smart_turn = False
+
+        # Question 6d: Video avatar service (only for web/mobile bots)
+        if config.bot_type == "web":
+            use_video_service = questionary.confirm(
+                "Use video avatar service?",
+                default=False,
+                style=custom_style,
+            ).ask()
+            replace_question_with_answer(
+                "Use video avatar service?", "Yes" if use_video_service else "No"
+            )
+
+            if use_video_service:
+                video_choices = [
+                    Choice(
+                        title=svc.label,
+                        value=svc.value,
+                    )
+                    for svc in ServiceRegistry.VIDEO_SERVICES
+                ]
+                config.video_service = questionary.select(
+                    "Video avatar service:",
+                    choices=video_choices,
+                    style=custom_style,
+                ).ask()
+
+                if config.video_service:
+                    video_label = next(
+                        (
+                            svc.label
+                            for svc in ServiceRegistry.VIDEO_SERVICES
+                            if svc.value == config.video_service
+                        ),
+                        config.video_service,
+                    )
+                    replace_question_with_answer("Video avatar service:", video_label)
+
+        # Question 6e: Video input (only for web/mobile bots)
+        if config.bot_type == "web":
+            config.video_input = questionary.confirm(
+                "Video input?",
+                default=False,
+                style=custom_style,
+            ).ask()
+            replace_question_with_answer("Video input?", "Yes" if config.video_input else "No")
+        else:
+            # Telephony bots don't support video
+            config.video_input = False
+
+        # Question 6f: Video output (only for web/mobile bots, skip if video service selected)
+        if config.bot_type == "web":
+            if config.video_service:
+                # Video service requires video output, enable automatically
+                config.video_output = True
+            else:
+                config.video_output = questionary.confirm(
+                    "Video output?",
+                    default=False,
+                    style=custom_style,
+                ).ask()
+                replace_question_with_answer(
+                    "Video output?", "Yes" if config.video_output else "No"
+                )
+        else:
+            # Telephony bots don't support video
+            config.video_output = False
+
+        # Question 6g: Observability
+        config.enable_observability = questionary.confirm(
+            "Enable observability?",
+            default=False,
+            style=custom_style,
+        ).ask()
+        replace_question_with_answer(
+            "Enable observability?", "Yes" if config.enable_observability else "No"
+        )
+    else:
+        # Apply default feature settings
+        config.video_service = None
+        config.video_input = False
+        config.video_output = False
+        config.recording = False
+        config.transcription = False
+        config.smart_turn = True if config.mode == "cascade" else False
+        config.enable_observability = False
+
+    # Question 7: Pipecat Cloud deployment
     config.deploy_to_cloud = questionary.confirm(
         "Deploy to Pipecat Cloud?",
         default=True,
@@ -592,7 +627,7 @@ def ask_project_questions() -> ProjectConfig:
         "Deploy to Pipecat Cloud?", "Yes" if config.deploy_to_cloud else "No"
     )
 
-    # Question 13: Krisp noise cancellation (only if deploying to cloud)
+    # Question 8: Krisp noise cancellation (only if deploying to cloud)
     if config.deploy_to_cloud:
         config.enable_krisp = questionary.confirm(
             "Enable Krisp noise cancellation?",

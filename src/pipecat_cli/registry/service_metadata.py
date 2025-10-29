@@ -789,6 +789,9 @@ class ServiceRegistry:
             env_prefix="HEYGEN",
             include_params=["api_key"],
             manual_config=True,
+            additional_imports=[
+                "from pipecat.services.heygen.api import AvatarQuality, NewSessionRequest"
+            ],
         ),
         ServiceDefinition(
             value="tavus_video",
