@@ -5,164 +5,164 @@ Reusable event handlers for different transport types
 
 {# Standard event handlers for web/telephony #}
 {% macro standard_handlers(recording=False) %}
-    @transport.event_handler("on_client_connected")
-    async def on_client_connected(transport, client):
-        logger.info("Client connected")
-        {% if recording %}
-        # Start recording audio
-        await audio_buffer.start_recording()
-        {% endif %}
-        # Kick off the conversation
-        messages.append({"role": "system", "content": "Say hello and briefly introduce yourself."})
-        await task.queue_frames([LLMRunFrame()])
+@transport.event_handler("on_client_connected")
+async def on_client_connected(transport, client):
+    logger.info("Client connected")
+    {% if recording %}
+    # Start recording audio
+    await audio_buffer.start_recording()
+    {% endif %}
+    # Kick off the conversation
+    messages.append({"role": "system", "content": "Say hello and briefly introduce yourself."})
+    await task.queue_frames([LLMRunFrame()])
 
-    @transport.event_handler("on_client_disconnected")
-    async def on_client_disconnected(transport, client):
-        logger.info("Client disconnected")
-        await task.cancel()
+@transport.event_handler("on_client_disconnected")
+async def on_client_disconnected(transport, client):
+    logger.info("Client disconnected")
+    await task.cancel()
 {% endmacro %}
 
 {# Daily PSTN dial-in event handlers #}
 {% macro daily_pstn_dialin_handlers(recording=False) %}
-    @transport.event_handler("on_first_participant_joined")
-    async def on_first_participant_joined(transport, participant):
-        logger.debug(f"First participant joined: {participant['id']}")
-        {% if recording %}
-        # Start recording audio
-        await audio_buffer.start_recording()
-        {% endif %}
-        # Kick off the conversation
-        await task.queue_frames([LLMRunFrame()])
+@transport.event_handler("on_first_participant_joined")
+async def on_first_participant_joined(transport, participant):
+    logger.debug(f"First participant joined: {participant['id']}")
+    {% if recording %}
+    # Start recording audio
+    await audio_buffer.start_recording()
+    {% endif %}
+    # Kick off the conversation
+    await task.queue_frames([LLMRunFrame()])
 
-    @transport.event_handler("on_client_disconnected")
-    async def on_client_disconnected(transport, client):
-        logger.info(f"Client disconnected")
-        await task.cancel()
+@transport.event_handler("on_client_disconnected")
+async def on_client_disconnected(transport, client):
+    logger.info(f"Client disconnected")
+    await task.cancel()
 
-    @transport.event_handler("on_dialin_error")
-    async def on_dialin_error(transport, data):
-        logger.error(f"Dial-in error: {data}")
-        await task.cancel()
+@transport.event_handler("on_dialin_error")
+async def on_dialin_error(transport, data):
+    logger.error(f"Dial-in error: {data}")
+    await task.cancel()
 {% endmacro %}
 
 {# Daily PSTN dial-out event handlers #}
 {% macro daily_pstn_dialout_handlers(recording=False) %}
-    @transport.event_handler("on_joined")
-    async def on_joined(transport, data):
+@transport.event_handler("on_joined")
+async def on_joined(transport, data):
+    await dialout_manager.attempt_dialout()
+
+@transport.event_handler("on_dialout_answered")
+async def on_dialout_answered(transport, data):
+    logger.debug(f"Dial-out answered: {data}")
+    dialout_manager.mark_successful()
+    {% if recording %}
+    # Start recording audio
+    await audio_buffer.start_recording()
+    {% endif %}
+
+@transport.event_handler("on_dialout_error")
+async def on_dialout_error(transport, data: Any):
+    logger.error(f"Dial-out error, retrying: {data}")
+
+    if dialout_manager.should_retry():
         await dialout_manager.attempt_dialout()
-
-    @transport.event_handler("on_dialout_answered")
-    async def on_dialout_answered(transport, data):
-        logger.debug(f"Dial-out answered: {data}")
-        dialout_manager.mark_successful()
-        {% if recording %}
-        # Start recording audio
-        await audio_buffer.start_recording()
-        {% endif %}
-
-    @transport.event_handler("on_dialout_error")
-    async def on_dialout_error(transport, data: Any):
-        logger.error(f"Dial-out error, retrying: {data}")
-
-        if dialout_manager.should_retry():
-            await dialout_manager.attempt_dialout()
-        else:
-            logger.error(f"No more retries allowed, stopping bot.")
-            await task.cancel()
-
-    @transport.event_handler("on_client_disconnected")
-    async def on_client_disconnected(transport, client):
-        logger.info(f"Client disconnected")
+    else:
+        logger.error(f"No more retries allowed, stopping bot.")
         await task.cancel()
+
+@transport.event_handler("on_client_disconnected")
+async def on_client_disconnected(transport, client):
+    logger.info(f"Client disconnected")
+    await task.cancel()
 {% endmacro %}
 
 {# Twilio + Daily SIP dial-in event handlers #}
 {% macro twilio_daily_sip_dialin_handlers(recording=False) %}
-    @transport.event_handler("on_dialin_ready")
-    async def on_dialin_ready(transport, sip_endpoint):
-        logger.info(f"Forwarding call {request.call_sid} to {request.sip_uri}")
+@transport.event_handler("on_dialin_ready")
+async def on_dialin_ready(transport, sip_endpoint):
+    logger.info(f"Forwarding call {request.call_sid} to {request.sip_uri}")
 
-        try:
-            twilio_client = Client(os.getenv("TWILIO_ACCOUNT_SID"), os.getenv("TWILIO_AUTH_TOKEN"))
+    try:
+        twilio_client = Client(os.getenv("TWILIO_ACCOUNT_SID"), os.getenv("TWILIO_AUTH_TOKEN"))
 
-            # Update the Twilio call with TwiML to forward to the Daily SIP endpoint
-            twilio_client.calls(request.call_sid).update(
-                twiml=f"<Response><Dial><Sip>{request.sip_uri}</Sip></Dial></Response>"
-            )
-            logger.info("Call forwarded successfully")
-        except Exception as e:
-            logger.error(f"Failed to forward call: {str(e)}")
-            await task.cancel()
-
-    @transport.event_handler("on_dialin_error")
-    async def on_dialin_error(transport, data):
-        logger.error(f"Dial-in error: {data}")
+        # Update the Twilio call with TwiML to forward to the Daily SIP endpoint
+        twilio_client.calls(request.call_sid).update(
+            twiml=f"<Response><Dial><Sip>{request.sip_uri}</Sip></Dial></Response>"
+        )
+        logger.info("Call forwarded successfully")
+    except Exception as e:
+        logger.error(f"Failed to forward call: {str(e)}")
         await task.cancel()
 
-    @transport.event_handler("on_client_connected")
-    async def on_client_connected(transport, client):
-        logger.info("Client connected")
-        {% if recording %}
-        # Start recording audio
-        await audio_buffer.start_recording()
-        {% endif %}
-        await task.queue_frame(LLMRunFrame())
+@transport.event_handler("on_dialin_error")
+async def on_dialin_error(transport, data):
+    logger.error(f"Dial-in error: {data}")
+    await task.cancel()
 
-    @transport.event_handler("on_client_disconnected")
-    async def on_client_disconnected(transport, client):
-        logger.info("Client disconnected")
-        await task.cancel()
+@transport.event_handler("on_client_connected")
+async def on_client_connected(transport, client):
+    logger.info("Client connected")
+    {% if recording %}
+    # Start recording audio
+    await audio_buffer.start_recording()
+    {% endif %}
+    await task.queue_frame(LLMRunFrame())
+
+@transport.event_handler("on_client_disconnected")
+async def on_client_disconnected(transport, client):
+    logger.info("Client disconnected")
+    await task.cancel()
 {% endmacro %}
 
 {# Twilio + Daily SIP dial-out event handlers (same as Daily PSTN dial-out) #}
 {% macro twilio_daily_sip_dialout_handlers(recording=False) %}
-    @transport.event_handler("on_joined")
-    async def on_joined(transport, data):
+@transport.event_handler("on_joined")
+async def on_joined(transport, data):
+    await dialout_manager.attempt_dialout()
+
+@transport.event_handler("on_dialout_answered")
+async def on_dialout_answered(transport, data):
+    logger.debug(f"Dial-out answered: {data}")
+    dialout_manager.mark_successful()
+    {% if recording %}
+    # Start recording audio
+    await audio_buffer.start_recording()
+    {% endif %}
+
+@transport.event_handler("on_dialout_error")
+async def on_dialout_error(transport, data: Any):
+    logger.error(f"Dial-out error, retrying: {data}")
+
+    if dialout_manager.should_retry():
         await dialout_manager.attempt_dialout()
-
-    @transport.event_handler("on_dialout_answered")
-    async def on_dialout_answered(transport, data):
-        logger.debug(f"Dial-out answered: {data}")
-        dialout_manager.mark_successful()
-        {% if recording %}
-        # Start recording audio
-        await audio_buffer.start_recording()
-        {% endif %}
-
-    @transport.event_handler("on_dialout_error")
-    async def on_dialout_error(transport, data: Any):
-        logger.error(f"Dial-out error, retrying: {data}")
-
-        if dialout_manager.should_retry():
-            await dialout_manager.attempt_dialout()
-        else:
-            logger.error(f"No more retries allowed, stopping bot.")
-            await task.cancel()
-
-    @transport.event_handler("on_client_disconnected")
-    async def on_client_disconnected(transport, client):
-        logger.info(f"Client disconnected")
+    else:
+        logger.error(f"No more retries allowed, stopping bot.")
         await task.cancel()
+
+@transport.event_handler("on_client_disconnected")
+async def on_client_disconnected(transport, client):
+    logger.info(f"Client disconnected")
+    await task.cancel()
 {% endmacro %}
 
 {# Transcription event handler (feature-based) #}
 {% macro transcription_handler() %}
-    @transcript_processor.event_handler("on_transcript_update")
-    async def on_transcript_update(processor: TranscriptProcessor, frame: TranscriptionUpdateFrame):
-        for msg in frame.messages:
-            if isinstance(msg, TranscriptionMessage):
-                timestamp = f"[{msg.timestamp}] " if msg.timestamp else ""
-                line = f"{timestamp}{msg.role}: {msg.content}"
-                logger.info(f"Transcript: {line}")
+@transcript_processor.event_handler("on_transcript_update")
+async def on_transcript_update(processor: TranscriptProcessor, frame: TranscriptionUpdateFrame):
+    for msg in frame.messages:
+        if isinstance(msg, TranscriptionMessage):
+            timestamp = f"[{msg.timestamp}] " if msg.timestamp else ""
+            line = f"{timestamp}{msg.role}: {msg.content}"
+            logger.info(f"Transcript: {line}")
 {% endmacro %}
 
 {# Recording event handler (feature-based) #}
 {% macro recording_handler() %}
-    @audio_buffer.event_handler("on_audio_data")
-    async def on_audio_data(buffer, audio, sample_rate, num_channels):
-        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        filename = f"recordings/merged_{timestamp}.wav"
-        os.makedirs("recordings", exist_ok=True)
-        await save_audio_file(audio, filename, sample_rate, num_channels)
+@audio_buffer.event_handler("on_audio_data")
+async def on_audio_data(buffer, audio, sample_rate, num_channels):
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    filename = f"recordings/merged_{timestamp}.wav"
+    os.makedirs("recordings", exist_ok=True)
+    await save_audio_file(audio, filename, sample_rate, num_channels)
 {% endmacro %}
 

@@ -22,32 +22,32 @@ async def save_audio_file(audio: bytes, filename: str, sample_rate: int, num_cha
 
 {# Context and message setup #}
 {% macro setup_context() %}
-    messages = [
-        {
-            "role": "system",
-            "content": "You are a friendly AI assistant. Respond naturally and keep your answers conversational.",
-        },
-    ]
+messages = [
+    {
+        "role": "system",
+        "content": "You are a friendly AI assistant. Respond naturally and keep your answers conversational.",
+    },
+]
 
-    context = LLMContext(messages)
-    context_aggregator = LLMContextAggregatorPair(context)
+context = LLMContext(messages)
+context_aggregator = LLMContextAggregatorPair(context)
 {% endmacro %}
 
 {# Feature processors setup #}
 {% macro setup_feature_processors(recording, transcription, bot_type) %}
-    {% if recording %}
-    # Audio recording
-    audio_buffer = AudioBufferProcessor()
-    {% endif %}
+{% if recording %}
+# Audio recording
+audio_buffer = AudioBufferProcessor()
+{% endif %}
 
-    {% if transcription %}
-    # Transcription processor
-    transcript_processor = TranscriptProcessor()
-    {% endif %}
+{% if transcription %}
+# Transcription processor
+transcript_processor = TranscriptProcessor()
+{% endif %}
 
-    {% if bot_type == 'web' %}
-    rtvi = RTVIProcessor()
-    {% endif %}
+{% if bot_type == 'web' %}
+rtvi = RTVIProcessor()
+{% endif %}
 {% endmacro %}
 
 {# Twilio call info helper function #}
