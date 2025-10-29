@@ -35,6 +35,7 @@ class TestProjectConfig:
         assert config.llm_service is None
         assert config.tts_service is None
         assert config.realtime_service is None
+        assert config.video_service is None
         assert config.video_input is False
         assert config.video_output is False
         assert config.recording is False
@@ -77,6 +78,23 @@ class TestProjectConfig:
         assert config.generate_client is True
         assert config.client_framework == "react"
         assert config.client_server == "nextjs"
+
+    def test_project_config_with_video_service(self):
+        """Test that ProjectConfig can be created with a video service."""
+        config = ProjectConfig(
+            project_name="test-video-bot",
+            bot_type="web",
+            transports=["daily"],
+            mode="cascade",
+            stt_service="deepgram_stt",
+            llm_service="openai_llm",
+            tts_service="cartesia_tts",
+            video_service="tavus_video",
+            video_output=True,
+        )
+        assert config.video_service == "tavus_video"
+        assert config.video_output is True
+        assert config.bot_type == "web"  # Video services only for web bots
 
 
 class TestServiceDefinitionChoiceCreation:
@@ -130,6 +148,20 @@ class TestServiceDefinitionChoiceCreation:
         # Verify actual content
         assert any("OpenAI" in choice.title for choice in choices)
 
+    def test_video_service_choices(self):
+        """Test that video services can be converted to questionary Choices."""
+        choices = [
+            Choice(title=svc.label, value=svc.value)
+            for svc in ServiceRegistry.VIDEO_SERVICES
+        ]
+        assert len(choices) > 0
+        assert all(hasattr(choice, "title") for choice in choices)
+        assert all(hasattr(choice, "value") for choice in choices)
+        # Verify actual content
+        assert any("HeyGen" in choice.title for choice in choices)
+        assert any("Tavus" in choice.title for choice in choices)
+        assert any("Simli" in choice.title for choice in choices)
+
     def test_web_transport_choices(self):
         """Test that web transport options can be converted to questionary Choices."""
         transport_options = ServiceLoader.get_transport_options("web")
@@ -168,6 +200,7 @@ class TestServiceDefinitionChoiceCreation:
             + ServiceRegistry.LLM_SERVICES
             + ServiceRegistry.TTS_SERVICES
             + ServiceRegistry.REALTIME_SERVICES
+            + ServiceRegistry.VIDEO_SERVICES
             + ServiceRegistry.WEBRTC_TRANSPORTS
             + ServiceRegistry.TELEPHONY_TRANSPORTS
         )

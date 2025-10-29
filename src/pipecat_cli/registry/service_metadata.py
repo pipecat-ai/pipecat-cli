@@ -779,6 +779,38 @@ class ServiceRegistry:
         ),
     ]
 
+    # Video Services (Avatars)
+    VIDEO_SERVICES: list[ServiceDefinition] = [
+        ServiceDefinition(
+            value="heygen_video",
+            label="HeyGen",
+            package="pipecat-ai[heygen]",
+            class_name=["HeyGenVideoService"],
+            env_prefix="HEYGEN",
+            include_params=["api_key"],
+            manual_config=True,
+            additional_imports=[
+                "from pipecat.services.heygen.api import AvatarQuality, NewSessionRequest"
+            ],
+        ),
+        ServiceDefinition(
+            value="tavus_video",
+            label="Tavus",
+            package="pipecat-ai[tavus]",
+            class_name=["TavusVideoService"],
+            env_prefix="TAVUS",
+            include_params=["api_key", "replica_id"],
+        ),
+        ServiceDefinition(
+            value="simli_video",
+            label="Simli",
+            package="pipecat-ai[simli]",
+            class_name=["SimliVideoService"],
+            env_prefix="SIMLI",
+            include_params=["api_key", "face_id"],
+        ),
+    ]
+
 
 # Manual service configurations for services that require custom initialization
 # These services have complex initialization logic that cannot be auto-generated
@@ -860,6 +892,15 @@ MANUAL_SERVICE_CONFIGS = {
         '        region=os.getenv("AWS_REGION"),\n'
         '        session_token=os.getenv("AWS_SESSION_TOKEN"),\n'
         '        voice_id=os.getenv("AWS_VOICE_ID"),\n'
+        "    )"
+    ),
+    "heygen_video": (
+        "heyGen = HeyGenVideoService(\n"
+        '        api_key=os.getenv("HEYGEN_API_KEY"),\n'
+        "        session=session,\n"
+        "        session_request=NewSessionRequest(\n"
+        '            avatar_id="HEYGEN_AVATAR_ID", version="v2", quality=AvatarQuality.high\n'
+        "        ),\n"
         "    )"
     ),
 }

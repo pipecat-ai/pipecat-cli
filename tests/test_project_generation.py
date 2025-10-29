@@ -339,6 +339,54 @@ TEST_CONFIGS = [
         "deploy_to_cloud": True,
         "enable_krisp": True,
     },
+    # Video avatar services
+    {
+        "name": "daily-tavus-video",
+        "bot_type": "web",
+        "transports": ["daily"],
+        "mode": "cascade",
+        "stt_service": "deepgram_stt",
+        "llm_service": "openai_llm",
+        "tts_service": "cartesia_tts",
+        "video_service": "tavus_video",
+        "video_output": True,
+    },
+    {
+        "name": "smallwebrtc-heygen-video",
+        "bot_type": "web",
+        "transports": ["smallwebrtc"],
+        "mode": "cascade",
+        "stt_service": "assemblyai_stt",
+        "llm_service": "anthropic_llm",
+        "tts_service": "elevenlabs_tts",
+        "video_service": "heygen_video",
+        "video_output": True,
+    },
+    {
+        "name": "daily-simli-video",
+        "bot_type": "web",
+        "transports": ["daily"],
+        "mode": "cascade",
+        "stt_service": "deepgram_stt",
+        "llm_service": "openai_llm",
+        "tts_service": "cartesia_tts",
+        "video_service": "simli_video",
+        "video_output": True,
+        "smart_turn": True,
+    },
+    {
+        "name": "daily-tavus-video-cloud",
+        "bot_type": "web",
+        "transports": ["daily"],
+        "mode": "cascade",
+        "stt_service": "deepgram_stt",
+        "llm_service": "openai_llm",
+        "tts_service": "cartesia_tts",
+        "video_service": "tavus_video",
+        "video_output": True,
+        "deploy_to_cloud": True,
+        "enable_krisp": True,
+    },
 ]
 
 
@@ -355,6 +403,7 @@ def test_project_generation(config_data, temp_output_dir):
         llm_service=config_data.get("llm_service"),
         tts_service=config_data.get("tts_service"),
         realtime_service=config_data.get("realtime_service"),
+        video_service=config_data.get("video_service"),
         video_input=config_data.get("video_input", False),
         video_output=config_data.get("video_output", False),
         recording=config_data.get("recording", False),
@@ -457,6 +506,24 @@ def test_project_generation(config_data, temp_output_dir):
         assert "from pipecat_whisker import WhiskerObserver" in bot_content
         assert "from pipecat_tail.observer import TailObserver" in bot_content
 
+    # Verify video service dependencies and imports
+    if config.video_service:
+        # Video services should be in bot.py
+        if config.video_service == "tavus_video":
+            assert "TavusVideoService" in bot_content, "TavusVideoService should be imported"
+            assert "tavus" in pyproject_content, "tavus extra should be in dependencies"
+        elif config.video_service == "heygen_video":
+            assert "HeyGenVideoService" in bot_content, "HeyGenVideoService should be imported"
+            assert "heygen" in pyproject_content, "heygen extra should be in dependencies"
+            assert "NewSessionRequest" in bot_content, "NewSessionRequest should be imported for HeyGen"
+            assert "AvatarQuality" in bot_content, "AvatarQuality should be imported for HeyGen"
+        elif config.video_service == "simli_video":
+            assert "SimliVideoService" in bot_content, "SimliVideoService should be imported"
+            assert "simli" in pyproject_content, "simli extra should be in dependencies"
+        
+        # Video service should be initialized in bot.py
+        assert "video" in bot_content.lower(), "video service variable should be present"
+
 
 @pytest.mark.slow
 @pytest.mark.parametrize(
@@ -481,6 +548,7 @@ def test_project_installable(config_data, temp_output_dir):
         llm_service=config_data.get("llm_service"),
         tts_service=config_data.get("tts_service"),
         realtime_service=config_data.get("realtime_service"),
+        video_service=config_data.get("video_service"),
         video_input=config_data.get("video_input", False),
         video_output=config_data.get("video_output", False),
         recording=config_data.get("recording", False),

@@ -41,6 +41,7 @@ class TestServiceRegistryIntegrity:
         all_services.extend(ServiceRegistry.LLM_SERVICES)
         all_services.extend(ServiceRegistry.TTS_SERVICES)
         all_services.extend(ServiceRegistry.REALTIME_SERVICES)
+        all_services.extend(ServiceRegistry.VIDEO_SERVICES)
 
         # Verify all services have required fields
         for service in all_services:
@@ -57,6 +58,7 @@ class TestServiceRegistryIntegrity:
         all_services.extend(ServiceRegistry.LLM_SERVICES)
         all_services.extend(ServiceRegistry.TTS_SERVICES)
         all_services.extend(ServiceRegistry.REALTIME_SERVICES)
+        all_services.extend(ServiceRegistry.VIDEO_SERVICES)
 
         values = [s.value for s in all_services]
         duplicates = [v for v in values if values.count(v) > 1]
@@ -73,6 +75,7 @@ class TestServiceRegistryIntegrity:
         all_services.extend(ServiceRegistry.LLM_SERVICES)
         all_services.extend(ServiceRegistry.TTS_SERVICES)
         all_services.extend(ServiceRegistry.REALTIME_SERVICES)
+        all_services.extend(ServiceRegistry.VIDEO_SERVICES)
 
         for service in all_services:
             package = service.package
@@ -119,7 +122,8 @@ class TestServiceLoader:
         ServiceRegistry.STT_SERVICES
         + ServiceRegistry.LLM_SERVICES
         + ServiceRegistry.TTS_SERVICES
-        + ServiceRegistry.REALTIME_SERVICES,
+        + ServiceRegistry.REALTIME_SERVICES
+        + ServiceRegistry.VIDEO_SERVICES,
         ids=lambda s: s.value,
     )
     def test_every_service_has_config(self, service):
@@ -139,7 +143,8 @@ class TestServiceLoader:
         ServiceRegistry.STT_SERVICES
         + ServiceRegistry.LLM_SERVICES
         + ServiceRegistry.TTS_SERVICES
-        + ServiceRegistry.REALTIME_SERVICES,
+        + ServiceRegistry.REALTIME_SERVICES
+        + ServiceRegistry.VIDEO_SERVICES,
         ids=lambda s: s.value,
     )
     def test_every_service_has_imports(self, service):
@@ -180,7 +185,8 @@ class TestServiceLoader:
         ServiceRegistry.STT_SERVICES
         + ServiceRegistry.LLM_SERVICES
         + ServiceRegistry.TTS_SERVICES
-        + ServiceRegistry.REALTIME_SERVICES,
+        + ServiceRegistry.REALTIME_SERVICES
+        + ServiceRegistry.VIDEO_SERVICES,
         ids=lambda s: s.value,
     )
     def test_every_service_package_is_extractable(self, service):
@@ -240,6 +246,29 @@ class TestServiceLoader:
         assert "daily" in extras
         assert "openai" in extras
 
+    def test_extract_extras_with_video_service(self):
+        """Test extracting extras when a video service is included."""
+        services = {
+            "transports": ["daily"],
+            "stt": "deepgram_stt",
+            "llm": "openai_llm",
+            "tts": "cartesia_tts",
+            "video": "tavus_video",
+        }
+
+        extras = ServiceLoader.extract_extras_for_services(services)
+
+        # Should include video service extra
+        assert "tavus" in extras
+        
+        # Should still include other service extras
+        assert "runner" in extras
+        assert "silero" in extras
+        assert "daily" in extras
+        assert "deepgram" in extras
+        assert "openai" in extras
+        assert "cartesia" in extras
+
     def test_validate_service_exists(self):
         """Test service existence validation."""
         assert ServiceLoader.validate_service_exists("deepgram_stt") is True
@@ -274,3 +303,37 @@ class TestServiceLoader:
         assert "TailObserver" in import_str
         assert "pipecat_whisker" in import_str
         assert "pipecat_tail" in import_str
+
+    def test_get_imports_with_video_service(self):
+        """Test that video service imports are included when a video service is selected."""
+        services = {
+            "transports": ["daily"],
+            "stt": "deepgram_stt",
+            "llm": "openai_llm",
+            "tts": "cartesia_tts",
+            "video": "tavus_video",
+        }
+        features = {
+            "observability": False,
+        }
+
+        imports = ServiceLoader.get_imports_for_services(services, features, "web")
+
+        # Check that video service imports are included
+        import_str = "\n".join(imports)
+        assert "TavusVideoService" in import_str
+        assert "pipecat.services.tavus" in import_str
+
+    def test_video_services_have_correct_metadata(self):
+        """Test that all video services have the expected metadata."""
+        for video_service in ServiceRegistry.VIDEO_SERVICES:
+            # All video services should have env_prefix
+            assert video_service.env_prefix is not None, f"{video_service.value} missing env_prefix"
+            
+            # All video services should have class_name
+            assert video_service.class_name is not None, f"{video_service.value} missing class_name"
+            assert len(video_service.class_name) > 0, f"{video_service.value} has empty class_name"
+            
+            # All video services should have include_params
+            assert video_service.include_params is not None, f"{video_service.value} missing include_params"
+            assert "api_key" in video_service.include_params, f"{video_service.value} should include api_key param"

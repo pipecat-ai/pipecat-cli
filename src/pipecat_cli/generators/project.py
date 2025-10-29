@@ -173,6 +173,35 @@ class ProjectGenerator:
         utils_content = utils_template.render()
         (project_path / "server_utils.py").write_text(utils_content)
 
+    def _needs_aiohttp_session(self) -> bool:
+        """Check if any selected service requires an aiohttp session."""
+        # Collect all selected services
+        service_values = []
+
+        if self.config.mode == "cascade":
+            if self.config.stt_service:
+                service_values.append(self.config.stt_service)
+            if self.config.llm_service:
+                service_values.append(self.config.llm_service)
+            if self.config.tts_service:
+                service_values.append(self.config.tts_service)
+        else:
+            if self.config.realtime_service:
+                service_values.append(self.config.realtime_service)
+
+        if self.config.video_service:
+            service_values.append(self.config.video_service)
+
+        # Check if any service config contains "session=" parameter
+        for service_value in service_values:
+            if service_value in ServiceRegistry.SERVICE_CONFIGS:
+                config_str = ServiceRegistry.SERVICE_CONFIGS[service_value]
+                # Check if the config contains session= or aiohttp_session=
+                if "session=" in config_str or "aiohttp_session=" in config_str:
+                    return True
+
+        return False
+
     def _generate_bot_file(self, project_path: Path) -> None:
         """Generate the main bot.py file."""
         # Select template based on mode
@@ -197,6 +226,10 @@ class ProjectGenerator:
         else:
             services["realtime"] = self.config.realtime_service
 
+        # Add video service if present
+        if self.config.video_service:
+            services["video"] = self.config.video_service
+
         features = {
             "recording": self.config.recording,
             "transcription": self.config.transcription,
@@ -206,6 +239,11 @@ class ProjectGenerator:
 
         # Get imports
         imports = ServiceLoader.get_imports_for_services(services, features, self.config.bot_type)
+
+        # Check if we need aiohttp session and add import if needed
+        needs_session = self._needs_aiohttp_session()
+        if needs_session and "import aiohttp" not in imports:
+            imports.insert(0, "import aiohttp")
 
         context = {
             "project_name": self.config.project_name,
@@ -217,6 +255,7 @@ class ProjectGenerator:
             "llm_service": self.config.llm_service,
             "tts_service": self.config.tts_service,
             "realtime_service": self.config.realtime_service,
+            "video_service": self.config.video_service,
             "video_input": self.config.video_input,
             "video_output": self.config.video_output,
             "recording": self.config.recording,
@@ -227,6 +266,7 @@ class ProjectGenerator:
             "service_configs": ServiceRegistry.SERVICE_CONFIGS,
             "daily_pstn_mode": self.config.daily_pstn_mode,
             "twilio_daily_sip_mode": self.config.twilio_daily_sip_mode,
+            "needs_session": needs_session,
         }
 
         # Render and write
@@ -286,6 +326,7 @@ class ProjectGenerator:
             "llm_service": self.config.llm_service,
             "tts_service": self.config.tts_service,
             "realtime_service": self.config.realtime_service,
+            "video_service": self.config.video_service,
             "daily_pstn_mode": self.config.daily_pstn_mode,
             "twilio_daily_sip_mode": self.config.twilio_daily_sip_mode,
         }

@@ -139,12 +139,13 @@ class ServiceLoader:
                     if extra:
                         extras.add(extra)
 
-        # Process service types (stt, llm, tts, realtime)
+        # Process service types (stt, llm, tts, realtime, video)
         service_type_map = {
             "stt": ServiceRegistry.STT_SERVICES,
             "llm": ServiceRegistry.LLM_SERVICES,
             "tts": ServiceRegistry.TTS_SERVICES,
             "realtime": ServiceRegistry.REALTIME_SERVICES,
+            "video": ServiceRegistry.VIDEO_SERVICES,
         }
 
         for service_type, service_list in service_type_map.items():
@@ -237,7 +238,7 @@ class ServiceLoader:
                     imports.update(ServiceRegistry.IMPORTS[transport])
 
         # Handle service imports
-        for service_type in ["stt", "llm", "tts", "realtime"]:
+        for service_type in ["stt", "llm", "tts", "realtime", "video"]:
             if service_type in services:
                 service_value = services[service_type]
                 if service_value in ServiceRegistry.IMPORTS:
@@ -271,6 +272,7 @@ class ServiceLoader:
         all_services.extend(ServiceRegistry.LLM_SERVICES)
         all_services.extend(ServiceRegistry.TTS_SERVICES)
         all_services.extend(ServiceRegistry.REALTIME_SERVICES)
+        all_services.extend(ServiceRegistry.VIDEO_SERVICES)
 
         for service in all_services:
             service_value = service.value

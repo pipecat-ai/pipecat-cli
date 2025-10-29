@@ -36,6 +36,8 @@ PARAM_TO_ENV_SUFFIX = {
     "region_name": "REGION",
     "voice_id": "VOICE_ID",
     "voice": "VOICE_ID",
+    "replica_id": "REPLICA_ID",
+    "face_id": "FACE_ID",
     "model": "MODEL",
     "base_url": "BASE_URL",
     "endpoint": "ENDPOINT",
@@ -56,6 +58,7 @@ PARAM_TO_ENV_SUFFIX = {
 # Parameters that should be hardcoded to specific values (not env vars)
 HARDCODED_PARAMS = {
     "aiohttp_session": "session",
+    "session": "session",
 }
 
 
@@ -68,6 +71,7 @@ def get_service_class(service_value: str):
             + ServiceRegistry.LLM_SERVICES
             + ServiceRegistry.TTS_SERVICES
             + ServiceRegistry.REALTIME_SERVICES
+            + ServiceRegistry.VIDEO_SERVICES
         )
 
         service_def = next((s for s in all_services if s.value == service_value), None)
@@ -108,6 +112,7 @@ def get_service_metadata(service_value: str) -> dict | None:
         + ServiceRegistry.LLM_SERVICES
         + ServiceRegistry.TTS_SERVICES
         + ServiceRegistry.REALTIME_SERVICES
+        + ServiceRegistry.VIDEO_SERVICES
     )
 
     service_def = next((s for s in all_services if s.value == service_value), None)
@@ -276,6 +281,7 @@ def generate_all_configs() -> dict[str, str]:
         ("LLM", ServiceRegistry.LLM_SERVICES),
         ("TTS", ServiceRegistry.TTS_SERVICES),
         ("Realtime", ServiceRegistry.REALTIME_SERVICES),
+        ("Video", ServiceRegistry.VIDEO_SERVICES),
     ]
 
     for service_type, services in all_services:
@@ -311,6 +317,7 @@ def format_config_dict(configs: dict[str, str]) -> str:
         ("# LLM Services", ServiceRegistry.LLM_SERVICES),
         ("# TTS Services", ServiceRegistry.TTS_SERVICES),
         ("# Realtime Services", ServiceRegistry.REALTIME_SERVICES),
+        ("# Video Services", ServiceRegistry.VIDEO_SERVICES),
     ]
 
     for comment, services in categories:

@@ -371,4 +371,22 @@ SERVICE_CONFIGS = {
         "        start_audio_paused=False,\n"
         "    )\n"
     ),
+    # Video Services
+    "heygen_video": (
+        "heyGen = HeyGenVideoService(\n"
+        '        api_key=os.getenv("HEYGEN_API_KEY"),\n'
+        "        session=session,\n"
+        "        session_request=NewSessionRequest(\n"
+        '            avatar_id="HEYGEN_AVATAR_ID", version="v2", quality=AvatarQuality.high\n'
+        "        ),\n"
+        "    )\n"
+    ),
+    "tavus_video": (
+        "TavusVideoService(\n"
+        '        api_key=os.getenv("TAVUS_API_KEY"),\n'
+        '        replica_id=os.getenv("TAVUS_REPLICA_ID"),\n'
+        "        session=session\n"
+        "    )\n"
+    ),
+    "simli_video": 'SimliVideoService(simli_config=os.getenv("SIMLI_SIMLI_CONFIG"))',
 }
