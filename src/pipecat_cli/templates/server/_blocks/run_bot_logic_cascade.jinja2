@@ -64,7 +64,7 @@
 {% elif 'twilio_daily_sip_dialout' in transports %}
 {{ handlers.twilio_daily_sip_dialout_handlers(recording) | indent(indent_level, first=True) }}
 {% else %}
-{{ handlers.standard_handlers(recording) | indent(indent_level, first=True) }}
+{{ handlers.standard_handlers(recording, bot_type) | indent(indent_level, first=True) }}
 {% endif %}
 
 {# Feature-specific event handlers #}
