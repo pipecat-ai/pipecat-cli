@@ -82,6 +82,7 @@ IMPORTS = {
     "nvidia_riva_stt": ["from pipecat.services.riva.stt import RivaSTTService"],
     "openai_stt": ["from pipecat.services.openai.stt import OpenAISTTService"],
     "sambanova_stt": ["from pipecat.services.sambanova.stt import SambaNovaSTTService"],
+    "sarvam_stt": ["from pipecat.services.sarvam.stt import SarvamSTTService"],
     "soniox_stt": ["from pipecat.services.soniox.stt import SonioxSTTService"],
     "speechmatics_stt": ["from pipecat.services.speechmatics.stt import SpeechmaticsSTTService"],
     "ultravox_stt": ["from pipecat.services.ultravox.stt import UltravoxSTTService"],

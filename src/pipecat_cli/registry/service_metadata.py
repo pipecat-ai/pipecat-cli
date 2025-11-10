@@ -354,6 +354,14 @@ class ServiceRegistry:
             include_params=["model", "api_key"],
         ),
         ServiceDefinition(
+            value="sarvam_stt",
+            label="Sarvam",
+            package="pipecat-ai[sarvam]",
+            class_name=["SarvamSTTService"],
+            env_prefix="SARVAM",
+            include_params=["model", "api_key"],
+        ),
+        ServiceDefinition(
             value="soniox_stt",
             label="Soniox",
             package="pipecat-ai[soniox]",
