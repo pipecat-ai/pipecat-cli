@@ -5,6 +5,16 @@ All notable changes to **Pipecat** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- `SarvamSTTService` included in services list.
+
+### Changed
+
+- Updated imports and service declartions for `pipecat-ai` 0.0.93 release.
+
 ## [0.1.7] - 2025-11-07
 
 ### Fixed

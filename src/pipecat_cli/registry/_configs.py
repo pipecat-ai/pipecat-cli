@@ -57,6 +57,12 @@ SERVICE_CONFIGS = {
         '        api_key=os.getenv("SAMBANOVA_API_KEY")\n'
         "    )\n"
     ),
+    "sarvam_stt": (
+        "SarvamSTTService(\n"
+        '        api_key=os.getenv("SARVAM_API_KEY"),\n'
+        '        model=os.getenv("SARVAM_MODEL")\n'
+        "    )\n"
+    ),
     "soniox_stt": 'SonioxSTTService(api_key=os.getenv("SONIOX_API_KEY"))',
     "speechmatics_stt": 'SpeechmaticsSTTService(api_key=os.getenv("SPEECHMATICS_API_KEY"))',
     "ultravox_stt": (
@@ -304,8 +310,7 @@ SERVICE_CONFIGS = {
         "SarvamTTSService(\n"
         '        api_key=os.getenv("SARVAM_API_KEY"),\n'
         '        model=os.getenv("SARVAM_MODEL"),\n'
-        '        voice_id=os.getenv("SARVAM_VOICE_ID"),\n'
-        "        aiohttp_session=session\n"
+        '        voice_id=os.getenv("SARVAM_VOICE_ID")\n'
         "    )\n"
     ),
     "xtts_tts": (
@@ -388,5 +393,10 @@ SERVICE_CONFIGS = {
         "        session=session\n"
         "    )\n"
     ),
-    "simli_video": 'SimliVideoService(simli_config=os.getenv("SIMLI_SIMLI_CONFIG"))',
+    "simli_video": (
+        "SimliVideoService(\n"
+        '        api_key=os.getenv("SIMLI_API_KEY"),\n'
+        '        face_id=os.getenv("SIMLI_FACE_ID")\n'
+        "    )\n"
+    ),
 }
