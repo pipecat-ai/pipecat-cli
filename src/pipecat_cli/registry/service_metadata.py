@@ -137,6 +137,9 @@ class ServiceRegistry:
                 "SmallWebRTCConnection",
                 "SmallWebRTCRunnerArguments",
             ],
+            additional_imports=[
+                "from pipecatcloud import PipecatSessionArguments, SmallWebRTCSessionManager",
+            ],
         ),
     ]
 
