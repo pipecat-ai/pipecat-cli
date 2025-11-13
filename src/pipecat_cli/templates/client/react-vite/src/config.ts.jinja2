@@ -4,6 +4,7 @@
  */
 
 import type { DailyConnectionEndpoint } from '@pipecat-ai/daily-transport';
+import type { APIRequest } from '@pipecat-ai/client-js';
 
 export type TransportType = 'daily' | 'smallwebrtc';
 
@@ -39,7 +40,24 @@ if (botStartPublicApiKey) {
   });
 }
 
-export const TRANSPORT_CONFIG: Record<TransportType, any> = {
+const smallWebRTCConfig: APIRequest = {
+  endpoint: botStartUrl,
+  requestData: {
+    createDailyRoom: false,
+    enableDefaultIceServers: true,
+  },
+};
+
+if (botStartPublicApiKey) {
+  smallWebRTCConfig.headers = new Headers({
+    Authorization: `Bearer ${botStartPublicApiKey}`,
+  });
+}
+
+export const TRANSPORT_CONFIG: Record<
+  TransportType,
+  DailyConnectionEndpoint | APIRequest
+> = {
   daily: dailyConfig,
-  smallwebrtc: { webrtcRequestParams: { endpoint: 'http://localhost:7860/api/offer' } },
+  smallwebrtc: smallWebRTCConfig,
 };

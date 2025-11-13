@@ -13,6 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- Improved implementation of SmallWebRTC to match the latest recommended
+  patterns.
+
 - Updated imports and service declartions for `pipecat-ai` 0.0.93 release.
 
 ## [0.1.7] - 2025-11-07
