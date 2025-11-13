@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-export async function POST() {
+export async function POST(request: Request) {
   const botStartUrl =
     process.env.BOT_START_URL || 'http://localhost:7860/start';
 
@@ -11,6 +11,9 @@ export async function POST() {
   }
 
   try {
+    // Parse the request body from the client
+    const requestData = await request.json();
+
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };
@@ -19,13 +22,11 @@ export async function POST() {
       headers.Authorization = `Bearer ${process.env.BOT_START_PUBLIC_API_KEY}`;
     }
 
+    // Pass through the request data from the client
     const response = await fetch(botStartUrl, {
       method: 'POST',
       headers,
-      body: JSON.stringify({
-        createDailyRoom: true,
-        dailyRoomProperties: { start_video_off: true },
-      }),
+      body: JSON.stringify(requestData),
     });
 
     if (!response.ok) {

@@ -22,6 +22,7 @@ IMPORTS = {
         "from pipecat.transports.base_transport import TransportParams",
         "from pipecat.transports.smallwebrtc.connection import SmallWebRTCConnection",
         "from pipecat.transports.smallwebrtc.transport import SmallWebRTCTransport",
+        "from pipecatcloud import PipecatSessionArguments, SmallWebRTCSessionManager",
     ],
     # Transports - Telephony
     "twilio": [
