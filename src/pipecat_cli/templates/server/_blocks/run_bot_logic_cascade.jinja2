@@ -14,8 +14,8 @@
 {{ ("llm = " ~ service_configs[llm_service]) | indent(indent_level, first=True) }}
 {% endif %}
 
-{{ "# Video service (avatar)" | indent(indent_level, first=True) }}
 {% if video_service and video_service in service_configs %}
+{{ "# Video service (avatar)" | indent(indent_level, first=True) }}
 {{ ("video = " ~ service_configs[video_service]) | indent(indent_level, first=True) }}
 {% endif %}
 
