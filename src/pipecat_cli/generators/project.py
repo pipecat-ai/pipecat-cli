@@ -616,6 +616,12 @@ class ProjectGenerator:
                 # Calculate relative path
                 rel_path = item.relative_to(source_dir)
 
+                # Skip SmallWebRTC-specific files if SmallWebRTC is not in transports
+                if "smallwebrtc" not in self.config.transports:
+                    # Skip the sessions API route for Next.js
+                    if "api/sessions" in str(rel_path):
+                        continue
+
                 # Determine destination path
                 if item.suffix == ".jinja2":
                     # Remove .jinja2 extension for rendered files
