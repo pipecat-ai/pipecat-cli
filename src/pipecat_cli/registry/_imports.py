@@ -76,6 +76,9 @@ IMPORTS = {
     "deepgram_stt": ["from pipecat.services.deepgram.stt import DeepgramSTTService"],
     "deepgram_flux_stt": ["from pipecat.services.deepgram.flux.stt import DeepgramFluxSTTService"],
     "elevenlabs_stt": ["from pipecat.services.elevenlabs.stt import ElevenLabsSTTService"],
+    "elevenlabs_realtime_stt": [
+        "from pipecat.services.elevenlabs.stt import ElevenLabsRealtimeSTTService"
+    ],
     "fal_stt": ["from pipecat.services.fal.stt import FalSTTService"],
     "gladia_stt": ["from pipecat.services.gladia.stt import GladiaSTTService"],
     "google_stt": ["from pipecat.services.google.stt import GoogleSTTService"],
@@ -117,6 +120,7 @@ IMPORTS = {
     "deepgram_tts": ["from pipecat.services.deepgram.tts import DeepgramTTSService"],
     "elevenlabs_tts": ["from pipecat.services.elevenlabs.tts import ElevenLabsTTSService"],
     "fish_tts": ["from pipecat.services.fish.tts import FishAudioTTSService"],
+    "gemini_tts": ["from pipecat.services.google.tts import GeminiTTSService"],
     "google_tts": ["from pipecat.services.google.tts import GoogleTTSService"],
     "groq_tts": ["from pipecat.services.groq.tts import GroqTTSService"],
     "hume_tts": ["from pipecat.services.hume.tts import HumeTTSService"],

@@ -37,12 +37,12 @@ wheels = [
 
 [[package]]
 name = "aic-sdk"
-version = "1.0.2"
+version = "1.1.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "numpy" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/51/90/b02e853e863c303f8456c689b42ac24ad403b781adc9642d0a91ed4bed7e/aic_sdk-1.0.2.tar.gz", hash = "sha256:239097dd3aaa8a8a0fd7542b75d2510cb34144caec796370639b7c636acbc56e", size = 32059, upload-time = "2025-08-24T09:20:03.9Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/99/83/bf38b95d98c67b8ebc574fb4a4f23c07a3740b51992d7522976173d30b98/aic_sdk-1.1.0.tar.gz", hash = "sha256:04e08df695581c8cb4db8acca20e73815e9f449e7bd08e0162fd55518c727963", size = 34954, upload-time = "2025-11-11T20:45:24.25Z" }
 
 [[package]]
 name = "aioboto3"
@@ -2793,7 +2793,7 @@ wheels = [
 
 [[package]]
 name = "pipecat-ai"
-version = "0.0.93"
+version = "0.0.95"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiofiles" },
@@ -2814,9 +2814,9 @@ dependencies = [
     { name = "soxr" },
     { name = "wait-for2", marker = "python_full_version < '3.12'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/a4/55/422451c1481f2e360d0f1420d7cca5eda544037e0f59fc8c1457617316bc/pipecat_ai-0.0.93.tar.gz", hash = "sha256:85cc46921189d8a9f46ab7a990fca47988e556f93a653ed2cdb6c3697a3084c8", size = 10722760, upload-time = "2025-11-07T21:26:51.658Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/30/b4/096f79474d4a2f9506027c0b55ea3f3a35af9087bafc9204db346c35a138/pipecat_ai-0.0.95.tar.gz", hash = "sha256:2bedbd52fa14f16980af8d919775d94f78c3ce23d8369f097f5df2f725c5c5f2", size = 10732782, upload-time = "2025-11-19T05:24:40.002Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/9b/cb/de066ecc33924d400e5354e10585828308448bc9550ac78dabc5d6d4985f/pipecat_ai-0.0.93-py3-none-any.whl", hash = "sha256:6de1fd0dd42ee0de28c07513df286ee9ccc57e8f2cefb10117c5ca573a052897", size = 10405327, upload-time = "2025-11-07T21:26:49.006Z" },
+    { url = "https://files.pythonhosted.org/packages/5a/e0/3c6f2da402efe10e31ef946f839a1331176232e2dfb71eb8433ac9b4ce3a/pipecat_ai-0.0.95-py3-none-any.whl", hash = "sha256:a741f25e9bdc96bccf3b723da4ba05e5668f98289400c87e14261b0787722124", size = 10415565, upload-time = "2025-11-19T05:24:37.198Z" },
 ]
 
 [package.optional-dependencies]
@@ -2978,7 +2978,7 @@ provides-extras = ["tail"]
 [package.metadata.requires-dev]
 dev = [
     { name = "build", specifier = "~=1.2.2" },
-    { name = "pipecat-ai", extras = ["aic", "anthropic", "assemblyai", "asyncai", "aws", "aws-nova-sonic", "azure", "cartesia", "cerebras", "daily", "deepseek", "deepgram", "elevenlabs", "fal", "fireworks", "fish", "gladia", "google", "grok", "groq", "heygen", "hume", "inworld", "lmnt", "mistral", "moondream", "neuphonic", "nim", "openai", "openpipe", "openrouter", "perplexity", "playht", "qwen", "rime", "riva", "sambanova", "sarvam", "silero", "simli", "soniox", "speechmatics", "tavus", "together", "webrtc", "websocket"] },
+    { name = "pipecat-ai", extras = ["aic", "anthropic", "assemblyai", "asyncai", "aws", "aws-nova-sonic", "azure", "cartesia", "cerebras", "daily", "deepseek", "deepgram", "elevenlabs", "fal", "fireworks", "fish", "gladia", "google", "grok", "groq", "heygen", "hume", "inworld", "lmnt", "mistral", "moondream", "neuphonic", "nim", "openai", "openpipe", "openrouter", "perplexity", "playht", "qwen", "rime", "riva", "sambanova", "sarvam", "silero", "simli", "soniox", "speechmatics", "tavus", "together", "webrtc", "websocket"], specifier = "==0.0.95" },
     { name = "pre-commit", specifier = "~=4.2.0" },
     { name = "pytest", specifier = "~=8.4.1" },
     { name = "pytest-cov", specifier = "~=7.0.0" },
@@ -4074,18 +4074,19 @@ wheels = [
 
 [[package]]
 name = "simli-ai"
-version = "0.1.25"
+version = "1.0.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiortc" },
     { name = "av" },
     { name = "httpx" },
+    { name = "livekit" },
     { name = "numpy" },
     { name = "websockets" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/64/6a/b28f90baf76f6a60865985f6233ff44abc72d45b66b76658bff3961e20a7/simli_ai-0.1.25.tar.gz", hash = "sha256:7a00b3426dc26a6a421641072c3e49014b7950c621cf4544152f35c58d13fcff", size = 13182, upload-time = "2025-11-06T16:27:08.862Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/81/03/b0b3e12c68fd3f9c57f6afeee67841349e4866b88760f413357af3043ae4/simli_ai-1.0.3.tar.gz", hash = "sha256:e96b0621a1dbd9582b2ae3d51eefd4995983b49c1f1061eb9239707b15a1ee27", size = 13350, upload-time = "2025-11-13T12:22:32.514Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ac/57/ae1032fd88214ea4ee6d3028c817c12a999eb90a67766bbab31e9819385a/simli_ai-0.1.25-py3-none-any.whl", hash = "sha256:7d01f65321dc9052f25e15d0463af6a20a86c6d37d9a7b3a2c4b01cbec0a54ed", size = 13651, upload-time = "2025-11-06T16:27:07.765Z" },
+    { url = "https://files.pythonhosted.org/packages/5e/d1/dc382ba529de0d2d51f35e9bfd20b41d8f5c96404a3aa24bae97a5a5e51f/simli_ai-1.0.3-py3-none-any.whl", hash = "sha256:ffafa7540aa28833e207be8f3b199367c7f500dac1a8ba0108395bfb7d8362bc", size = 13863, upload-time = "2025-11-13T12:22:31.218Z" },
 ]
 
 [[package]]
