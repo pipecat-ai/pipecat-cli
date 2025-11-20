@@ -35,6 +35,7 @@ SERVICE_CONFIGS = {
         "        aiohttp_session=session\n"
         "    )\n"
     ),
+    "elevenlabs_realtime_stt": 'ElevenLabsRealtimeSTTService(api_key=os.getenv("ELEVENLABS_API_KEY"))',
     "fal_stt": 'FalSTTService(api_key=os.getenv("FAL_API_KEY"))',
     "gladia_stt": (
         "GladiaSTTService(\n"
@@ -235,6 +236,12 @@ SERVICE_CONFIGS = {
         "FishAudioTTSService(\n"
         '        api_key=os.getenv("FISH_API_KEY"),\n'
         '        model=os.getenv("FISH_MODEL")\n'
+        "    )\n"
+    ),
+    "gemini_tts": (
+        "GeminiTTSService(\n"
+        '        credentials=os.getenv("GOOGLE_APPLICATION_CREDENTIALS"),\n'
+        '        voice_id=os.getenv("GOOGLE_VOICE_ID")\n'
         "    )\n"
     ),
     "google_tts": (

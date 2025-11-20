@@ -301,6 +301,14 @@ class ServiceRegistry:
             include_params=["api_key"],
         ),
         ServiceDefinition(
+            value="elevenlabs_realtime_stt",
+            label="ElevenLabs Realtime",
+            package="pipecat-ai[elevenlabs]",
+            class_name=["ElevenLabsRealtimeSTTService"],
+            env_prefix="ELEVENLABS",
+            include_params=["api_key"],
+        ),
+        ServiceDefinition(
             value="fal_stt",
             label="Fal (Wizper)",
             package="pipecat-ai[fal]",
@@ -622,6 +630,14 @@ class ServiceRegistry:
             class_name=["FishAudioTTSService"],
             env_prefix="FISH",
             include_params=["api_key", "model"],
+        ),
+        ServiceDefinition(
+            value="gemini_tts",
+            label="Gemini TTS",
+            package="pipecat-ai[google]",
+            class_name=["GeminiTTSService"],
+            env_prefix="GOOGLE",
+            include_params=["voice_id", "credentials"],
         ),
         ServiceDefinition(
             value="google_tts",
