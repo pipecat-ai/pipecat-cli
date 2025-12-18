@@ -13,7 +13,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Updated support for `pipecat-ai` 0.0.95.
+- Updated `SmallWebRTCTransport` to be compatible with the latest Pipecat Cloud
+  best practices.
+
+- Updated support for `pipecat-ai` 0.0.98.
 
 ## [0.1.9] - 2025-11-20
 

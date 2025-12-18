@@ -26,6 +26,7 @@ const dailyConfig = {
   requestData: {
     createDailyRoom: true,
     dailyRoomProperties: { start_video_off: true },
+    transport: "daily",
   },
 };
 
@@ -40,6 +41,7 @@ const smallWebRTCConfig = {
   requestData: {
     createDailyRoom: false,
     enableDefaultIceServers: true,
+    transport: "webrtc",
   },
 };
 
