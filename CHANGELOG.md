@@ -9,14 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Added support for `ElevenLabsRealtimeSTTService` and `GeminiTTSService`.
+- Added support for:
+  - `ElevenLabsRealtimeSTTService`
+  - `GeminiTTSService`
+  - `GradiumSTTService`
+  - `GradiumTTSService`
+  - `UltravoxRealtimeLLMService`
 
 ### Changed
+
+- Renamed NVIDIA services to match the latest Pipecat naming.
 
 - Updated `SmallWebRTCTransport` to be compatible with the latest Pipecat Cloud
   best practices.
 
-- Updated support for `pipecat-ai` 0.0.98.
+- Updated support for `pipecat-ai` 0.0.98, and the latest Pipecat client SDKs.
 
 ## [0.1.9] - 2025-11-20
 

@@ -330,6 +330,14 @@ class ServiceRegistry:
             include_params=["credentials", "location"],
         ),
         ServiceDefinition(
+            value="gradium_stt",
+            label="Gradium",
+            package="pipecat-ai[gradium]",
+            class_name=["GradiumSTTService"],
+            env_prefix="GRADIUM",
+            include_params=["api_key"],
+        ),
+        ServiceDefinition(
             value="groq_stt",
             label="Groq (Whisper)",
             package="pipecat-ai[groq]",
@@ -338,10 +346,10 @@ class ServiceRegistry:
             include_params=["api_key"],
         ),
         ServiceDefinition(
-            value="nvidia_riva_stt",
-            label="NVIDIA Riva",
-            package="pipecat-ai[riva]",
-            class_name=["RivaSTTService"],
+            value="nvidia_stt",
+            label="NVIDIA",
+            package="pipecat-ai[nvidia]",
+            class_name=["NvidiaSTTService"],
             env_prefix="NVIDIA",
             include_params=["api_key"],
         ),
@@ -384,15 +392,6 @@ class ServiceRegistry:
             class_name=["SpeechmaticsSTTService"],
             env_prefix="SPEECHMATICS",
             include_params=["api_key"],
-        ),
-        ServiceDefinition(
-            value="ultravox_stt",
-            label="Ultravox",
-            package="pipecat-ai[ultravox]",
-            class_name=["UltravoxSTTService"],
-            env_prefix="ULTRAVOX",
-            include_params=["model_name", "hf_token"],
-            manual_config=True,
         ),
         ServiceDefinition(
             value="whisper_stt",
@@ -496,10 +495,10 @@ class ServiceRegistry:
             include_params=["api_key", "model"],
         ),
         ServiceDefinition(
-            value="nvidia_nim_llm",
-            label="NVIDIA NIM",
-            package="pipecat-ai[nim]",
-            class_name=["NimLLMService"],
+            value="nvidia_llm",
+            label="NVIDIA",
+            package="pipecat-ai[nvidia]",
+            class_name=["NvidiaLLMService"],
             env_prefix="NVIDIA",
             include_params=["api_key", "model"],
         ),
@@ -645,6 +644,14 @@ class ServiceRegistry:
             include_params=["voice_id", "credentials"],
         ),
         ServiceDefinition(
+            value="gradium_tts",
+            label="Gradium TTS",
+            package="pipecat-ai[gradium]",
+            class_name=["GradiumTTSService"],
+            env_prefix="GRADIUM",
+            include_params=["api_key", "voice_id"],
+        ),
+        ServiceDefinition(
             value="groq_tts",
             label="Groq TTS",
             package="pipecat-ai[groq]",
@@ -693,10 +700,10 @@ class ServiceRegistry:
             include_params=["api_key", "voice_id"],
         ),
         ServiceDefinition(
-            value="nvidia_riva_tts",
-            label="NVIDIA Riva",
-            package="pipecat-ai[riva]",
-            class_name=["RivaTTSService"],
+            value="nvidia_tts",
+            label="NVIDIA",
+            package="pipecat-ai[nvidia]",
+            class_name=["NvidiaTTSService"],
             env_prefix="NVIDIA",
             include_params=["api_key", "voice_id"],
         ),
@@ -801,6 +808,15 @@ class ServiceRegistry:
             include_params=[],
             manual_config=True,
         ),
+        ServiceDefinition(
+            value="ultravox",
+            label="Ultravox",
+            package="pipecat-ai[ultravox]",
+            class_name=["UltravoxRealtimeLLMService", "OneShotInputParams"],
+            env_prefix="ULTRAVOX",
+            include_params=["api_key"],
+            manual_config=True,
+        ),
     ]
 
     # Video Services (Avatars)
@@ -840,13 +856,6 @@ class ServiceRegistry:
 # These services have complex initialization logic that cannot be auto-generated
 # (e.g., nested InputParams, SessionProperties, or other special requirements)
 MANUAL_SERVICE_CONFIGS = {
-    "ultravox_stt": (
-        "UltravoxSTTService(\n"
-        '    model_name=os.getenv("ULTRAVOX_MODEL_NAME"),\n'
-        '    hf_token=os.getenv("HF_TOKEN"),\n'
-        '    region=os.getenv("ULTRAVOX_REGION")\n'
-        ")"
-    ),
     "aws_bedrock_llm": (
         "AWSBedrockLLMService(\n"
         '    aws_region=os.getenv("AWS_REGION"),\n'
@@ -924,6 +933,16 @@ MANUAL_SERVICE_CONFIGS = {
         "    session=session,\n"
         "    session_request=NewSessionRequest(\n"
         '        avatar_id="HEYGEN_AVATAR_ID", version="v2", quality=AvatarQuality.high\n'
+        "    ),\n"
+        ")"
+    ),
+    "ultravox": (
+        "UltravoxRealtimeLLMService(\n"
+        "    params=OneShotInputParams(\n"
+        '        api_key=os.getenv("ULTRAVOX_API_KEY"),\n'
+        '        system_prompt=os.getenv("ULTRAVOX_SYSTEM_PROMPT"),\n'
+        "        temperature=0.3,\n"
+        "        max_duration=datetime.timedelta(minutes=3),\n"
         "    ),\n"
         ")"
     ),

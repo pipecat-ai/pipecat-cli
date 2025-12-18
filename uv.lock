@@ -2879,6 +2879,9 @@ google = [
     { name = "google-genai" },
     { name = "websockets" },
 ]
+gradium = [
+    { name = "websockets" },
+]
 groq = [
     { name = "groq" },
 ]
@@ -2902,6 +2905,9 @@ moondream = [
 neuphonic = [
     { name = "websockets" },
 ]
+nvidia = [
+    { name = "nvidia-riva-client" },
+]
 openai = [
     { name = "websockets" },
 ]
@@ -2913,9 +2919,6 @@ playht = [
 ]
 rime = [
     { name = "websockets" },
-]
-riva = [
-    { name = "nvidia-riva-client" },
 ]
 sarvam = [
     { name = "sarvamai" },
@@ -2932,6 +2935,9 @@ soniox = [
 ]
 speechmatics = [
     { name = "speechmatics-rt" },
+]
+ultravox = [
+    { name = "websockets" },
 ]
 webrtc = [
     { name = "aiortc" },
@@ -2962,7 +2968,7 @@ tail = [
 [package.dev-dependencies]
 dev = [
     { name = "build" },
-    { name = "pipecat-ai", extra = ["aic", "anthropic", "assemblyai", "asyncai", "aws", "aws-nova-sonic", "azure", "cartesia", "daily", "deepgram", "elevenlabs", "fal", "fish", "gladia", "google", "groq", "heygen", "hume", "lmnt", "moondream", "neuphonic", "openai", "openpipe", "playht", "rime", "riva", "sarvam", "silero", "simli", "soniox", "speechmatics", "webrtc", "websocket"] },
+    { name = "pipecat-ai", extra = ["aic", "anthropic", "assemblyai", "asyncai", "aws", "aws-nova-sonic", "azure", "cartesia", "daily", "deepgram", "elevenlabs", "fal", "fish", "gladia", "google", "gradium", "groq", "heygen", "hume", "lmnt", "moondream", "neuphonic", "nvidia", "openai", "openpipe", "playht", "rime", "sarvam", "silero", "simli", "soniox", "speechmatics", "ultravox", "webrtc", "websocket"] },
     { name = "pre-commit" },
     { name = "pytest" },
     { name = "pytest-cov" },
@@ -2986,7 +2992,7 @@ provides-extras = ["tail"]
 [package.metadata.requires-dev]
 dev = [
     { name = "build", specifier = "~=1.2.2" },
-    { name = "pipecat-ai", extras = ["aic", "anthropic", "assemblyai", "asyncai", "aws", "aws-nova-sonic", "azure", "cartesia", "cerebras", "daily", "deepseek", "deepgram", "elevenlabs", "fal", "fireworks", "fish", "gladia", "google", "grok", "groq", "heygen", "hume", "inworld", "lmnt", "mistral", "moondream", "neuphonic", "nim", "openai", "openpipe", "openrouter", "perplexity", "playht", "qwen", "rime", "riva", "sambanova", "sarvam", "silero", "simli", "soniox", "speechmatics", "tavus", "together", "webrtc", "websocket"], specifier = "==0.0.98" },
+    { name = "pipecat-ai", extras = ["aic", "anthropic", "assemblyai", "asyncai", "aws", "aws-nova-sonic", "azure", "cartesia", "cerebras", "daily", "deepseek", "deepgram", "elevenlabs", "fal", "fireworks", "fish", "gladia", "google", "gradium", "grok", "groq", "heygen", "hume", "inworld", "lmnt", "mistral", "moondream", "neuphonic", "nvidia", "openai", "openpipe", "openrouter", "perplexity", "playht", "qwen", "rime", "sambanova", "sarvam", "silero", "simli", "soniox", "speechmatics", "tavus", "together", "ultravox", "webrtc", "websocket"], specifier = "==0.0.98" },
     { name = "pre-commit", specifier = "~=4.2.0" },
     { name = "pytest", specifier = "~=8.4.1" },
     { name = "pytest-cov", specifier = "~=7.0.0" },

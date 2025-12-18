@@ -49,8 +49,9 @@ SERVICE_CONFIGS = {
         '        location=os.getenv("GOOGLE_LOCATION")\n'
         "    )\n"
     ),
+    "gradium_stt": 'GradiumSTTService(api_key=os.getenv("GRADIUM_API_KEY"))',
     "groq_stt": 'GroqSTTService(api_key=os.getenv("GROQ_API_KEY"))',
-    "nvidia_riva_stt": 'RivaSTTService(api_key=os.getenv("NVIDIA_API_KEY"))',
+    "nvidia_stt": 'NvidiaSTTService(api_key=os.getenv("NVIDIA_API_KEY"))',
     "openai_stt": 'OpenAISTTService(api_key=os.getenv("OPENAI_API_KEY"))',
     "sambanova_stt": (
         "SambaNovaSTTService(\n"
@@ -66,13 +67,6 @@ SERVICE_CONFIGS = {
     ),
     "soniox_stt": 'SonioxSTTService(api_key=os.getenv("SONIOX_API_KEY"))',
     "speechmatics_stt": 'SpeechmaticsSTTService(api_key=os.getenv("SPEECHMATICS_API_KEY"))',
-    "ultravox_stt": (
-        "UltravoxSTTService(\n"
-        '    model_name=os.getenv("ULTRAVOX_MODEL_NAME"),\n'
-        '    hf_token=os.getenv("HF_TOKEN"),\n'
-        '    region=os.getenv("ULTRAVOX_REGION")\n'
-        ")\n"
-    ),
     "whisper_stt": 'WhisperSTTService(model=os.getenv("OPENAI_MODEL"))',
     # LLM Services
     "anthropic_llm": (
@@ -144,8 +138,8 @@ SERVICE_CONFIGS = {
         '        api_key=os.getenv("MISTRAL_API_KEY")\n'
         "    )\n"
     ),
-    "nvidia_nim_llm": (
-        "NimLLMService(\n"
+    "nvidia_llm": (
+        "NvidiaLLMService(\n"
         '        model=os.getenv("NVIDIA_MODEL"),\n'
         '        api_key=os.getenv("NVIDIA_API_KEY")\n'
         "    )\n"
@@ -250,6 +244,12 @@ SERVICE_CONFIGS = {
         '        voice_id=os.getenv("GOOGLE_VOICE_ID")\n'
         "    )\n"
     ),
+    "gradium_tts": (
+        "GradiumTTSService(\n"
+        '        api_key=os.getenv("GRADIUM_API_KEY"),\n'
+        '        voice_id=os.getenv("GRADIUM_VOICE_ID")\n'
+        "    )\n"
+    ),
     "groq_tts": (
         "GroqTTSService(\n"
         '        api_key=os.getenv("GROQ_API_KEY"),\n'
@@ -265,7 +265,6 @@ SERVICE_CONFIGS = {
     "inworld_tts": (
         "InworldTTSService(\n"
         '        api_key=os.getenv("INWORLD_API_KEY"),\n'
-        "        aiohttp_session=session,\n"
         '        voice_id=os.getenv("INWORLD_VOICE_ID")\n'
         "    )\n"
     ),
@@ -289,8 +288,8 @@ SERVICE_CONFIGS = {
         '        voice_id=os.getenv("NEUPHONIC_VOICE_ID")\n'
         "    )\n"
     ),
-    "nvidia_riva_tts": (
-        "RivaTTSService(\n"
+    "nvidia_tts": (
+        "NvidiaTTSService(\n"
         '        api_key=os.getenv("NVIDIA_API_KEY"),\n'
         '        voice_id=os.getenv("NVIDIA_VOICE_ID")\n'
         "    )\n"
@@ -381,6 +380,16 @@ SERVICE_CONFIGS = {
         '    api_key=os.getenv("OPENAI_API_KEY"),\n'
         "    session_properties=session_properties,\n"
         "    start_audio_paused=False,\n"
+        ")\n"
+    ),
+    "ultravox": (
+        "UltravoxRealtimeLLMService(\n"
+        "    params=OneShotInputParams(\n"
+        '        api_key=os.getenv("ULTRAVOX_API_KEY"),\n'
+        '        system_prompt=os.getenv("ULTRAVOX_SYSTEM_PROMPT"),\n'
+        "        temperature=0.3,\n"
+        "        max_duration=datetime.timedelta(minutes=3),\n"
+        "    ),\n"
         ")\n"
     ),
     # Video Services
