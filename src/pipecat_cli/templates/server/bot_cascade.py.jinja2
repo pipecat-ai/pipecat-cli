@@ -48,11 +48,6 @@ from twilio.rest import Client
 
 load_dotenv(override=True)
 
-{% if 'smallwebrtc' in transports %}
-# Create a global session manager instance for SmallWebRTC
-session_manager = SmallWebRTCSessionManager(timeout_seconds=120)
-
-{% endif %}
 {% if recording %}
 {{ helpers.save_audio_file_function() }}
 {% endif %}
@@ -104,23 +99,6 @@ async def run_bot(transport: BaseTransport):
 
 async def bot(runner_args: RunnerArguments):
     """Main bot entry point."""
-    {% if 'smallwebrtc' in transports %}
-    # Handle Pipecat Cloud initialization for SmallWebRTC
-    if isinstance(runner_args, PipecatSessionArguments):
-        logger.info("Starting the bot, waiting for webrtc_connection from Pipecat Cloud")
-        try:
-            await session_manager.wait_for_webrtc()
-        except TimeoutError as e:
-            logger.error(f"Timeout waiting for WebRTC connection: {e}")
-            raise
-        return
-
-    # Handle SmallWebRTC connection established
-    if isinstance(runner_args, SmallWebRTCRunnerArguments):
-        logger.info("Received webrtc_connection from Pipecat Cloud")
-        session_manager.cancel_timeout()
-
-    {% endif %}
     {% if enable_krisp %}
     # Krisp is available when deployed to Pipecat Cloud
     if os.environ.get("ENV") != "local":
@@ -167,16 +145,7 @@ async def bot(runner_args: RunnerArguments):
             logger.error(f"Unsupported runner arguments type: {type(runner_args)}")
             return
 
-    {% if 'smallwebrtc' in transports %}
-    try:
-        await run_bot(transport)
-    finally:
-        if isinstance(runner_args, SmallWebRTCRunnerArguments):
-            logger.info("Cleaning up SmallWebRTC resources")
-            session_manager.complete_session()
-    {% else %}
     await run_bot(transport)
-    {% endif %}
     {% endif %}
 
 

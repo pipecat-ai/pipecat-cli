@@ -22,7 +22,6 @@ IMPORTS = {
         "from pipecat.transports.base_transport import TransportParams",
         "from pipecat.transports.smallwebrtc.connection import SmallWebRTCConnection",
         "from pipecat.transports.smallwebrtc.transport import SmallWebRTCTransport",
-        "from pipecatcloud import PipecatSessionArguments, SmallWebRTCSessionManager",
     ],
     # Transports - Telephony
     "twilio": [
@@ -82,14 +81,14 @@ IMPORTS = {
     "fal_stt": ["from pipecat.services.fal.stt import FalSTTService"],
     "gladia_stt": ["from pipecat.services.gladia.stt import GladiaSTTService"],
     "google_stt": ["from pipecat.services.google.stt import GoogleSTTService"],
+    "gradium_stt": ["from pipecat.services.gradium.stt import GradiumSTTService"],
     "groq_stt": ["from pipecat.services.groq.stt import GroqSTTService"],
-    "nvidia_riva_stt": ["from pipecat.services.riva.stt import RivaSTTService"],
+    "nvidia_stt": ["from pipecat.services.nvidia.stt import NvidiaSTTService"],
     "openai_stt": ["from pipecat.services.openai.stt import OpenAISTTService"],
     "sambanova_stt": ["from pipecat.services.sambanova.stt import SambaNovaSTTService"],
     "sarvam_stt": ["from pipecat.services.sarvam.stt import SarvamSTTService"],
     "soniox_stt": ["from pipecat.services.soniox.stt import SonioxSTTService"],
     "speechmatics_stt": ["from pipecat.services.speechmatics.stt import SpeechmaticsSTTService"],
-    "ultravox_stt": ["from pipecat.services.ultravox.stt import UltravoxSTTService"],
     "whisper_stt": ["from pipecat.services.whisper.stt import WhisperSTTService"],
     # LLM Services
     "anthropic_llm": ["from pipecat.services.anthropic.llm import AnthropicLLMService"],
@@ -103,7 +102,7 @@ IMPORTS = {
     "grok_llm": ["from pipecat.services.grok.llm import GrokLLMService"],
     "groq_llm": ["from pipecat.services.groq.llm import GroqLLMService"],
     "mistral_llm": ["from pipecat.services.mistral.llm import MistralLLMService"],
-    "nvidia_nim_llm": ["from pipecat.services.nim.llm import NimLLMService"],
+    "nvidia_llm": ["from pipecat.services.nvidia.llm import NvidiaLLMService"],
     "ollama_llm": ["from pipecat.services.ollama.llm import OLLamaLLMService"],
     "openai_llm": ["from pipecat.services.openai.llm import OpenAILLMService"],
     "openpipe_llm": ["from pipecat.services.openpipe.llm import OpenPipeLLMService"],
@@ -122,13 +121,14 @@ IMPORTS = {
     "fish_tts": ["from pipecat.services.fish.tts import FishAudioTTSService"],
     "gemini_tts": ["from pipecat.services.google.tts import GeminiTTSService"],
     "google_tts": ["from pipecat.services.google.tts import GoogleTTSService"],
+    "gradium_tts": ["from pipecat.services.gradium.tts import GradiumTTSService"],
     "groq_tts": ["from pipecat.services.groq.tts import GroqTTSService"],
     "hume_tts": ["from pipecat.services.hume.tts import HumeTTSService"],
     "inworld_tts": ["from pipecat.services.inworld.tts import InworldTTSService"],
     "lmnt_tts": ["from pipecat.services.lmnt.tts import LmntTTSService"],
     "minimax_tts": ["from pipecat.services.minimax.tts import MiniMaxHttpTTSService"],
     "neuphonic_tts": ["from pipecat.services.neuphonic.tts import NeuphonicTTSService"],
-    "nvidia_riva_tts": ["from pipecat.services.riva.tts import RivaTTSService"],
+    "nvidia_tts": ["from pipecat.services.nvidia.tts import NvidiaTTSService"],
     "openai_tts": ["from pipecat.services.openai.tts import OpenAITTSService"],
     "piper_tts": ["from pipecat.services.piper.tts import PiperTTSService"],
     "rime_tts": ["from pipecat.services.rime.tts import RimeTTSService"],
@@ -149,6 +149,9 @@ IMPORTS = {
     "openai_realtime": [
         "from pipecat.services.openai.realtime.events import SessionProperties, AudioConfiguration, AudioInput, InputAudioTranscription, SemanticTurnDetection, InputAudioNoiseReduction",
         "from pipecat.services.openai.realtime.llm import OpenAIRealtimeLLMService",
+    ],
+    "ultravox": [
+        "from pipecat.services.ultravox.llm import UltravoxRealtimeLLMService, OneShotInputParams"
     ],
     # Video Services
     "heygen_video": [

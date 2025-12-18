@@ -21,6 +21,7 @@ export const TRANSPORT_CONFIG: Record<TransportType, APIRequest> = {
     requestData: {
       createDailyRoom: true,
       dailyRoomProperties: { start_video_off: true },
+      transport: "daily",
     },
   },
   smallwebrtc: {
@@ -28,6 +29,7 @@ export const TRANSPORT_CONFIG: Record<TransportType, APIRequest> = {
     requestData: {
       createDailyRoom: false,
       enableDefaultIceServers: true,
+      transport: "webrtc",
     },
   },
 };
