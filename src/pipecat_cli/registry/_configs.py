@@ -383,7 +383,7 @@ SERVICE_CONFIGS = {
         ")\n"
     ),
     "ultravox": (
-        "UltravoxRealtimeLLMService(\n"
+        "llm =UltravoxRealtimeLLMService(\n"
         "    params=OneShotInputParams(\n"
         '        api_key=os.getenv("ULTRAVOX_API_KEY"),\n'
         '        system_prompt=os.getenv("ULTRAVOX_SYSTEM_PROMPT"),\n'
