@@ -816,6 +816,9 @@ class ServiceRegistry:
             env_prefix="ULTRAVOX",
             include_params=["api_key"],
             manual_config=True,
+            additional_imports=[
+                "import datetime",
+            ],
         ),
     ]
 
@@ -937,7 +940,7 @@ MANUAL_SERVICE_CONFIGS = {
         ")"
     ),
     "ultravox": (
-        "UltravoxRealtimeLLMService(\n"
+        "llm =UltravoxRealtimeLLMService(\n"
         "    params=OneShotInputParams(\n"
         '        api_key=os.getenv("ULTRAVOX_API_KEY"),\n'
         '        system_prompt=os.getenv("ULTRAVOX_SYSTEM_PROMPT"),\n'

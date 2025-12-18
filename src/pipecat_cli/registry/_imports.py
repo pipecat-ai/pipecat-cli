@@ -151,7 +151,8 @@ IMPORTS = {
         "from pipecat.services.openai.realtime.llm import OpenAIRealtimeLLMService",
     ],
     "ultravox": [
-        "from pipecat.services.ultravox.llm import UltravoxRealtimeLLMService, OneShotInputParams"
+        "from pipecat.services.ultravox.llm import UltravoxRealtimeLLMService, OneShotInputParams",
+        "import datetime",
     ],
     # Video Services
     "heygen_video": [
