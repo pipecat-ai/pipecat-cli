@@ -34,18 +34,6 @@ Run the bot using::
 {# Standard imports #}
 {{ imports|join('\n') }}
 
-{# Daily PSTN and Twilio + Daily SIP specific imports #}
-{% if 'daily_pstn_dialin' in transports or 'twilio_daily_sip_dialin' in transports %}
-from server_utils import AgentRequest
-{% elif 'daily_pstn_dialout' in transports or 'twilio_daily_sip_dialout' in transports %}
-from server_utils import AgentRequest, DialoutSettings
-{% endif %}
-
-{# Twilio Client import for Twilio + Daily SIP dial-in #}
-{% if 'twilio_daily_sip_dialin' in transports %}
-from twilio.rest import Client
-{% endif %}
-
 load_dotenv(override=True)
 
 {% if recording %}

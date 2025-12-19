@@ -5,6 +5,14 @@ All notable changes to **Pipecat** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.12] - 2025-12-19
+
+### Changed
+
+- Simplified the Daily PSTN Dial-in code by removing `server.py` and
+  `server_utils.py` as they're both handled by Pipecat's development runner and
+  Pipecat Cloud.
+
 ## [0.1.11] - 2025-12-18
 
 ### Fixed

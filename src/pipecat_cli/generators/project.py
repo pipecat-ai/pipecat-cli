@@ -143,11 +143,14 @@ class ProjectGenerator:
         return project_path
 
     def _generate_server_files(self, project_path: Path) -> None:
-        """Generate server.py and server_utils.py for Daily PSTN or Twilio + Daily SIP."""
+        """Generate server.py and server_utils.py for Daily PSTN dial-out or Twilio + Daily SIP."""
         # Determine which templates to use based on transport type and mode
         if self.config.daily_pstn_mode:
-            # Daily PSTN
-            mode = self.config.daily_pstn_mode  # 'dial-in' or 'dial-out'
+            # Daily PSTN - only dial-out has server files (dial-in doesn't need them)
+            if self.config.daily_pstn_mode == "dial-in":
+                # Daily PSTN dial-in doesn't require server.py/server_utils.py
+                return
+            mode = self.config.daily_pstn_mode  # 'dial-out'
             server_template_name = f"server/server_pstn_{mode.replace('-', '')}.py.jinja2"
             utils_template_name = f"server/server_utils_pstn_{mode.replace('-', '')}.py.jinja2"
         elif self.config.twilio_daily_sip_mode:

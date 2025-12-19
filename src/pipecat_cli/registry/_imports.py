@@ -34,6 +34,7 @@ IMPORTS = {
     "twilio_daily_sip_dialin": [
         "from pipecat.transports.daily.transport import DailyParams, DailyTransport",
         "from server_utils import AgentRequest",
+        "from twilio.rest import Client",
     ],
     "twilio_daily_sip_dialout": [
         "from pipecat.transports.daily.transport import DailyParams, DailyTransport",
@@ -42,7 +43,7 @@ IMPORTS = {
     ],
     "daily_pstn_dialin": [
         "from pipecat.transports.daily.transport import DailyParams, DailyDialinSettings, DailyTransport",
-        "from server_utils import AgentRequest",
+        "from pipecat.runner.types import DailyDialinRequest",
     ],
     "daily_pstn_dialout": [
         "from pipecat.transports.daily.transport import DailyParams, DailyTransport",
