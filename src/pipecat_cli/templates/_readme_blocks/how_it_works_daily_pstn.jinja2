@@ -2,13 +2,15 @@
 
 {% if daily_pstn_mode == 'dial-in' %}
 1. Daily receives an incoming call to your phone number
-2. Daily calls your webhook server (`/daily-webhook` endpoint in `server.py`)
-3. The server creates a Daily room with dial-in capabilities
-4. The server starts the bot process with the room details (locally or via Pipecat Cloud)
+2. Daily calls your webhook server (`/daily-dialin-webhook` endpoint, included in the bundled Pipecat development runner)
+3. The webhook server creates a Daily room with SIP configuration
+4. The webhook server starts your bot with the room details and caller information
 5. The caller is put on hold with music
 6. The bot joins the Daily room and signals readiness
 7. Daily forwards the call to the Daily room
-8. The caller and the bot are connected, and the bot handles the conversation
+8. The caller and bot are connected for the conversation
+
+> Note: When deploying to Pipecat Cloud, steps 1-4 are handled by the Pipecat Cloud service.
 
 {% elif daily_pstn_mode == 'dial-out' %}
 1. Your application triggers an outbound call

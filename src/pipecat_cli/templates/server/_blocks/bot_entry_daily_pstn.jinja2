@@ -1,22 +1,21 @@
 {# Daily PSTN bot entry point (both dial-in and dial-out) #}
-    try:
-        request = AgentRequest.model_validate(runner_args.body)
-
 {% if 'daily_pstn_dialin' in transports %}
+    try:
+        request = DailyDialinRequest.model_validate(runner_args.body)
+
         daily_dialin_settings = DailyDialinSettings(
-            call_id=request.call_id, call_domain=request.call_domain
+            call_id=request.dialin_settings.call_id,
+            call_domain=request.dialin_settings.call_domain,
         )
 
-{% endif %}
-
         transport = DailyTransport(
-            request.room_url,
-            request.token,
+            runner_args.room_url,
+            runner_args.token,
             "Daily PSTN Bot",
             params=DailyParams(
-{% if 'daily_pstn_dialin' in transports %}
+                api_key=request.daily_api_key,
+                api_url=request.daily_api_url,
                 dialin_settings=daily_dialin_settings,
-{% endif %}
                 audio_in_enabled=True,
                 {% if enable_krisp %}
                 audio_in_filter=krisp_filter,
@@ -31,10 +30,39 @@
             ),
         )
 
-{% if 'daily_pstn_dialout' in transports %}
-        await run_bot(transport, request.dialout_settings)
-{% else %}
+        # Log caller information if available
+        # You can use this to look up customer information to personalize the conversation
+        if request.dialin_settings.From:
+            logger.info(f"Handling call from: {request.dialin_settings.From}")
+
         await run_bot(transport)
+{% endif %}
+{% if 'daily_pstn_dialout' in transports %}
+
+    try:
+        request = AgentRequest.model_validate(runner_args.body)
+
+        transport = DailyTransport(
+            request.room_url,
+            request.token,
+            "Daily PSTN Bot",
+            params=DailyParams(
+                api_key=os.getenv("DAILY_API_KEY"),
+                audio_in_enabled=True,
+                {% if enable_krisp %}
+                audio_in_filter=krisp_filter,
+                {% endif %}
+                audio_out_enabled=True,
+                {% if smart_turn %}
+                vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.2)),
+                turn_analyzer=LocalSmartTurnAnalyzerV3(),
+                {% else %}
+                vad_analyzer=SileroVADAnalyzer(),
+                {% endif %}
+            ),
+        )
+
+        await run_bot(transport, request.dialout_settings)
 {% endif %}
 
     except Exception as e:

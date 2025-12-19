@@ -164,6 +164,7 @@ class ServiceRegistry:
             class_name=["DailyParams", "DailyTransport"],
             additional_imports=[
                 "from server_utils import AgentRequest",
+                "from twilio.rest import Client",
             ],
         ),
         ServiceDefinition(
@@ -182,7 +183,7 @@ class ServiceRegistry:
             package="pipecat-ai[daily]",
             class_name=["DailyParams", "DailyDialinSettings", "DailyTransport"],
             additional_imports=[
-                "from server_utils import AgentRequest",
+                "from pipecat.runner.types import DailyDialinRequest",
             ],
         ),
         ServiceDefinition(
