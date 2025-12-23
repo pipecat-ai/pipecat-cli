@@ -15,6 +15,11 @@ export const AVAILABLE_TRANSPORTS: TransportType[] = [
 
 export const DEFAULT_TRANSPORT: TransportType = '{{ transports[0].value }}';
 
+export const TRANSPORT_LABELS: Record<TransportType, string> = {
+  daily: "Daily",
+  smallwebrtc: "SmallWebRTC",
+};
+
 export const TRANSPORT_CONFIG: Record<TransportType, APIRequest> = {
   daily: {
     endpoint: '/api/start',

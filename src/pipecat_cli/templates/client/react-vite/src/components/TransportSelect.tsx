@@ -7,18 +7,13 @@ import {
   SelectGuide,
 } from '@pipecat-ai/voice-ui-kit';
 
-import type { TransportType } from '../config';
+import { TRANSPORT_LABELS, type TransportType } from '../config';
 
 interface TransportSelectProps {
   transportType: TransportType;
   onTransportChange: (type: TransportType) => void;
   availableTransports: TransportType[];
 }
-
-const TRANSPORT_LABELS: Record<TransportType, string> = {
-  daily: 'Daily',
-  smallwebrtc: 'SmallWebRTC',
-};
 
 export const TransportSelect = ({
   transportType,
