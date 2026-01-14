@@ -178,8 +178,7 @@ FEATURE_IMPORTS = {
         "import wave",
     ],
     "transcription": [
-        "from pipecat.frames.frames import TranscriptionMessage, TranscriptionUpdateFrame",
-        "from pipecat.processors.transcript_processor import TranscriptProcessor",
+        "from pipecat.processors.aggregators.llm_response_universal import AssistantTurnStoppedMessage, UserTurnStoppedMessage"
     ],
     "smart_turn": [
         "from pipecat.audio.turn.smart_turn.local_smart_turn_v3 import LocalSmartTurnAnalyzerV3",

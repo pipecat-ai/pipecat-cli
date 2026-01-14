@@ -40,11 +40,6 @@ user_aggregator, assistant_aggregator = LLMContextAggregatorPair(context)
 audio_buffer = AudioBufferProcessor()
 {% endif %}
 
-{% if transcription %}
-# Transcription processor
-transcript_processor = TranscriptProcessor()
-{% endif %}
-
 {% if bot_type == 'web' %}
 rtvi = RTVIProcessor()
 {% endif %}

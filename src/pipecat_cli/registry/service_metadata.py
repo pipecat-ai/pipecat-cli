@@ -78,7 +78,7 @@ class ServiceDefinition:
 # Maps feature names to the list of classes/functions that need to be imported
 FEATURE_DEFINITIONS: dict[str, list[str]] = {
     "recording": ["AudioBufferProcessor", "datetime", "io", "wave", "aiofiles"],
-    "transcription": ["TranscriptProcessor", "TranscriptionMessage", "TranscriptionUpdateFrame"],
+    "transcription": ["AssistantTurnStoppedMessage", "UserTurnStoppedMessage"],
     "smart_turn": ["LocalSmartTurnAnalyzerV3", "SileroVADAnalyzer", "VADParams"],
     "vad": ["SileroVADAnalyzer"],
     "pipeline": ["Pipeline", "PipelineRunner", "PipelineParams", "PipelineTask"],
