@@ -21,7 +21,7 @@ async def save_audio_file(audio: bytes, filename: str, sample_rate: int, num_cha
 {% endmacro %}
 
 {# Context and message setup #}
-{% macro setup_context() %}
+{% macro setup_context(smart_turn=False) %}
 messages = [
     {
         "role": "system",
@@ -30,7 +30,18 @@ messages = [
 ]
 
 context = LLMContext(messages)
+{% if smart_turn %}
+user_aggregator, assistant_aggregator = LLMContextAggregatorPair(
+    context,
+    user_params=LLMUserAggregatorParams(
+        user_turn_strategies=UserTurnStrategies(
+            stop=[TurnAnalyzerUserTurnStopStrategy(turn_analyzer=LocalSmartTurnAnalyzerV3())]
+        ),
+    ),
+)
+{% else %}
 user_aggregator, assistant_aggregator = LLMContextAggregatorPair(context)
+{% endif %}
 {% endmacro %}
 
 {# Feature processors setup #}

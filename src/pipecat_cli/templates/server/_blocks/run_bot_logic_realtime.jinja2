@@ -9,7 +9,7 @@
 {{ ("video = " ~ service_configs[video_service]) | indent(indent_level, first=True) }}
 {% endif %}
 
-{{ helpers.setup_context() | indent(indent_level, first=True) }}
+{{ helpers.setup_context(smart_turn) | indent(indent_level, first=True) }}
 
 {{ helpers.setup_feature_processors(recording, transcription, bot_type) | indent(indent_level, first=True) }}
 

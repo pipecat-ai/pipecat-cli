@@ -79,7 +79,14 @@ class ServiceDefinition:
 FEATURE_DEFINITIONS: dict[str, list[str]] = {
     "recording": ["AudioBufferProcessor", "datetime", "io", "wave", "aiofiles"],
     "transcription": ["AssistantTurnStoppedMessage", "UserTurnStoppedMessage"],
-    "smart_turn": ["LocalSmartTurnAnalyzerV3", "SileroVADAnalyzer", "VADParams"],
+    "smart_turn": [
+        "LocalSmartTurnAnalyzerV3",
+        "SileroVADAnalyzer",
+        "VADParams",
+        "LLMUserAggregatorParams",
+        "TurnAnalyzerUserTurnStopStrategy",
+        "UserTurnStrategies",
+    ],
     "vad": ["SileroVADAnalyzer"],
     "pipeline": ["Pipeline", "PipelineRunner", "PipelineParams", "PipelineTask"],
     "context": ["LLMContext", "LLMContextAggregatorPair"],

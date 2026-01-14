@@ -14,7 +14,6 @@
                 audio_out_enabled=True,
                 {% if smart_turn %}
                 vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.2)),
-                turn_analyzer=LocalSmartTurnAnalyzerV3(),
                 {% else %}
                 vad_analyzer=SileroVADAnalyzer(),
                 {% endif %}
