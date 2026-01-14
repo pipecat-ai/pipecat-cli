@@ -20,16 +20,9 @@ rtvi,
 stt,
 {% endmacro %}
 
-{# Transcription user stage #}
-{% macro transcription_user_stage(transcription) %}
-{% if transcription %}
-transcript_processor.user(),
-{% endif %}
-{% endmacro %}
-
 {# Context aggregator user stage #}
 {% macro context_user_stage() %}
-context_aggregator.user(),
+user_aggregator,
 {% endmacro %}
 
 {# LLM stage #}
@@ -54,13 +47,6 @@ video,
 transport.output(),
 {% endmacro %}
 
-{# Transcription assistant stage #}
-{% macro transcription_assistant_stage(transcription) %}
-{% if transcription %}
-transcript_processor.assistant(),
-{% endif %}
-{% endmacro %}
-
 {# Recording stage #}
 {% macro recording_stage(recording) %}
 {% if recording %}
@@ -70,7 +56,7 @@ audio_buffer,
 
 {# Context aggregator assistant stage #}
 {% macro context_assistant_stage() %}
-context_aggregator.assistant(),
+assistant_aggregator,
 {% endmacro %}
 
 {# Complete cascade pipeline assembly #}
@@ -79,13 +65,11 @@ pipeline = Pipeline([
     {{ input_stage() }}
     {{ rtvi_stage(bot_type) }}
     {{ stt_stage() }}
-    {{ transcription_user_stage(transcription) }}
     {{ context_user_stage() }}
     {{ llm_stage() }}
     {{ tts_stage() }}
     {{ video_stage(video_service) }}
     {{ output_stage() }}
-    {{ transcription_assistant_stage(transcription) }}
     {{ recording_stage(recording) }}
     {{ context_assistant_stage() }}
 ])
@@ -97,11 +81,9 @@ pipeline = Pipeline([
     {{ input_stage() }}
     {{ rtvi_stage(bot_type) }}
     {{ context_user_stage() }}
-    {{ transcription_user_stage(transcription) }}
     {{ llm_stage() }}
     {{ video_stage(video_service) }}
     {{ output_stage() }}
-    {{ transcription_assistant_stage(transcription) }}
     {{ recording_stage(recording) }}
     {{ context_assistant_stage() }}
 ])

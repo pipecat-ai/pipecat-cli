@@ -365,6 +365,16 @@ SERVICE_CONFIGS = {
         '        system_instruction=os.getenv("GOOGLE_SYSTEM_INSTRUCTION"),\n'
         ")\n"
     ),
+    "grok_realtime": (
+        "session_properties = SessionProperties(\n"
+        '    voice=os.getenv("GROK_VOICE_ID"),\n'
+        '    instructions=os.getenv("GROK_INSTRUCTIONS"),\n'
+        ")\n"
+        "llm = GrokRealtimeLLMService(\n"
+        '    api_key=os.getenv("GROK_API_KEY"),\n'
+        "    session_properties=session_properties,\n"
+        ")\n"
+    ),
     "openai_realtime": (
         "session_properties = SessionProperties(\n"
         "    audio=AudioConfiguration(\n"
@@ -379,7 +389,6 @@ SERVICE_CONFIGS = {
         "llm = OpenAIRealtimeLLMService(\n"
         '    api_key=os.getenv("OPENAI_API_KEY"),\n'
         "    session_properties=session_properties,\n"
-        "    start_audio_paused=False,\n"
         ")\n"
     ),
     "ultravox": (

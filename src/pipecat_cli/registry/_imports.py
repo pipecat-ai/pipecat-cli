@@ -147,6 +147,10 @@ IMPORTS = {
     "gemini_vertex_live_realtime": [
         "from pipecat.services.google.gemini_live.llm_vertex import GeminiLiveVertexLLMService"
     ],
+    "grok_realtime": [
+        "from pipecat.services.grok.realtime.events import SessionProperties",
+        "from pipecat.services.grok.realtime.llm import GrokRealtimeLLMService",
+    ],
     "openai_realtime": [
         "from pipecat.services.openai.realtime.events import SessionProperties, AudioConfiguration, AudioInput, InputAudioTranscription, SemanticTurnDetection, InputAudioNoiseReduction",
         "from pipecat.services.openai.realtime.llm import OpenAIRealtimeLLMService",
@@ -174,13 +178,15 @@ FEATURE_IMPORTS = {
         "import wave",
     ],
     "transcription": [
-        "from pipecat.frames.frames import TranscriptionMessage, TranscriptionUpdateFrame",
-        "from pipecat.processors.transcript_processor import TranscriptProcessor",
+        "from pipecat.processors.aggregators.llm_response_universal import AssistantTurnStoppedMessage, UserTurnStoppedMessage"
     ],
     "smart_turn": [
         "from pipecat.audio.turn.smart_turn.local_smart_turn_v3 import LocalSmartTurnAnalyzerV3",
         "from pipecat.audio.vad.silero import SileroVADAnalyzer",
         "from pipecat.audio.vad.vad_analyzer import VADParams",
+        "from pipecat.processors.aggregators.llm_response_universal import LLMUserAggregatorParams",
+        "from pipecat.turns.user_stop.turn_analyzer_user_turn_stop_strategy import TurnAnalyzerUserTurnStopStrategy",
+        "from pipecat.turns.user_turn_strategies import UserTurnStrategies",
     ],
     "vad": ["from pipecat.audio.vad.silero import SileroVADAnalyzer"],
     "pipeline": [

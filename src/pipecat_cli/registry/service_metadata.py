@@ -78,8 +78,15 @@ class ServiceDefinition:
 # Maps feature names to the list of classes/functions that need to be imported
 FEATURE_DEFINITIONS: dict[str, list[str]] = {
     "recording": ["AudioBufferProcessor", "datetime", "io", "wave", "aiofiles"],
-    "transcription": ["TranscriptProcessor", "TranscriptionMessage", "TranscriptionUpdateFrame"],
-    "smart_turn": ["LocalSmartTurnAnalyzerV3", "SileroVADAnalyzer", "VADParams"],
+    "transcription": ["AssistantTurnStoppedMessage", "UserTurnStoppedMessage"],
+    "smart_turn": [
+        "LocalSmartTurnAnalyzerV3",
+        "SileroVADAnalyzer",
+        "VADParams",
+        "LLMUserAggregatorParams",
+        "TurnAnalyzerUserTurnStopStrategy",
+        "UserTurnStrategies",
+    ],
     "vad": ["SileroVADAnalyzer"],
     "pipeline": ["Pipeline", "PipelineRunner", "PipelineParams", "PipelineTask"],
     "context": ["LLMContext", "LLMContextAggregatorPair"],
@@ -765,14 +772,13 @@ class ServiceRegistry:
             value="azure_realtime",
             label="Azure Realtime",
             package="pipecat-ai[azure]",
-            class_name=[
-                "AzureRealtimeLLMService",
-                "SessionProperties",
-                "InputAudioTranscription",
-            ],
+            class_name=["AzureRealtimeLLMService"],
             env_prefix="AZURE",
             include_params=[],
             manual_config=True,
+            additional_imports=[
+                "from pipecat.services.openai.realtime.events import SessionProperties, InputAudioTranscription"
+            ],
         ),
         ServiceDefinition(
             value="gemini_live_realtime",
@@ -789,6 +795,15 @@ class ServiceRegistry:
             package="pipecat-ai[google]",
             class_name=["GeminiLiveVertexLLMService"],
             env_prefix="GOOGLE_VERTEX",
+            include_params=[],
+            manual_config=True,
+        ),
+        ServiceDefinition(
+            value="grok_realtime",
+            label="Grok Realtime",
+            package="pipecat-ai[grok]",
+            class_name=["GrokRealtimeLLMService", "SessionProperties"],
+            env_prefix="GROK",
             include_params=[],
             manual_config=True,
         ),
@@ -902,7 +917,6 @@ MANUAL_SERVICE_CONFIGS = {
         "llm = OpenAIRealtimeLLMService(\n"
         '    api_key=os.getenv("OPENAI_API_KEY"),\n'
         "    session_properties=session_properties,\n"
-        "    start_audio_paused=False,\n"
         ")"
     ),
     "gemini_live_realtime": (
@@ -920,6 +934,17 @@ MANUAL_SERVICE_CONFIGS = {
         '        location=os.getenv("GOOGLE_LOCATION"),\n'
         '        voice_id=os.getenv("GOOGLE_VOICE_ID"),\n'
         '        system_instruction=os.getenv("GOOGLE_SYSTEM_INSTRUCTION"),\n'
+        ")"
+    ),
+    "grok_realtime": (
+        "session_properties = SessionProperties(\n"
+        '    voice=os.getenv("GROK_VOICE_ID"),\n'
+        '    instructions=os.getenv("GROK_INSTRUCTIONS"),\n'
+        ")\n"
+        "\n"
+        "llm = GrokRealtimeLLMService(\n"
+        '    api_key=os.getenv("GROK_API_KEY"),\n'
+        "    session_properties=session_properties,\n"
         ")"
     ),
     "aws_nova_realtime": (
