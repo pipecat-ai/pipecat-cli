@@ -147,6 +147,10 @@ IMPORTS = {
     "gemini_vertex_live_realtime": [
         "from pipecat.services.google.gemini_live.llm_vertex import GeminiLiveVertexLLMService"
     ],
+    "grok_realtime": [
+        "from pipecat.services.grok.realtime.events import SessionProperties",
+        "from pipecat.services.grok.realtime.llm import GrokRealtimeLLMService",
+    ],
     "openai_realtime": [
         "from pipecat.services.openai.realtime.events import SessionProperties, AudioConfiguration, AudioInput, InputAudioTranscription, SemanticTurnDetection, InputAudioNoiseReduction",
         "from pipecat.services.openai.realtime.llm import OpenAIRealtimeLLMService",

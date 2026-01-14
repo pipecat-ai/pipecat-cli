@@ -30,7 +30,7 @@ messages = [
 ]
 
 context = LLMContext(messages)
-context_aggregator = LLMContextAggregatorPair(context)
+user_aggregator, assistant_aggregator = LLMContextAggregatorPair(context)
 {% endmacro %}
 
 {# Feature processors setup #}

@@ -29,7 +29,7 @@ transcript_processor.user(),
 
 {# Context aggregator user stage #}
 {% macro context_user_stage() %}
-context_aggregator.user(),
+user_aggregator,
 {% endmacro %}
 
 {# LLM stage #}
@@ -70,7 +70,7 @@ audio_buffer,
 
 {# Context aggregator assistant stage #}
 {% macro context_assistant_stage() %}
-context_aggregator.assistant(),
+assistant_aggregator,
 {% endmacro %}
 
 {# Complete cascade pipeline assembly #}

@@ -162,13 +162,32 @@ def discover_import(
     # Determine search directory
     search_dir = pipecat_path / search_subdir if search_subdir else pipecat_path
 
+    # For service-specific searches, extract the service directory to prioritize
+    # e.g., "azure_realtime" -> search "services/azure" first
+    # e.g., "openai_realtime" -> search "services/openai" first
+    service_specific_dir = None
+    if search_subdir == "services" and "_" in identifier:
+        # Extract service name from identifier (e.g., "azure" from "azure_realtime")
+        service_name = identifier.split("_")[0]
+        potential_service_dir = search_dir / service_name
+        if potential_service_dir.exists():
+            service_specific_dir = potential_service_dir
+
     # Find each class and group by module
     module_to_classes: dict[str, list[str]] = {}
     not_found = []
 
     for class_name in classes:
         if search_dir.exists():
-            result = find_class_in_directory(search_dir, class_name)
+            # First, try to find in service-specific directory if available
+            result = None
+            if service_specific_dir:
+                result = find_class_in_directory(service_specific_dir, class_name)
+
+            # If not found in service-specific dir, search the broader directory
+            if not result:
+                result = find_class_in_directory(search_dir, class_name)
+
             if result:
                 _, module_path = result
                 if module_path not in module_to_classes:
