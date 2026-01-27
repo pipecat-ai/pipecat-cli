@@ -51,6 +51,12 @@ SERVICE_CONFIGS = {
     ),
     "gradium_stt": 'GradiumSTTService(api_key=os.getenv("GRADIUM_API_KEY"))',
     "groq_stt": 'GroqSTTService(api_key=os.getenv("GROQ_API_KEY"))',
+    "hathora_stt": (
+        "HathoraSTTService(\n"
+        '        model=os.getenv("HATHORA_MODEL"),\n'
+        '        api_key=os.getenv("HATHORA_API_KEY")\n'
+        "    )\n"
+    ),
     "nvidia_stt": 'NvidiaSTTService(api_key=os.getenv("NVIDIA_API_KEY"))',
     "openai_stt": 'OpenAISTTService(api_key=os.getenv("OPENAI_API_KEY"))',
     "sambanova_stt": (
@@ -208,6 +214,12 @@ SERVICE_CONFIGS = {
         '        voice=os.getenv("AZURE_SPEECH_VOICE_ID")\n'
         "    )\n"
     ),
+    "camb_tts": (
+        "CambTTSService(\n"
+        '        api_key=os.getenv("CAMB_API_KEY"),\n'
+        '        voice_id=os.getenv("CAMB_VOICE_ID")\n'
+        "    )\n"
+    ),
     "cartesia_tts": (
         "CartesiaTTSService(\n"
         '        api_key=os.getenv("CARTESIA_API_KEY"),\n'
@@ -254,6 +266,13 @@ SERVICE_CONFIGS = {
         "GroqTTSService(\n"
         '        api_key=os.getenv("GROQ_API_KEY"),\n'
         '        voice_id=os.getenv("GROQ_VOICE_ID")\n'
+        "    )\n"
+    ),
+    "hathora_tts": (
+        "HathoraTTSService(\n"
+        '        model=os.getenv("HATHORA_MODEL"),\n'
+        '        voice_id=os.getenv("HATHORA_VOICE_ID"),\n'
+        '        api_key=os.getenv("HATHORA_API_KEY")\n'
         "    )\n"
     ),
     "hume_tts": (

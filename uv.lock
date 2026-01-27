@@ -555,6 +555,22 @@ wheels = [
 ]
 
 [[package]]
+name = "camb-sdk"
+version = "1.5.8"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "httpx" },
+    { name = "pydantic" },
+    { name = "typing-extensions" },
+    { name = "websocket-client" },
+    { name = "websockets" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/6c/f9/4d3f62909f62f98556e09958f40934abf226289f55a43e149dfc426dc1cf/camb_sdk-1.5.8.tar.gz", hash = "sha256:4ace563accb6aab35d2a4dce53789c98d8809a8c48806a69d0873fc8b0361300", size = 83508, upload-time = "2026-01-27T14:55:49.16Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/1d/2d/e7aeef5d5f48205020d153f4a6ffb39d8971fca78b2cc64fdf0a36ceeb12/camb_sdk-1.5.8-py3-none-any.whl", hash = "sha256:7e1a4764376791ab7cccc27014cdfb691b8c73eecdcaeb01457f506ffd3425be", size = 152371, upload-time = "2026-01-27T14:55:45.637Z" },
+]
+
+[[package]]
 name = "cartesia"
 version = "2.0.9"
 source = { registry = "https://pypi.org/simple" }
@@ -2807,7 +2823,7 @@ wheels = [
 
 [[package]]
 name = "pipecat-ai"
-version = "0.0.99"
+version = "0.0.100"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiofiles" },
@@ -2828,9 +2844,9 @@ dependencies = [
     { name = "soxr" },
     { name = "wait-for2", marker = "python_full_version < '3.12'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/38/28/5f5f358e64d690e8fe96ada12d1a17ddf419c51f4764fd00686ef020a7e8/pipecat_ai-0.0.99.tar.gz", hash = "sha256:748b7f1d326cd0d8ec5ccdcef817966f25c56924b32307b1ed65395f297cce39", size = 10840935, upload-time = "2026-01-14T01:18:37.367Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/53/e9/f377fe49617721d41e3f6d563069849d6d1047c7b4cf4e6dfcb143a868a5/pipecat_ai-0.0.100.tar.gz", hash = "sha256:028a6203094f182461f8065a9c5fd92180038826a52ef1322dac2e258190f9f2", size = 10855536, upload-time = "2026-01-21T03:36:59.613Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f4/ff/3d284a150f0565a65e2b5c119a5b1ba567c59abb8b2197cc2c538bec7b3b/pipecat_ai-0.0.99-py3-none-any.whl", hash = "sha256:e4dded7b592bfe1f91144b16e80ad4feb12ae5f17f78c45cc146e9f05bed2836", size = 10523911, upload-time = "2026-01-14T01:18:35.032Z" },
+    { url = "https://files.pythonhosted.org/packages/6c/23/4f77c613fdcd5a581a5df0227bfd6e8554151e3f5a423c1e4b2a42b6d3d5/pipecat_ai-0.0.100-py3-none-any.whl", hash = "sha256:1f832329dcb0f5d26f0a478df3a40007b1d3032c9b84f66d3f80225bb59d2f30", size = 10539423, upload-time = "2026-01-21T03:36:56.974Z" },
 ]
 
 [package.optional-dependencies]
@@ -2855,6 +2871,9 @@ aws-nova-sonic = [
 ]
 azure = [
     { name = "azure-cognitiveservices-speech" },
+]
+camb = [
+    { name = "camb-sdk" },
 ]
 cartesia = [
     { name = "cartesia" },
@@ -2975,7 +2994,7 @@ tail = [
 [package.dev-dependencies]
 dev = [
     { name = "build" },
-    { name = "pipecat-ai", extra = ["aic", "anthropic", "assemblyai", "asyncai", "aws", "aws-nova-sonic", "azure", "cartesia", "daily", "deepgram", "elevenlabs", "fal", "fish", "gladia", "google", "gradium", "groq", "heygen", "hume", "lmnt", "moondream", "neuphonic", "nvidia", "openai", "openpipe", "playht", "rime", "sarvam", "silero", "simli", "soniox", "speechmatics", "ultravox", "webrtc", "websocket"] },
+    { name = "pipecat-ai", extra = ["aic", "anthropic", "assemblyai", "asyncai", "aws", "aws-nova-sonic", "azure", "camb", "cartesia", "daily", "deepgram", "elevenlabs", "fal", "fish", "gladia", "google", "gradium", "groq", "heygen", "hume", "lmnt", "moondream", "neuphonic", "nvidia", "openai", "openpipe", "playht", "rime", "sarvam", "silero", "simli", "soniox", "speechmatics", "ultravox", "webrtc", "websocket"] },
     { name = "pre-commit" },
     { name = "pytest" },
     { name = "pytest-cov" },
@@ -2999,7 +3018,7 @@ provides-extras = ["tail"]
 [package.metadata.requires-dev]
 dev = [
     { name = "build", specifier = "~=1.2.2" },
-    { name = "pipecat-ai", extras = ["aic", "anthropic", "assemblyai", "asyncai", "aws", "aws-nova-sonic", "azure", "cartesia", "cerebras", "daily", "deepseek", "deepgram", "elevenlabs", "fal", "fireworks", "fish", "gladia", "google", "gradium", "grok", "groq", "heygen", "hume", "inworld", "lmnt", "mistral", "moondream", "neuphonic", "nvidia", "openai", "openpipe", "openrouter", "perplexity", "playht", "qwen", "rime", "sambanova", "sarvam", "silero", "simli", "soniox", "speechmatics", "tavus", "together", "ultravox", "webrtc", "websocket"], specifier = "==0.0.99" },
+    { name = "pipecat-ai", extras = ["aic", "anthropic", "assemblyai", "asyncai", "aws", "aws-nova-sonic", "azure", "camb", "cartesia", "cerebras", "daily", "deepseek", "deepgram", "elevenlabs", "fal", "fireworks", "fish", "gladia", "google", "gradium", "grok", "groq", "heygen", "hume", "inworld", "lmnt", "mistral", "moondream", "neuphonic", "nvidia", "openai", "openpipe", "openrouter", "perplexity", "playht", "qwen", "rime", "sambanova", "sarvam", "silero", "simli", "soniox", "speechmatics", "tavus", "together", "ultravox", "webrtc", "websocket"], specifier = "==0.0.100" },
     { name = "pre-commit", specifier = "~=4.2.0" },
     { name = "pytest", specifier = "~=8.4.1" },
     { name = "pytest-cov", specifier = "~=7.0.0" },
@@ -4703,6 +4722,15 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/24/30/6b0809f4510673dc723187aeaf24c7f5459922d01e2f794277a3dfb90345/wcwidth-0.2.14.tar.gz", hash = "sha256:4d478375d31bc5395a3c55c40ccdf3354688364cd61c4f6adacaa9215d0b3605", size = 102293, upload-time = "2025-09-22T16:29:53.023Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/af/b5/123f13c975e9f27ab9c0770f514345bd406d0e8d3b7a0723af9d43f710af/wcwidth-0.2.14-py2.py3-none-any.whl", hash = "sha256:a7bb560c8aee30f9957e5f9895805edd20602f2d7f720186dfd906e82b4982e1", size = 37286, upload-time = "2025-09-22T16:29:51.641Z" },
+]
+
+[[package]]
+name = "websocket-client"
+version = "1.9.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/2c/41/aa4bf9664e4cda14c3b39865b12251e8e7d239f4cd0e3cc1b6c2ccde25c1/websocket_client-1.9.0.tar.gz", hash = "sha256:9e813624b6eb619999a97dc7958469217c3176312b3a16a4bd1bc7e08a46ec98", size = 70576, upload-time = "2025-10-07T21:16:36.495Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/34/db/b10e48aa8fff7407e67470363eac595018441cf32d5e1001567a7aeba5d2/websocket_client-1.9.0-py3-none-any.whl", hash = "sha256:af248a825037ef591efbf6ed20cc5faa03d3b47b9e5a2230a529eeee1c1fc3ef", size = 82616, upload-time = "2025-10-07T21:16:34.951Z" },
 ]
 
 [[package]]
