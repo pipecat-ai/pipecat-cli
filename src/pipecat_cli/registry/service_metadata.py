@@ -354,6 +354,14 @@ class ServiceRegistry:
             include_params=["api_key"],
         ),
         ServiceDefinition(
+            value="hathora_stt",
+            label="Hathora",
+            package="pipecat-ai",
+            class_name=["HathoraSTTService"],
+            env_prefix="HATHORA",
+            include_params=["api_key"],
+        ),
+        ServiceDefinition(
             value="nvidia_stt",
             label="NVIDIA",
             package="pipecat-ai[nvidia]",
@@ -604,6 +612,14 @@ class ServiceRegistry:
             include_params=["api_key", "region", "voice"],
         ),
         ServiceDefinition(
+            value="camb_tts",
+            label="Camb",
+            package="pipecat-ai[camb]",
+            class_name=["CambTTSService"],
+            env_prefix="CAMB",
+            include_params=["api_key", "voice_id"],
+        ),
+        ServiceDefinition(
             value="cartesia_tts",
             label="Cartesia",
             package="pipecat-ai[cartesia]",
@@ -665,6 +681,14 @@ class ServiceRegistry:
             package="pipecat-ai[groq]",
             class_name=["GroqTTSService"],
             env_prefix="GROQ",
+            include_params=["api_key", "voice_id"],
+        ),
+        ServiceDefinition(
+            value="hathora_tts",
+            label="Hathora",
+            package="pipecat-ai",
+            class_name=["HathoraTTSService"],
+            env_prefix="HATHORA",
             include_params=["api_key", "voice_id"],
         ),
         ServiceDefinition(
