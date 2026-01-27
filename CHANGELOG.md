@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Updated `init` to match Pipecat patterns for 0.0.99.
 
+- Updated Krisp support from `KrispFilter` to `KrispVivaFilter`.
+
 ## [0.1.12] - 2025-12-19
 
 ### Changed

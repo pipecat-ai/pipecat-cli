@@ -7,7 +7,8 @@ agent_profile = "agent-2x"
 agent_profile = "agent-1x"
 {% endif %}
 {% if enable_krisp %}
-enable_krisp = true
+[krisp_viva]
+	audio_filter = "tel"
 {% endif %}
 
 # RECOMMENDED: Set an image pull secret:
