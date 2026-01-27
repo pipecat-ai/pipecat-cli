@@ -5,21 +5,28 @@ All notable changes to **Pipecat** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.1.13] - 2026-01-14
-
-### Added
+## [0.1.14] - 2026-01-27
 
 - Added support for:
-  - `GrokRealtimeLLMService`
   - `HathoraSTTService`
   - `HathoraTTSService`
   - `CambTTSService`
 
 ### Changed
 
-- Updated `init` to match Pipecat patterns for 0.0.99.
+- Updated for `pipecat-ai` 0.0.100.
 
 - Updated Krisp support from `KrispFilter` to `KrispVivaFilter`.
+
+## [0.1.13] - 2026-01-14
+
+### Added
+
+- Added support for `GrokRealtimeLLMService`.
+
+### Changed
+
+- Updated `init` to match Pipecat patterns for 0.0.99.
 
 ## [0.1.12] - 2025-12-19
 
