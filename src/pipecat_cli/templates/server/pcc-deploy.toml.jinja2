@@ -1,5 +1,8 @@
 agent_name = "{{ project_name }}"
 image = "your_username/{{ project_name }}:0.1"
+# RECOMMENDED: Set an image pull secret:
+# https://docs.pipecat.ai/deployment/pipecat-cloud/fundamentals/secrets#image-pull-secrets
+# image_credentials = "your_image_pull_secret"
 secret_set = "{{ project_name }}-secrets"
 {% if enable_video_input or enable_video_output %}
 agent_profile = "agent-2x"
@@ -10,10 +13,6 @@ agent_profile = "agent-1x"
 [krisp_viva]
 	audio_filter = "tel"
 {% endif %}
-
-# RECOMMENDED: Set an image pull secret:
-# https://docs.pipecat.ai/deployment/pipecat-cloud/fundamentals/secrets#image-pull-secrets
-# image_credentials = "your_image_pull_secret"
 
 [scaling]
 	min_agents = 1
