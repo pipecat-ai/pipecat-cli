@@ -96,7 +96,6 @@ FEATURE_DEFINITIONS: dict[str, list[str]] = {
         "RunnerArguments",
         "BaseTransport",
     ],
-    "rtvi": ["RTVIObserver", "RTVIProcessor"],
     "observability": ["WhiskerObserver", "TailObserver"],
 }
 

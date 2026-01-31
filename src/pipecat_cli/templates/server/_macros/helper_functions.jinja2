@@ -51,9 +51,6 @@ user_aggregator, assistant_aggregator = LLMContextAggregatorPair(context)
 audio_buffer = AudioBufferProcessor()
 {% endif %}
 
-{% if bot_type == 'web' %}
-rtvi = RTVIProcessor()
-{% endif %}
 {% endmacro %}
 
 {# Twilio call info helper function #}

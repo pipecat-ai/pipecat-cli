@@ -207,7 +207,6 @@ FEATURE_IMPORTS = {
         "from pipecat.runner.types import RunnerArguments",
         "from pipecat.transports.base_transport import BaseTransport",
     ],
-    "rtvi": ["from pipecat.processors.frameworks.rtvi import RTVIObserver, RTVIProcessor"],
     "observability": [
         "from pipecat_tail.observer import TailObserver",
         "from pipecat_whisker import WhiskerObserver",

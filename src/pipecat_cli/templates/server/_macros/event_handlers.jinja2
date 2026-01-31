@@ -6,9 +6,8 @@ Reusable event handlers for different transport types
 {# Standard event handlers for web/telephony #}
 {% macro standard_handlers(recording=False, bot_type='telephony') %}
 {% if bot_type == 'web' %}
-@rtvi.event_handler("on_client_ready")
+@task.rtvi.event_handler("on_client_ready")
 async def on_client_ready(rtvi):
-    await rtvi.set_bot_ready()
     # Kick off the conversation
     await task.queue_frames([LLMRunFrame()])
 

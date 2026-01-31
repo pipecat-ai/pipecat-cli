@@ -222,10 +222,6 @@ class ServiceLoader:
         imports.update(ServiceRegistry.FEATURE_IMPORTS["runner"])
         imports.update(ServiceRegistry.FEATURE_IMPORTS["vad"])
 
-        # Add RTVI imports only for web apps
-        if bot_type == "web":
-            imports.update(ServiceRegistry.FEATURE_IMPORTS["rtvi"])
-
         # Handle transport imports (can be multiple)
         if "transports" in services:
             transport_list = (
