@@ -37,10 +37,16 @@ user_aggregator, assistant_aggregator = LLMContextAggregatorPair(
         user_turn_strategies=UserTurnStrategies(
             stop=[TurnAnalyzerUserTurnStopStrategy(turn_analyzer=LocalSmartTurnAnalyzerV3())]
         ),
+        vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.2)),
     ),
 )
 {% else %}
-user_aggregator, assistant_aggregator = LLMContextAggregatorPair(context)
+user_aggregator, assistant_aggregator = LLMContextAggregatorPair(
+    context,
+    user_params=LLMUserAggregatorParams(
+        vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.2)),
+    ),
+)
 {% endif %}
 {% endmacro %}
 
@@ -51,9 +57,6 @@ user_aggregator, assistant_aggregator = LLMContextAggregatorPair(context)
 audio_buffer = AudioBufferProcessor()
 {% endif %}
 
-{% if bot_type == 'web' %}
-rtvi = RTVIProcessor()
-{% endif %}
 {% endmacro %}
 
 {# Twilio call info helper function #}

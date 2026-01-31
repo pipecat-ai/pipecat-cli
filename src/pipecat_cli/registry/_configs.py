@@ -287,6 +287,7 @@ SERVICE_CONFIGS = {
         '        voice_id=os.getenv("INWORLD_VOICE_ID")\n'
         "    )\n"
     ),
+    "kokoro_tts": 'KokoroTTSService(voice_id=os.getenv("KOKORO_VOICE_ID"))',
     "lmnt_tts": (
         "LmntTTSService(\n"
         '        api_key=os.getenv("LMNT_API_KEY"),\n'
@@ -319,12 +320,7 @@ SERVICE_CONFIGS = {
         '        voice=os.getenv("OPENAI_VOICE_ID")\n'
         "    )\n"
     ),
-    "piper_tts": (
-        "PiperTTSService(\n"
-        '        base_url=os.getenv("PIPER_BASE_URL"),\n'
-        "        aiohttp_session=session\n"
-        "    )\n"
-    ),
+    "piper_tts": 'PiperTTSService(voice_id=os.getenv("PIPER_VOICE_ID"))',
     "rime_tts": (
         "RimeTTSService(\n"
         '        api_key=os.getenv("RIME_API_KEY"),\n'

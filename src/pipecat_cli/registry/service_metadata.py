@@ -81,22 +81,18 @@ FEATURE_DEFINITIONS: dict[str, list[str]] = {
     "transcription": ["AssistantTurnStoppedMessage", "UserTurnStoppedMessage"],
     "smart_turn": [
         "LocalSmartTurnAnalyzerV3",
-        "SileroVADAnalyzer",
-        "VADParams",
-        "LLMUserAggregatorParams",
         "TurnAnalyzerUserTurnStopStrategy",
         "UserTurnStrategies",
     ],
-    "vad": ["SileroVADAnalyzer"],
+    "vad": ["SileroVADAnalyzer", "VADParams"],
     "pipeline": ["Pipeline", "PipelineRunner", "PipelineParams", "PipelineTask"],
-    "context": ["LLMContext", "LLMContextAggregatorPair"],
+    "context": ["LLMContext", "LLMContextAggregatorPair", "LLMUserAggregatorParams"],
     "runner": [
         "load_dotenv",
         "LLMRunFrame",
         "RunnerArguments",
         "BaseTransport",
     ],
-    "rtvi": ["RTVIObserver", "RTVIProcessor"],
     "observability": ["WhiskerObserver", "TailObserver"],
 }
 
@@ -708,6 +704,14 @@ class ServiceRegistry:
             include_params=["api_key", "voice_id"],
         ),
         ServiceDefinition(
+            value="kokoro_tts",
+            label="Kokoro",
+            package="pipecat-ai[kokoro]",
+            class_name=["KokoroTTSService"],
+            env_prefix="KOKORO",
+            include_params=["voice_id"],
+        ),
+        ServiceDefinition(
             value="lmnt_tts",
             label="LMNT",
             package="pipecat-ai[lmnt]",
@@ -750,10 +754,10 @@ class ServiceRegistry:
         ServiceDefinition(
             value="piper_tts",
             label="Piper",
-            package="pipecat-ai",
+            package="pipecat-ai[piper]",
             class_name=["PiperTTSService"],
             env_prefix="PIPER",
-            include_params=["base_url"],
+            include_params=["voice_id"],
         ),
         ServiceDefinition(
             value="rime_tts",

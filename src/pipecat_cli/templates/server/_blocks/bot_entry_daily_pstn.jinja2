@@ -21,11 +21,6 @@
                 audio_in_filter=krisp_filter,
                 {% endif %}
                 audio_out_enabled=True,
-                {% if smart_turn %}
-                vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.2)),
-                {% else %}
-                vad_analyzer=SileroVADAnalyzer(),
-                {% endif %}
             ),
         )
 
@@ -52,11 +47,6 @@
                 audio_in_filter=krisp_filter,
                 {% endif %}
                 audio_out_enabled=True,
-                {% if smart_turn %}
-                vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.2)),
-                {% else %}
-                vad_analyzer=SileroVADAnalyzer(),
-                {% endif %}
             ),
         )
 

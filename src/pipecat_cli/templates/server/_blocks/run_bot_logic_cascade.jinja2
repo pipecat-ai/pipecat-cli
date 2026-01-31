@@ -38,9 +38,6 @@
 {{ ")," | indent(indent_level + 4, first=True) }}
 {% if bot_type == 'web' or enable_observability %}
 {{ "observers=[" | indent(indent_level + 4, first=True) }}
-{% if bot_type == 'web' %}
-{{ "RTVIObserver(rtvi)," | indent(indent_level + 8, first=True) }}
-{% endif %}
 {% if enable_observability %}
 {{ "WhiskerObserver(pipeline)," | indent(indent_level + 8, first=True) }}
 {{ "TailObserver()," | indent(indent_level + 8, first=True) }}

@@ -8,13 +8,6 @@ Reusable pipeline stages that can be composed together
 transport.input(),
 {% endmacro %}
 
-{# RTVI processor (web bots only) #}
-{% macro rtvi_stage(bot_type) %}
-{% if bot_type == 'web' %}
-rtvi,
-{% endif %}
-{% endmacro %}
-
 {# STT stage #}
 {% macro stt_stage() %}
 stt,
@@ -63,7 +56,6 @@ assistant_aggregator,
 {% macro cascade_pipeline(bot_type, transcription, recording, video_service) %}
 pipeline = Pipeline([
     {{ input_stage() }}
-    {{ rtvi_stage(bot_type) }}
     {{ stt_stage() }}
     {{ context_user_stage() }}
     {{ llm_stage() }}
@@ -79,7 +71,6 @@ pipeline = Pipeline([
 {% macro realtime_pipeline(bot_type, transcription, recording, video_service) %}
 pipeline = Pipeline([
     {{ input_stage() }}
-    {{ rtvi_stage(bot_type) }}
     {{ context_user_stage() }}
     {{ llm_stage() }}
     {{ video_stage(video_service) }}

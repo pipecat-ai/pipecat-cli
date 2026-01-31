@@ -129,6 +129,7 @@ IMPORTS = {
     "hathora_tts": ["from pipecat.services.hathora.tts import HathoraTTSService"],
     "hume_tts": ["from pipecat.services.hume.tts import HumeTTSService"],
     "inworld_tts": ["from pipecat.services.inworld.tts import InworldTTSService"],
+    "kokoro_tts": ["from pipecat.services.kokoro.tts import KokoroTTSService"],
     "lmnt_tts": ["from pipecat.services.lmnt.tts import LmntTTSService"],
     "minimax_tts": ["from pipecat.services.minimax.tts import MiniMaxHttpTTSService"],
     "neuphonic_tts": ["from pipecat.services.neuphonic.tts import NeuphonicTTSService"],
@@ -185,13 +186,13 @@ FEATURE_IMPORTS = {
     ],
     "smart_turn": [
         "from pipecat.audio.turn.smart_turn.local_smart_turn_v3 import LocalSmartTurnAnalyzerV3",
-        "from pipecat.audio.vad.silero import SileroVADAnalyzer",
-        "from pipecat.audio.vad.vad_analyzer import VADParams",
-        "from pipecat.processors.aggregators.llm_response_universal import LLMUserAggregatorParams",
         "from pipecat.turns.user_stop.turn_analyzer_user_turn_stop_strategy import TurnAnalyzerUserTurnStopStrategy",
         "from pipecat.turns.user_turn_strategies import UserTurnStrategies",
     ],
-    "vad": ["from pipecat.audio.vad.silero import SileroVADAnalyzer"],
+    "vad": [
+        "from pipecat.audio.vad.silero import SileroVADAnalyzer",
+        "from pipecat.audio.vad.vad_analyzer import VADParams",
+    ],
     "pipeline": [
         "from pipecat.pipeline.pipeline import Pipeline",
         "from pipecat.pipeline.runner import PipelineRunner",
@@ -199,7 +200,7 @@ FEATURE_IMPORTS = {
     ],
     "context": [
         "from pipecat.processors.aggregators.llm_context import LLMContext",
-        "from pipecat.processors.aggregators.llm_response_universal import LLMContextAggregatorPair",
+        "from pipecat.processors.aggregators.llm_response_universal import LLMContextAggregatorPair, LLMUserAggregatorParams",
     ],
     "runner": [
         "from dotenv import load_dotenv",
@@ -207,7 +208,6 @@ FEATURE_IMPORTS = {
         "from pipecat.runner.types import RunnerArguments",
         "from pipecat.transports.base_transport import BaseTransport",
     ],
-    "rtvi": ["from pipecat.processors.frameworks.rtvi import RTVIObserver, RTVIProcessor"],
     "observability": [
         "from pipecat_tail.observer import TailObserver",
         "from pipecat_whisker import WhiskerObserver",
