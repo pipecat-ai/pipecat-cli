@@ -17,11 +17,6 @@
                     video_out_width=1024,
                     video_out_height=768,
                     {% endif %}
-                    {% if smart_turn %}
-                    vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.2)),
-                    {% else %}
-                    vad_analyzer=SileroVADAnalyzer(),
-                    {% endif %}
                 ),
             )
 

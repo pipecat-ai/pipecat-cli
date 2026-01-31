@@ -16,11 +16,6 @@
                     {% endif %}
                     audio_out_enabled=True,
                     add_wav_header=False,
-                    {% if smart_turn %}
-                    vad_analyzer=SileroVADAnalyzer(params=VADParams(stop_secs=0.2)),
-                    {% else %}
-                    vad_analyzer=SileroVADAnalyzer(),
-                    {% endif %}
                     serializer=serializer,
                 ),
             )

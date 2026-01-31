@@ -81,15 +81,12 @@ FEATURE_DEFINITIONS: dict[str, list[str]] = {
     "transcription": ["AssistantTurnStoppedMessage", "UserTurnStoppedMessage"],
     "smart_turn": [
         "LocalSmartTurnAnalyzerV3",
-        "SileroVADAnalyzer",
-        "VADParams",
-        "LLMUserAggregatorParams",
         "TurnAnalyzerUserTurnStopStrategy",
         "UserTurnStrategies",
     ],
-    "vad": ["SileroVADAnalyzer"],
+    "vad": ["SileroVADAnalyzer", "VADParams"],
     "pipeline": ["Pipeline", "PipelineRunner", "PipelineParams", "PipelineTask"],
-    "context": ["LLMContext", "LLMContextAggregatorPair"],
+    "context": ["LLMContext", "LLMContextAggregatorPair", "LLMUserAggregatorParams"],
     "runner": [
         "load_dotenv",
         "LLMRunFrame",

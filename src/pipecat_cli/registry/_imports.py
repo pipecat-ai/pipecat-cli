@@ -185,13 +185,13 @@ FEATURE_IMPORTS = {
     ],
     "smart_turn": [
         "from pipecat.audio.turn.smart_turn.local_smart_turn_v3 import LocalSmartTurnAnalyzerV3",
-        "from pipecat.audio.vad.silero import SileroVADAnalyzer",
-        "from pipecat.audio.vad.vad_analyzer import VADParams",
-        "from pipecat.processors.aggregators.llm_response_universal import LLMUserAggregatorParams",
         "from pipecat.turns.user_stop.turn_analyzer_user_turn_stop_strategy import TurnAnalyzerUserTurnStopStrategy",
         "from pipecat.turns.user_turn_strategies import UserTurnStrategies",
     ],
-    "vad": ["from pipecat.audio.vad.silero import SileroVADAnalyzer"],
+    "vad": [
+        "from pipecat.audio.vad.silero import SileroVADAnalyzer",
+        "from pipecat.audio.vad.vad_analyzer import VADParams",
+    ],
     "pipeline": [
         "from pipecat.pipeline.pipeline import Pipeline",
         "from pipecat.pipeline.runner import PipelineRunner",
@@ -199,7 +199,7 @@ FEATURE_IMPORTS = {
     ],
     "context": [
         "from pipecat.processors.aggregators.llm_context import LLMContext",
-        "from pipecat.processors.aggregators.llm_response_universal import LLMContextAggregatorPair",
+        "from pipecat.processors.aggregators.llm_response_universal import LLMContextAggregatorPair, LLMUserAggregatorParams",
     ],
     "runner": [
         "from dotenv import load_dotenv",
