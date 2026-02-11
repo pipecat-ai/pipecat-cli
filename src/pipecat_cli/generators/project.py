@@ -68,15 +68,19 @@ class ProjectGenerator:
 
             # If still exists, loop will continue and prompt again
 
-    def generate(self, output_dir: Path | None = None) -> Path:
+    def generate(self, output_dir: Path | None = None, non_interactive: bool = False) -> Path:
         """
         Generate the complete project structure.
 
         Args:
             output_dir: Optional directory to create project in (defaults to current dir)
+            non_interactive: If True, raise FileExistsError instead of prompting
 
         Returns:
             Path to the created project directory
+
+        Raises:
+            FileExistsError: If directory exists and non_interactive is True
         """
         # Determine output directory
         if output_dir is None:
@@ -84,8 +88,12 @@ class ProjectGenerator:
 
         project_path = output_dir / self.config.project_name
 
-        # Check if project already exists and prompt for new name if needed
+        # Check if project already exists
         if project_path.exists():
+            if non_interactive:
+                raise FileExistsError(
+                    f"Directory '{self.config.project_name}' already exists in {output_dir}"
+                )
             new_name = self._prompt_for_new_name(output_dir)
             self.config.project_name = new_name
             project_path = output_dir / new_name
