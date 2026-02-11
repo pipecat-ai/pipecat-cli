@@ -48,7 +48,6 @@ def validate_and_build_config(
     twilio_daily_sip_mode: Optional[str] = None,
     recording: bool = False,
     transcription: bool = False,
-    smart_turn: Optional[bool] = None,
     video_input: bool = False,
     video_output: bool = False,
     deploy_to_cloud: bool = True,
@@ -252,8 +251,6 @@ def validate_and_build_config(
         raise ConfigValidationError(errors)
 
     # --- Apply defaults ---
-    if smart_turn is None:
-        smart_turn = mode == "cascade"
 
     # Force video output on if a video service is selected
     if video:
@@ -291,7 +288,6 @@ def validate_and_build_config(
         video_output=video_output,
         recording=recording,
         transcription=transcription,
-        smart_turn=smart_turn,
         deploy_to_cloud=deploy_to_cloud,
         enable_krisp=enable_krisp,
         enable_observability=observability,
@@ -330,7 +326,6 @@ def config_to_json(config: ProjectConfig) -> str:
         "video_output": config.video_output,
         "recording": config.recording,
         "transcription": config.transcription,
-        "smart_turn": config.smart_turn,
         "deploy_to_cloud": config.deploy_to_cloud,
         "enable_krisp": config.enable_krisp,
         "enable_observability": config.enable_observability,

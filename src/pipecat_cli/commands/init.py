@@ -58,9 +58,6 @@ def init_command(
     transcription: bool = typer.Option(
         False, "--transcription/--no-transcription", help="Enable transcription"
     ),
-    smart_turn: Optional[bool] = typer.Option(
-        None, "--smart-turn/--no-smart-turn", help="Enable smart turn-taking (default: True for cascade)"
-    ),
     video_input: bool = typer.Option(
         False, "--video-input/--no-video-input", help="Enable video input"
     ),
@@ -133,8 +130,6 @@ def init_command(
                 )
                 recording = recording or file_data.get("recording", False)
                 transcription = transcription or file_data.get("transcription", False)
-                if smart_turn is None:
-                    smart_turn = file_data.get("smart_turn")
                 video_input = video_input or file_data.get("video_input", False)
                 video_output = video_output or file_data.get("video_output", False)
                 if "deploy_to_cloud" in file_data:
@@ -161,7 +156,6 @@ def init_command(
                     twilio_daily_sip_mode=twilio_daily_sip_mode,
                     recording=recording,
                     transcription=transcription,
-                    smart_turn=smart_turn,
                     video_input=video_input,
                     video_output=video_output,
                     deploy_to_cloud=deploy_to_cloud,

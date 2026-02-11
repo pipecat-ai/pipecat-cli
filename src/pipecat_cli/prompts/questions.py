@@ -99,7 +99,6 @@ class ProjectConfig:
     video_output: bool = False
     recording: bool = False
     transcription: bool = False
-    smart_turn: bool = False
 
     # Deployment
     deploy_to_cloud: bool = False
@@ -520,18 +519,6 @@ def ask_project_questions() -> ProjectConfig:
             "Transcription logging?", "Yes" if config.transcription else "No"
         )
 
-        # Question 6c: Smart Turn V3 (only for cascade mode)
-        if config.mode == "cascade":
-            config.smart_turn = questionary.confirm(
-                "Smart turn-taking? (recommended)",
-                default=True,
-                style=custom_style,
-            ).ask()
-            replace_question_with_answer("Smart turn-taking?", "Yes" if config.smart_turn else "No")
-        else:
-            # Realtime mode doesn't use smart turn
-            config.smart_turn = False
-
         # Question 6d: Video avatar service (only for web/mobile bots)
         if config.bot_type == "web":
             use_video_service = questionary.confirm(
@@ -614,7 +601,6 @@ def ask_project_questions() -> ProjectConfig:
         config.video_output = False
         config.recording = False
         config.transcription = False
-        config.smart_turn = True if config.mode == "cascade" else False
         config.enable_observability = False
 
     # Question 7: Pipecat Cloud deployment

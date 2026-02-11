@@ -87,6 +87,7 @@ IMPORTS = {
     "hathora_stt": ["from pipecat.services.hathora.stt import HathoraSTTService"],
     "nvidia_stt": ["from pipecat.services.nvidia.stt import NvidiaSTTService"],
     "openai_stt": ["from pipecat.services.openai.stt import OpenAISTTService"],
+    "openai_realtime_stt": ["from pipecat.services.openai.stt import OpenAIRealtimeSTTService"],
     "sambanova_stt": ["from pipecat.services.sambanova.stt import SambaNovaSTTService"],
     "sarvam_stt": ["from pipecat.services.sarvam.stt import SarvamSTTService"],
     "soniox_stt": ["from pipecat.services.soniox.stt import SonioxSTTService"],
@@ -136,6 +137,7 @@ IMPORTS = {
     "nvidia_tts": ["from pipecat.services.nvidia.tts import NvidiaTTSService"],
     "openai_tts": ["from pipecat.services.openai.tts import OpenAITTSService"],
     "piper_tts": ["from pipecat.services.piper.tts import PiperTTSService"],
+    "resemble_tts": ["from pipecat.services.resembleai.tts import ResembleAITTSService"],
     "rime_tts": ["from pipecat.services.rime.tts import RimeTTSService"],
     "sarvam_tts": ["from pipecat.services.sarvam.tts import SarvamTTSService"],
     "xtts_tts": ["from pipecat.services.xtts.tts import XTTSService"],
@@ -184,15 +186,7 @@ FEATURE_IMPORTS = {
     "transcription": [
         "from pipecat.processors.aggregators.llm_response_universal import AssistantTurnStoppedMessage, UserTurnStoppedMessage"
     ],
-    "smart_turn": [
-        "from pipecat.audio.turn.smart_turn.local_smart_turn_v3 import LocalSmartTurnAnalyzerV3",
-        "from pipecat.turns.user_stop.turn_analyzer_user_turn_stop_strategy import TurnAnalyzerUserTurnStopStrategy",
-        "from pipecat.turns.user_turn_strategies import UserTurnStrategies",
-    ],
-    "vad": [
-        "from pipecat.audio.vad.silero import SileroVADAnalyzer",
-        "from pipecat.audio.vad.vad_analyzer import VADParams",
-    ],
+    "vad": ["from pipecat.audio.vad.silero import SileroVADAnalyzer"],
     "pipeline": [
         "from pipecat.pipeline.pipeline import Pipeline",
         "from pipecat.pipeline.runner import PipelineRunner",

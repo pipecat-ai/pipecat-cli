@@ -96,41 +96,6 @@ class TestValidRealtimeConfigs:
 class TestDefaults:
     """Test that defaults are applied correctly."""
 
-    def test_smart_turn_defaults_true_for_cascade(self):
-        config = validate_and_build_config(
-            name="bot",
-            bot_type="web",
-            transport=["daily"],
-            mode="cascade",
-            stt="deepgram_stt",
-            llm="openai_llm",
-            tts="cartesia_tts",
-        )
-        assert config.smart_turn is True
-
-    def test_smart_turn_defaults_false_for_realtime(self):
-        config = validate_and_build_config(
-            name="bot",
-            bot_type="web",
-            transport=["daily"],
-            mode="realtime",
-            realtime="openai_realtime",
-        )
-        assert config.smart_turn is False
-
-    def test_smart_turn_explicit_false_override(self):
-        config = validate_and_build_config(
-            name="bot",
-            bot_type="web",
-            transport=["daily"],
-            mode="cascade",
-            stt="deepgram_stt",
-            llm="openai_llm",
-            tts="cartesia_tts",
-            smart_turn=False,
-        )
-        assert config.smart_turn is False
-
     def test_deploy_to_cloud_default_true(self):
         config = validate_and_build_config(
             name="bot",
@@ -630,7 +595,6 @@ def _parse_config_dict(file_data: dict) -> ProjectConfig:
         twilio_daily_sip_mode=file_data.get("twilio_daily_sip_mode"),
         recording=file_data.get("recording", False),
         transcription=file_data.get("transcription", False),
-        smart_turn=file_data.get("smart_turn"),
         video_input=file_data.get("video_input", False),
         video_output=file_data.get("video_output", False),
         deploy_to_cloud=file_data.get("deploy_to_cloud", True),
@@ -657,7 +621,6 @@ class TestConfigDictParsing:
         assert config.stt_service == "deepgram_stt"
         assert config.llm_service == "openai_llm"
         assert config.tts_service == "cartesia_tts"
-        assert config.smart_turn is True
         assert config.deploy_to_cloud is True
 
     def test_cascade_with_short_keys(self):
@@ -714,7 +677,6 @@ class TestConfigDictParsing:
             "client_server": "nextjs",
             "recording": True,
             "transcription": True,
-            "smart_turn": False,
             "video_input": True,
             "video_output": True,
             "deploy_to_cloud": False,
@@ -726,7 +688,6 @@ class TestConfigDictParsing:
         assert config.client_server == "nextjs"
         assert config.recording is True
         assert config.transcription is True
-        assert config.smart_turn is False
         assert config.video_input is True
         assert config.deploy_to_cloud is False
         assert config.enable_observability is True
@@ -778,7 +739,6 @@ class TestConfigToJson:
         assert data["stt_service"] == "deepgram_stt"
         assert data["llm_service"] == "openai_llm"
         assert data["tts_service"] == "cartesia_tts"
-        assert data["smart_turn"] is True
         assert data["deploy_to_cloud"] is True
 
     def test_json_includes_all_fields(self):
@@ -819,7 +779,6 @@ class TestFeatureFlags:
             tts="cartesia_tts",
             recording=True,
             transcription=True,
-            smart_turn=True,
             video_input=True,
             video_output=True,
             observability=True,
@@ -828,7 +787,6 @@ class TestFeatureFlags:
         )
         assert config.recording is True
         assert config.transcription is True
-        assert config.smart_turn is True
         assert config.video_input is True
         assert config.video_output is True
         assert config.enable_observability is True
@@ -846,7 +804,6 @@ class TestFeatureFlags:
             tts="cartesia_tts",
             recording=False,
             transcription=False,
-            smart_turn=False,
             video_input=False,
             video_output=False,
             observability=False,
@@ -855,7 +812,6 @@ class TestFeatureFlags:
         )
         assert config.recording is False
         assert config.transcription is False
-        assert config.smart_turn is False
         assert config.video_input is False
         assert config.video_output is False
         assert config.enable_observability is False
