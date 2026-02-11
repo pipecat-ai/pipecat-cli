@@ -79,12 +79,7 @@ class ServiceDefinition:
 FEATURE_DEFINITIONS: dict[str, list[str]] = {
     "recording": ["AudioBufferProcessor", "datetime", "io", "wave", "aiofiles"],
     "transcription": ["AssistantTurnStoppedMessage", "UserTurnStoppedMessage"],
-    "smart_turn": [
-        "LocalSmartTurnAnalyzerV3",
-        "TurnAnalyzerUserTurnStopStrategy",
-        "UserTurnStrategies",
-    ],
-    "vad": ["SileroVADAnalyzer", "VADParams"],
+    "vad": ["SileroVADAnalyzer"],
     "pipeline": ["Pipeline", "PipelineRunner", "PipelineParams", "PipelineTask"],
     "context": ["LLMContext", "LLMContextAggregatorPair", "LLMUserAggregatorParams"],
     "runner": [
@@ -370,6 +365,14 @@ class ServiceRegistry:
             label="OpenAI (Whisper)",
             package="pipecat-ai[openai]",
             class_name=["OpenAISTTService"],
+            env_prefix="OPENAI",
+            include_params=["api_key"],
+        ),
+        ServiceDefinition(
+            value="openai_realtime_stt",
+            label="OpenAI Realtime",
+            package="pipecat-ai[openai]",
+            class_name=["OpenAIRealtimeSTTService"],
             env_prefix="OPENAI",
             include_params=["api_key"],
         ),
@@ -758,6 +761,14 @@ class ServiceRegistry:
             class_name=["PiperTTSService"],
             env_prefix="PIPER",
             include_params=["voice_id"],
+        ),
+        ServiceDefinition(
+            value="resemble_tts",
+            label="Resemble",
+            package="pipecat-ai[resembleai]",
+            class_name=["ResembleAITTSService"],
+            env_prefix="RESEMBLE",
+            include_params=["api_key", "voice_id"],
         ),
         ServiceDefinition(
             value="rime_tts",

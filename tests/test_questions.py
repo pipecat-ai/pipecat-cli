@@ -40,7 +40,6 @@ class TestProjectConfig:
         assert config.video_output is False
         assert config.recording is False
         assert config.transcription is False
-        assert config.smart_turn is False
         assert config.deploy_to_cloud is False
         assert config.enable_krisp is False
         assert config.enable_observability is False

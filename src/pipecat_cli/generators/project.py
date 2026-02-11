@@ -244,7 +244,6 @@ class ProjectGenerator:
         features = {
             "recording": self.config.recording,
             "transcription": self.config.transcription,
-            "smart_turn": self.config.smart_turn,
             "observability": self.config.enable_observability,
         }
 
@@ -271,7 +270,6 @@ class ProjectGenerator:
             "video_output": self.config.video_output,
             "recording": self.config.recording,
             "transcription": self.config.transcription,
-            "smart_turn": self.config.smart_turn,
             "enable_krisp": self.config.enable_krisp,
             "enable_observability": self.config.enable_observability,
             "service_configs": ServiceRegistry.SERVICE_CONFIGS,
@@ -305,10 +303,6 @@ class ProjectGenerator:
 
         # Extract all required extras
         extras = ServiceLoader.extract_extras_for_services(services)
-
-        # Add smart turn if enabled
-        if self.config.smart_turn:
-            extras.add("local-smart-turn-v3")
 
         # Build the pipecat-ai dependency string
         # No version constraint - will use latest from PyPI
@@ -404,7 +398,6 @@ class ProjectGenerator:
             "video_output": self.config.video_output,
             "recording": self.config.recording,
             "transcription": self.config.transcription,
-            "smart_turn": self.config.smart_turn,
             "enable_krisp": self.config.enable_krisp,
             "enable_observability": self.config.enable_observability,
             "deploy_to_cloud": self.config.deploy_to_cloud,

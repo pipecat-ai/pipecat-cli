@@ -23,6 +23,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added centralized config validation that collects all errors before
   reporting, so callers see every problem at once.
 
+- Added support for:
+  - `ResembleAITTSService`
+  - `OpenAIRealtimeSTTService`
+
+### Changed
+
+- Updated for `pipecat-ai` 0.0.102:
+  - Smart turn-taking is now automatically included in Pipecat and no longer
+    requires a separate option or extra dependency.
+
+### Removed
+
+- Removed the `--smart-turn` / `--no-smart-turn` CLI option and interactive
+  question. Smart turn-taking is now built into Pipecat.
+
 ## [0.1.15] - 2026-01-31
 
 ### Added

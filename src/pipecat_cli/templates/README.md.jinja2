@@ -20,7 +20,7 @@ A Pipecat AI voice agent built with {% if mode == 'cascade' %}a cascade pipeline
 - **Pipeline**: Realtime
   - **Service**: {{ realtime_label }}
 {% endif %}
-{% if video_input or video_output or recording or transcription or smart_turn or enable_krisp or enable_observability %}
+{% if video_input or video_output or recording or transcription or enable_krisp or enable_observability %}
 - **Features**:
 {% if video_input %}
   - Video Input
@@ -33,9 +33,6 @@ A Pipecat AI voice agent built with {% if mode == 'cascade' %}a cascade pipeline
 {% endif %}
 {%- if transcription %}
   - Transcription
-{% endif %}
-{%- if smart_turn %}
-  - smart-turn v3
 {% endif %}
 {%- if enable_krisp %}
   - Krisp Noise Cancellation

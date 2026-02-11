@@ -245,8 +245,6 @@ class ServiceLoader:
             imports.update(ServiceRegistry.FEATURE_IMPORTS["recording"])
         if features.get("transcription"):
             imports.update(ServiceRegistry.FEATURE_IMPORTS["transcription"])
-        if features.get("smart_turn"):
-            imports.update(ServiceRegistry.FEATURE_IMPORTS["smart_turn"])
         if features.get("observability"):
             imports.update(ServiceRegistry.FEATURE_IMPORTS["observability"])
 

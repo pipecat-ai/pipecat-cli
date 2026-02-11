@@ -59,6 +59,7 @@ SERVICE_CONFIGS = {
     ),
     "nvidia_stt": 'NvidiaSTTService(api_key=os.getenv("NVIDIA_API_KEY"))',
     "openai_stt": 'OpenAISTTService(api_key=os.getenv("OPENAI_API_KEY"))',
+    "openai_realtime_stt": 'OpenAIRealtimeSTTService(api_key=os.getenv("OPENAI_API_KEY"))',
     "sambanova_stt": (
         "SambaNovaSTTService(\n"
         '        model=os.getenv("SAMBANOVA_MODEL"),\n'
@@ -321,6 +322,12 @@ SERVICE_CONFIGS = {
         "    )\n"
     ),
     "piper_tts": 'PiperTTSService(voice_id=os.getenv("PIPER_VOICE_ID"))',
+    "resemble_tts": (
+        "ResembleAITTSService(\n"
+        '        api_key=os.getenv("RESEMBLE_API_KEY"),\n'
+        '        voice_id=os.getenv("RESEMBLE_VOICE_ID")\n'
+        "    )\n"
+    ),
     "rime_tts": (
         "RimeTTSService(\n"
         '        api_key=os.getenv("RIME_API_KEY"),\n'
