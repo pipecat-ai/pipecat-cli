@@ -5,6 +5,15 @@ All notable changes to **Pipecat** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.1] - 2026-02-11
+
+### Added
+
+- Added `--list-options` flag to `pc init` that outputs all available service
+  options (bot types, transports, STT, LLM, TTS, realtime, video) as JSON.
+  This lets CI scripts and coding agents discover valid values at runtime
+  instead of hardcoding them.
+
 ## [0.2.0] - 2026-02-11
 
 ### Added

@@ -6,6 +6,7 @@
 
 """Init command implementation for creating new Pipecat projects."""
 
+import json
 from pathlib import Path
 from typing import Optional
 
@@ -14,13 +15,45 @@ from rich.console import Console
 
 from pipecat_cli.generators import ProjectGenerator
 from pipecat_cli.prompts import ask_project_questions
+from pipecat_cli.registry.service_metadata import ServiceRegistry
 
 console = Console()
+
+
+def _list_options_callback(value: bool):
+    """Print available options as JSON and exit."""
+    if not value:
+        return
+
+    def values(defs):
+        return [s.value for s in defs]
+
+    options = {
+        "bot_type": ["web", "telephony"],
+        "transports": {
+            "web": values(ServiceRegistry.WEBRTC_TRANSPORTS),
+            "telephony": values(ServiceRegistry.TELEPHONY_TRANSPORTS),
+        },
+        "stt": values(ServiceRegistry.STT_SERVICES),
+        "llm": values(ServiceRegistry.LLM_SERVICES),
+        "tts": values(ServiceRegistry.TTS_SERVICES),
+        "realtime": values(ServiceRegistry.REALTIME_SERVICES),
+        "video": values(ServiceRegistry.VIDEO_SERVICES),
+    }
+    print(json.dumps(options, indent=2))
+    raise typer.Exit(0)
 
 
 def init_command(
     output_dir: Optional[Path] = typer.Option(
         None, "--output", "-o", help="Output directory (defaults to current directory)"
+    ),
+    list_options: bool = typer.Option(
+        False,
+        "--list-options",
+        help="Print available service options as JSON and exit",
+        callback=_list_options_callback,
+        is_eager=True,
     ),
     # --- Non-interactive flags ---
     name: Optional[str] = typer.Option(
