@@ -48,7 +48,13 @@ class ServiceDefinition:
     Optional fields:
         class_name: List of class names to import for this service
         env_prefix: Prefix for environment variables (e.g., "OPENAI" -> "OPENAI_API_KEY")
-        include_params: Parameters to include in generated config even if they have defaults
+        include_params: Constructor params that have defaults but should still appear in the
+            generated config (e.g., "api_key" has a default but we want users to set it via
+            env var). Controls *whether* a param is generated.
+        settings_params: Params to wrap in a Service.Settings(...) block instead of passing
+            as direct constructor args. Controls *where* a param goes. When set (even if
+            empty), the generator uses the Settings pattern and adds system_instruction.
+            Params listed here are implicitly included (no need to also list in include_params).
         manual_config: If True, config must be manually written (not auto-generated)
         recommended: If True, this service is marked as recommended in prompts
         additional_imports: List of full import statements that can't be auto-discovered
@@ -60,6 +66,7 @@ class ServiceDefinition:
     class_name: list[str] | None = None
     env_prefix: str | None = None
     include_params: list[str] | None = None
+    settings_params: list[str] | None = None
     manual_config: bool = False
     recommended: bool = False
     additional_imports: list[str] | None = None
@@ -345,14 +352,6 @@ class ServiceRegistry:
             include_params=["api_key"],
         ),
         ServiceDefinition(
-            value="hathora_stt",
-            label="Hathora",
-            package="pipecat-ai",
-            class_name=["HathoraSTTService"],
-            env_prefix="HATHORA",
-            include_params=["api_key"],
-        ),
-        ServiceDefinition(
             value="nvidia_stt",
             label="NVIDIA",
             package="pipecat-ai[nvidia]",
@@ -382,7 +381,8 @@ class ServiceRegistry:
             package="pipecat-ai[sambanova]",
             class_name=["SambaNovaSTTService"],
             env_prefix="SAMBANOVA",
-            include_params=["model", "api_key"],
+            include_params=["api_key"],
+            settings_params=["model"],
         ),
         ServiceDefinition(
             value="sarvam_stt",
@@ -390,7 +390,8 @@ class ServiceRegistry:
             package="pipecat-ai[sarvam]",
             class_name=["SarvamSTTService"],
             env_prefix="SARVAM",
-            include_params=["model", "api_key"],
+            include_params=["api_key"],
+            settings_params=["model"],
         ),
         ServiceDefinition(
             value="soniox_stt",
@@ -414,7 +415,7 @@ class ServiceRegistry:
             package="pipecat-ai[whisper]",
             class_name=["WhisperSTTService"],
             env_prefix="OPENAI",
-            include_params=["model"],
+            settings_params=["model"],
         ),
     ]
 
@@ -426,7 +427,8 @@ class ServiceRegistry:
             package="pipecat-ai[anthropic]",
             class_name=["AnthropicLLMService"],
             env_prefix="ANTHROPIC",
-            include_params=["api_key", "model"],
+            include_params=["api_key"],
+            settings_params=["model", "system_instruction"],
         ),
         ServiceDefinition(
             value="aws_bedrock_llm",
@@ -434,7 +436,8 @@ class ServiceRegistry:
             package="pipecat-ai[aws]",
             class_name=["AWSBedrockLLMService"],
             env_prefix="AWS",
-            include_params=["aws_region", "model"],
+            include_params=["aws_region"],
+            settings_params=["model", "system_instruction"],
             manual_config=True,
         ),
         ServiceDefinition(
@@ -443,7 +446,8 @@ class ServiceRegistry:
             package="pipecat-ai[azure]",
             class_name=["AzureLLMService"],
             env_prefix="AZURE_CHATGPT",
-            include_params=["api_key", "endpoint", "model"],
+            include_params=["api_key", "endpoint"],
+            settings_params=["model", "system_instruction"],
         ),
         ServiceDefinition(
             value="cerebras_llm",
@@ -451,7 +455,8 @@ class ServiceRegistry:
             package="pipecat-ai[cerebras]",
             class_name=["CerebrasLLMService"],
             env_prefix="CEREBRAS",
-            include_params=["api_key", "model"],
+            include_params=["api_key"],
+            settings_params=["model", "system_instruction"],
         ),
         ServiceDefinition(
             value="deepseek_llm",
@@ -459,7 +464,8 @@ class ServiceRegistry:
             package="pipecat-ai[deepseek]",
             class_name=["DeepSeekLLMService"],
             env_prefix="DEEPSEEK",
-            include_params=["api_key", "model"],
+            include_params=["api_key"],
+            settings_params=["model", "system_instruction"],
         ),
         ServiceDefinition(
             value="fireworks_llm",
@@ -467,7 +473,8 @@ class ServiceRegistry:
             package="pipecat-ai[fireworks]",
             class_name=["FireworksLLMService"],
             env_prefix="FIREWORKS",
-            include_params=["api_key", "model"],
+            include_params=["api_key"],
+            settings_params=["model", "system_instruction"],
         ),
         ServiceDefinition(
             value="google_gemini_llm",
@@ -475,7 +482,8 @@ class ServiceRegistry:
             package="pipecat-ai[google]",
             class_name=["GoogleLLMService"],
             env_prefix="GOOGLE",
-            include_params=["api_key", "model"],
+            include_params=["api_key"],
+            settings_params=["model", "system_instruction"],
         ),
         ServiceDefinition(
             value="google_vertex_llm",
@@ -484,6 +492,7 @@ class ServiceRegistry:
             class_name=["GoogleVertexLLMService"],
             env_prefix="GOOGLE",
             include_params=["credentials", "location", "project_id"],
+            settings_params=["model", "system_instruction"],
         ),
         ServiceDefinition(
             value="grok_llm",
@@ -491,7 +500,8 @@ class ServiceRegistry:
             package="pipecat-ai[grok]",
             class_name=["GrokLLMService"],
             env_prefix="GROK",
-            include_params=["api_key", "model"],
+            include_params=["api_key"],
+            settings_params=["model", "system_instruction"],
         ),
         ServiceDefinition(
             value="groq_llm",
@@ -499,7 +509,8 @@ class ServiceRegistry:
             package="pipecat-ai[groq]",
             class_name=["GroqLLMService"],
             env_prefix="GROQ",
-            include_params=["api_key", "model"],
+            include_params=["api_key"],
+            settings_params=["model", "system_instruction"],
         ),
         ServiceDefinition(
             value="mistral_llm",
@@ -507,7 +518,8 @@ class ServiceRegistry:
             package="pipecat-ai[mistral]",
             class_name=["MistralLLMService"],
             env_prefix="MISTRAL",
-            include_params=["api_key", "model"],
+            include_params=["api_key"],
+            settings_params=["model", "system_instruction"],
         ),
         ServiceDefinition(
             value="nvidia_llm",
@@ -515,7 +527,8 @@ class ServiceRegistry:
             package="pipecat-ai[nvidia]",
             class_name=["NvidiaLLMService"],
             env_prefix="NVIDIA",
-            include_params=["api_key", "model"],
+            include_params=["api_key"],
+            settings_params=["model", "system_instruction"],
         ),
         ServiceDefinition(
             value="ollama_llm",
@@ -523,7 +536,7 @@ class ServiceRegistry:
             package="pipecat-ai",
             class_name=["OLLamaLLMService"],
             env_prefix="OLLAMA",
-            include_params=["model"],
+            settings_params=["model", "system_instruction"],
         ),
         ServiceDefinition(
             value="openai_llm",
@@ -531,7 +544,8 @@ class ServiceRegistry:
             package="pipecat-ai[openai]",
             class_name=["OpenAILLMService"],
             env_prefix="OPENAI",
-            include_params=["api_key", "model"],
+            include_params=["api_key"],
+            settings_params=["model", "system_instruction"],
         ),
         ServiceDefinition(
             value="openpipe_llm",
@@ -540,6 +554,7 @@ class ServiceRegistry:
             class_name=["OpenPipeLLMService"],
             env_prefix="OPENPIPE",
             include_params=["api_key", "openpipe_api_key"],
+            settings_params=["system_instruction"],
         ),
         ServiceDefinition(
             value="openrouter_llm",
@@ -547,7 +562,8 @@ class ServiceRegistry:
             package="pipecat-ai[openrouter]",
             class_name=["OpenRouterLLMService"],
             env_prefix="OPENROUTER",
-            include_params=["api_key", "model"],
+            include_params=["api_key"],
+            settings_params=["model", "system_instruction"],
         ),
         ServiceDefinition(
             value="perplexity_llm",
@@ -555,7 +571,8 @@ class ServiceRegistry:
             package="pipecat-ai[perplexity]",
             class_name=["PerplexityLLMService"],
             env_prefix="PERPLEXITY",
-            include_params=["api_key", "model"],
+            include_params=["api_key"],
+            settings_params=["model", "system_instruction"],
         ),
         ServiceDefinition(
             value="qwen_llm",
@@ -563,7 +580,8 @@ class ServiceRegistry:
             package="pipecat-ai[qwen]",
             class_name=["QwenLLMService"],
             env_prefix="QWEN",
-            include_params=["api_key", "model"],
+            include_params=["api_key"],
+            settings_params=["model", "system_instruction"],
         ),
         ServiceDefinition(
             value="sambanova_llm",
@@ -571,7 +589,8 @@ class ServiceRegistry:
             package="pipecat-ai[sambanova]",
             class_name=["SambaNovaLLMService"],
             env_prefix="SAMBANOVA",
-            include_params=["api_key", "model"],
+            include_params=["api_key"],
+            settings_params=["model", "system_instruction"],
         ),
         ServiceDefinition(
             value="together_llm",
@@ -579,7 +598,8 @@ class ServiceRegistry:
             package="pipecat-ai[together]",
             class_name=["TogetherLLMService"],
             env_prefix="TOGETHER",
-            include_params=["api_key", "model"],
+            include_params=["api_key"],
+            settings_params=["model", "system_instruction"],
         ),
     ]
 
@@ -591,7 +611,8 @@ class ServiceRegistry:
             package="pipecat-ai[asyncai]",
             class_name=["AsyncAITTSService"],
             env_prefix="ASYNCAI",
-            include_params=["api_key", "voice_id"],
+            include_params=["api_key"],
+            settings_params=["voice"],
         ),
         ServiceDefinition(
             value="aws_polly_tts",
@@ -599,8 +620,8 @@ class ServiceRegistry:
             package="pipecat-ai[aws]",
             class_name=["AWSPollyTTSService"],
             env_prefix="AWS",
-            include_params=["region", "voice_id"],
-            manual_config=True,
+            include_params=["region"],
+            settings_params=["voice"],
         ),
         ServiceDefinition(
             value="azure_tts",
@@ -608,7 +629,8 @@ class ServiceRegistry:
             package="pipecat-ai[azure]",
             class_name=["AzureTTSService"],
             env_prefix="AZURE_SPEECH",
-            include_params=["api_key", "region", "voice"],
+            include_params=["api_key", "region"],
+            settings_params=["voice"],
         ),
         ServiceDefinition(
             value="camb_tts",
@@ -616,7 +638,8 @@ class ServiceRegistry:
             package="pipecat-ai[camb]",
             class_name=["CambTTSService"],
             env_prefix="CAMB",
-            include_params=["api_key", "voice_id"],
+            include_params=["api_key"],
+            settings_params=["voice"],
         ),
         ServiceDefinition(
             value="cartesia_tts",
@@ -624,7 +647,8 @@ class ServiceRegistry:
             package="pipecat-ai[cartesia]",
             class_name=["CartesiaTTSService"],
             env_prefix="CARTESIA",
-            include_params=["api_key", "voice_id"],
+            include_params=["api_key"],
+            settings_params=["voice"],
         ),
         ServiceDefinition(
             value="deepgram_tts",
@@ -632,7 +656,8 @@ class ServiceRegistry:
             package="pipecat-ai[deepgram]",
             class_name=["DeepgramTTSService"],
             env_prefix="DEEPGRAM",
-            include_params=["api_key", "voice"],
+            include_params=["api_key"],
+            settings_params=["voice"],
         ),
         ServiceDefinition(
             value="elevenlabs_tts",
@@ -640,7 +665,8 @@ class ServiceRegistry:
             package="pipecat-ai[elevenlabs]",
             class_name=["ElevenLabsTTSService"],
             env_prefix="ELEVENLABS",
-            include_params=["api_key", "voice_id"],
+            include_params=["api_key"],
+            settings_params=["voice"],
         ),
         ServiceDefinition(
             value="fish_tts",
@@ -648,7 +674,8 @@ class ServiceRegistry:
             package="pipecat-ai[fish]",
             class_name=["FishAudioTTSService"],
             env_prefix="FISH",
-            include_params=["api_key", "model"],
+            include_params=["api_key"],
+            settings_params=["voice"],
         ),
         ServiceDefinition(
             value="gemini_tts",
@@ -656,7 +683,8 @@ class ServiceRegistry:
             package="pipecat-ai[google]",
             class_name=["GeminiTTSService"],
             env_prefix="GOOGLE",
-            include_params=["voice_id", "credentials"],
+            include_params=["credentials"],
+            settings_params=["voice"],
         ),
         ServiceDefinition(
             value="google_tts",
@@ -664,7 +692,8 @@ class ServiceRegistry:
             package="pipecat-ai[google]",
             class_name=["GoogleTTSService"],
             env_prefix="GOOGLE",
-            include_params=["voice_id", "credentials"],
+            include_params=["credentials"],
+            settings_params=["voice"],
         ),
         ServiceDefinition(
             value="gradium_tts",
@@ -672,7 +701,8 @@ class ServiceRegistry:
             package="pipecat-ai[gradium]",
             class_name=["GradiumTTSService"],
             env_prefix="GRADIUM",
-            include_params=["api_key", "voice_id"],
+            include_params=["api_key"],
+            settings_params=["voice"],
         ),
         ServiceDefinition(
             value="groq_tts",
@@ -680,15 +710,8 @@ class ServiceRegistry:
             package="pipecat-ai[groq]",
             class_name=["GroqTTSService"],
             env_prefix="GROQ",
-            include_params=["api_key", "voice_id"],
-        ),
-        ServiceDefinition(
-            value="hathora_tts",
-            label="Hathora",
-            package="pipecat-ai",
-            class_name=["HathoraTTSService"],
-            env_prefix="HATHORA",
-            include_params=["api_key", "voice_id"],
+            include_params=["api_key"],
+            settings_params=["voice"],
         ),
         ServiceDefinition(
             value="hume_tts",
@@ -696,7 +719,8 @@ class ServiceRegistry:
             package="pipecat-ai[hume]",
             class_name=["HumeTTSService"],
             env_prefix="HUME",
-            include_params=["api_key", "voice_id"],
+            include_params=["api_key"],
+            settings_params=["voice"],
         ),
         ServiceDefinition(
             value="inworld_tts",
@@ -704,7 +728,8 @@ class ServiceRegistry:
             package="pipecat-ai",
             class_name=["InworldTTSService"],
             env_prefix="INWORLD",
-            include_params=["api_key", "voice_id"],
+            include_params=["api_key"],
+            settings_params=["voice"],
         ),
         ServiceDefinition(
             value="kokoro_tts",
@@ -712,7 +737,7 @@ class ServiceRegistry:
             package="pipecat-ai[kokoro]",
             class_name=["KokoroTTSService"],
             env_prefix="KOKORO",
-            include_params=["voice_id"],
+            settings_params=["voice"],
         ),
         ServiceDefinition(
             value="lmnt_tts",
@@ -720,7 +745,8 @@ class ServiceRegistry:
             package="pipecat-ai[lmnt]",
             class_name=["LmntTTSService"],
             env_prefix="LMNT",
-            include_params=["api_key", "voice_id"],
+            include_params=["api_key"],
+            settings_params=["voice"],
         ),
         ServiceDefinition(
             value="minimax_tts",
@@ -728,7 +754,8 @@ class ServiceRegistry:
             package="pipecat-ai",
             class_name=["MiniMaxHttpTTSService"],
             env_prefix="MINIMAX",
-            include_params=["api_key", "group_id", "voice_id"],
+            include_params=["api_key", "group_id"],
+            settings_params=["voice"],
         ),
         ServiceDefinition(
             value="neuphonic_tts",
@@ -736,7 +763,8 @@ class ServiceRegistry:
             package="pipecat-ai[neuphonic]",
             class_name=["NeuphonicTTSService"],
             env_prefix="NEUPHONIC",
-            include_params=["api_key", "voice_id"],
+            include_params=["api_key"],
+            settings_params=["voice"],
         ),
         ServiceDefinition(
             value="nvidia_tts",
@@ -744,7 +772,8 @@ class ServiceRegistry:
             package="pipecat-ai[nvidia]",
             class_name=["NvidiaTTSService"],
             env_prefix="NVIDIA",
-            include_params=["api_key", "voice_id"],
+            include_params=["api_key"],
+            settings_params=["voice"],
         ),
         ServiceDefinition(
             value="openai_tts",
@@ -752,7 +781,8 @@ class ServiceRegistry:
             package="pipecat-ai[openai]",
             class_name=["OpenAITTSService"],
             env_prefix="OPENAI",
-            include_params=["api_key", "voice"],
+            include_params=["api_key"],
+            settings_params=["voice"],
         ),
         ServiceDefinition(
             value="piper_tts",
@@ -760,7 +790,7 @@ class ServiceRegistry:
             package="pipecat-ai[piper]",
             class_name=["PiperTTSService"],
             env_prefix="PIPER",
-            include_params=["voice_id"],
+            settings_params=["voice"],
         ),
         ServiceDefinition(
             value="resemble_tts",
@@ -768,7 +798,8 @@ class ServiceRegistry:
             package="pipecat-ai[resembleai]",
             class_name=["ResembleAITTSService"],
             env_prefix="RESEMBLE",
-            include_params=["api_key", "voice_id"],
+            include_params=["api_key"],
+            settings_params=["voice"],
         ),
         ServiceDefinition(
             value="rime_tts",
@@ -776,7 +807,8 @@ class ServiceRegistry:
             package="pipecat-ai[rime]",
             class_name=["RimeTTSService"],
             env_prefix="RIME",
-            include_params=["api_key", "voice_id"],
+            include_params=["api_key"],
+            settings_params=["voice"],
         ),
         ServiceDefinition(
             value="sarvam_tts",
@@ -784,7 +816,8 @@ class ServiceRegistry:
             package="pipecat-ai",
             class_name=["SarvamTTSService"],
             env_prefix="SARVAM",
-            include_params=["api_key", "model", "voice_id"],
+            include_params=["api_key"],
+            settings_params=["model", "voice"],
         ),
         ServiceDefinition(
             value="xtts_tts",
@@ -792,7 +825,8 @@ class ServiceRegistry:
             package="pipecat-ai[xtts]",
             class_name=["XTTSService"],
             env_prefix="XTTS",
-            include_params=["voice_id", "base_url"],
+            include_params=["base_url"],
+            settings_params=["voice"],
         ),
     ]
 
@@ -917,28 +951,24 @@ MANUAL_SERVICE_CONFIGS = {
     "aws_bedrock_llm": (
         "AWSBedrockLLMService(\n"
         '    aws_region=os.getenv("AWS_REGION"),\n'
-        '    model=os.getenv("AWS_BEDROCK_MODEL"),\n'
-        "    params=AWSBedrockLLMService.InputParams(temperature=0.8)\n"
-        ")"
-    ),
-    "aws_polly_tts": (
-        "AWSPollyTTSService(\n"
-        '    region=os.getenv("AWS_REGION"),\n'
-        '    voice_id=os.getenv("AWS_VOICE_ID"),\n'
-        '    params=AWSPollyTTSService.InputParams(engine="generative"),\n'
+        "    settings=AWSBedrockLLMService.Settings(\n"
+        '        model=os.getenv("AWS_BEDROCK_MODEL"),\n'
+        '        system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "    ),\n"
         ")"
     ),
     "azure_realtime": (
         "session_properties = SessionProperties(\n"
         '    input_audio_transcription=InputAudioTranscription(model="whisper-1"),\n'
-        '    instructions=os.getenv("AZURE_INSTRUCTIONS"),\n'
         ")\n"
         "\n"
         "llm = AzureRealtimeLLMService(\n"
         '    api_key=os.getenv("AZURE_REALTIME_API_KEY"),\n'
         '    base_url=os.getenv("AZURE_REALTIME_BASE_URL"),\n'
-        "    session_properties=session_properties,\n"
-        "    start_audio_paused=False,\n"
+        "    settings=AzureRealtimeLLMService.Settings(\n"
+        "        session_properties=session_properties,\n"
+        '        system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "    ),\n"
         ")"
     ),
     "openai_realtime": (
@@ -950,20 +980,24 @@ MANUAL_SERVICE_CONFIGS = {
         '            noise_reduction=InputAudioNoiseReduction(type="near_field"),\n'
         "        )\n"
         "    ),\n"
-        '    instructions=os.getenv("OPENAI_INSTRUCTIONS"),\n'
         ")\n"
         "\n"
         "llm = OpenAIRealtimeLLMService(\n"
         '    api_key=os.getenv("OPENAI_API_KEY"),\n'
-        "    session_properties=session_properties,\n"
+        "    settings=OpenAIRealtimeLLMService.Settings(\n"
+        "        session_properties=session_properties,\n"
+        '        system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "    ),\n"
         ")"
     ),
     "gemini_live_realtime": (
         "llm = GeminiLiveLLMService(\n"
         '    api_key=os.getenv("GOOGLE_API_KEY"),\n'
-        '    model=os.getenv("GOOGLE_MODEL"),\n'
-        '    voice_id=os.getenv("GOOGLE_VOICE_ID"),\n'
-        '    system_instruction=os.getenv("GOOGLE_SYSTEM_INSTRUCTION"),\n'
+        "    settings=GeminiLiveLLMService.Settings(\n"
+        '        model=os.getenv("GOOGLE_MODEL"),\n'
+        '        voice=os.getenv("GOOGLE_VOICE_ID"),\n'
+        '        system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "    ),\n"
         ")"
     ),
     "gemini_vertex_live_realtime": (
@@ -971,19 +1005,25 @@ MANUAL_SERVICE_CONFIGS = {
         '        credentials=os.getenv("GOOGLE_APPLICATION_CREDENTIALS"),\n'
         '        project_id=os.getenv("GOOGLE_PROJECT_ID"),\n'
         '        location=os.getenv("GOOGLE_LOCATION"),\n'
-        '        voice_id=os.getenv("GOOGLE_VOICE_ID"),\n'
-        '        system_instruction=os.getenv("GOOGLE_SYSTEM_INSTRUCTION"),\n'
+        "        settings=GeminiLiveVertexLLMService.Settings(\n"
+        '            model=os.getenv("GOOGLE_MODEL"),\n'
+        '            voice=os.getenv("GOOGLE_VOICE_ID"),\n'
+        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "        ),\n"
+        "    ),\n"
         ")"
     ),
     "grok_realtime": (
         "session_properties = SessionProperties(\n"
         '    voice=os.getenv("GROK_VOICE_ID"),\n'
-        '    instructions=os.getenv("GROK_INSTRUCTIONS"),\n'
         ")\n"
         "\n"
         "llm = GrokRealtimeLLMService(\n"
         '    api_key=os.getenv("GROK_API_KEY"),\n'
-        "    session_properties=session_properties,\n"
+        "    settings=GrokRealtimeLLMService.Settings(\n"
+        "        session_properties=session_properties,\n"
+        '        system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "    ),\n"
         ")"
     ),
     "aws_nova_realtime": (
@@ -992,7 +1032,10 @@ MANUAL_SERVICE_CONFIGS = {
         '    access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),\n'
         '    region=os.getenv("AWS_REGION"),\n'
         '    session_token=os.getenv("AWS_SESSION_TOKEN"),\n'
-        '    voice_id=os.getenv("AWS_VOICE_ID"),\n'
+        "    settings=AWSNovaSonicLLMService.Settings(\n"
+        '        voice=os.getenv("AWS_VOICE_ID"),\n'
+        '        system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "    ),\n"
         ")"
     ),
     "heygen_video": (

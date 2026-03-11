@@ -84,7 +84,6 @@ IMPORTS = {
     "google_stt": ["from pipecat.services.google.stt import GoogleSTTService"],
     "gradium_stt": ["from pipecat.services.gradium.stt import GradiumSTTService"],
     "groq_stt": ["from pipecat.services.groq.stt import GroqSTTService"],
-    "hathora_stt": ["from pipecat.services.hathora.stt import HathoraSTTService"],
     "nvidia_stt": ["from pipecat.services.nvidia.stt import NvidiaSTTService"],
     "openai_stt": ["from pipecat.services.openai.stt import OpenAISTTService"],
     "openai_realtime_stt": ["from pipecat.services.openai.stt import OpenAIRealtimeSTTService"],
@@ -101,7 +100,7 @@ IMPORTS = {
     "deepseek_llm": ["from pipecat.services.deepseek.llm import DeepSeekLLMService"],
     "fireworks_llm": ["from pipecat.services.fireworks.llm import FireworksLLMService"],
     "google_gemini_llm": ["from pipecat.services.google.llm import GoogleLLMService"],
-    "google_vertex_llm": ["from pipecat.services.google.llm_vertex import GoogleVertexLLMService"],
+    "google_vertex_llm": ["from pipecat.services.google.vertex.llm import GoogleVertexLLMService"],
     "grok_llm": ["from pipecat.services.grok.llm import GrokLLMService"],
     "groq_llm": ["from pipecat.services.groq.llm import GroqLLMService"],
     "mistral_llm": ["from pipecat.services.mistral.llm import MistralLLMService"],
@@ -127,7 +126,6 @@ IMPORTS = {
     "google_tts": ["from pipecat.services.google.tts import GoogleTTSService"],
     "gradium_tts": ["from pipecat.services.gradium.tts import GradiumTTSService"],
     "groq_tts": ["from pipecat.services.groq.tts import GroqTTSService"],
-    "hathora_tts": ["from pipecat.services.hathora.tts import HathoraTTSService"],
     "hume_tts": ["from pipecat.services.hume.tts import HumeTTSService"],
     "inworld_tts": ["from pipecat.services.inworld.tts import InworldTTSService"],
     "kokoro_tts": ["from pipecat.services.kokoro.tts import KokoroTTSService"],
@@ -151,7 +149,7 @@ IMPORTS = {
         "from pipecat.services.google.gemini_live.llm import GeminiLiveLLMService"
     ],
     "gemini_vertex_live_realtime": [
-        "from pipecat.services.google.gemini_live.llm_vertex import GeminiLiveVertexLLMService"
+        "from pipecat.services.google.gemini_live.vertex.llm import GeminiLiveVertexLLMService"
     ],
     "grok_realtime": [
         "from pipecat.services.grok.realtime.events import SessionProperties",

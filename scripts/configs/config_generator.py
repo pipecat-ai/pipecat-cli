@@ -61,6 +61,14 @@ HARDCODED_PARAMS = {
     "session": "session",
 }
 
+# Settings-only params that use a hardcoded literal value instead of an env var
+HARDCODED_SETTINGS = {
+    "system_instruction": (
+        '"You are a friendly AI assistant. '
+        'Respond naturally and keep your answers conversational."'
+    ),
+}
+
 
 def get_service_class(service_value: str):
     """Import and return the service class for inspection."""
@@ -143,6 +151,10 @@ def should_skip_parameter(param_name: str, param: inspect.Parameter) -> bool:
     if param.kind in (inspect.Parameter.VAR_POSITIONAL, inspect.Parameter.VAR_KEYWORD):
         return True
 
+    # Skip the settings parameter (generated separately for Settings pattern services)
+    if param_name == "settings":
+        return True
+
     # Skip params that are hardcoded
     if param_name in HARDCODED_PARAMS:
         return False  # Don't skip, but will be handled specially
@@ -169,12 +181,14 @@ def generate_param_code(
     has_default = param.default != inspect.Parameter.empty
 
     # Get the include list from service metadata
+    # settings_params entries are implicitly included (they need to be generated
+    # even if the constructor param has a default value)
     service_meta = get_service_metadata(service_value)
-    if service_meta and service_meta.include_params:
-        include_list = service_meta.include_params
-    else:
-        # Fallback if metadata is missing
-        include_list = []
+    include_list = list(service_meta.include_params or []) if service_meta else []
+    if service_meta and service_meta.settings_params:
+        for sp in service_meta.settings_params:
+            if sp not in include_list:
+                include_list.append(sp)
 
     # Skip parameters with defaults UNLESS they're in this service's include list
     if has_default and param_name not in include_list:
@@ -191,30 +205,45 @@ def generate_param_code(
     return f'{param_name}=os.getenv("{env_var}")'
 
 
-def get_all_init_parameters(service_class) -> dict[str, inspect.Parameter]:
-    """Get all __init__ parameters including from parent classes.
+def get_init_parameters(service_class) -> dict[str, inspect.Parameter]:
+    """Get __init__ parameters for the service class.
 
-    Walks up the inheritance chain to collect all parameters,
-    with child class parameters overriding parent parameters.
+    Uses inspect.signature which resolves inheritance automatically —
+    if the class defines its own __init__, those params are returned;
+    otherwise, the nearest parent's __init__ params are used.
     """
-    all_params = {}
+    sig = inspect.signature(service_class.__init__)
+    return dict(sig.parameters)
 
-    # Walk the MRO (Method Resolution Order) in reverse to start with base classes
-    for base_class in reversed(inspect.getmro(service_class)):
-        # Skip object and other built-ins
-        if base_class in (object, type):
-            continue
 
-        try:
-            # Get the signature for this class's __init__
-            sig = inspect.signature(base_class.__init__)
-            # Update with this class's parameters (child overrides parent)
-            all_params.update(sig.parameters)
-        except (ValueError, TypeError):
-            # Some classes might not have inspectable __init__
-            continue
+def _format_direct(class_name: str, param_codes: list[str]) -> str:
+    """Format initialization code without Settings pattern."""
+    if not param_codes:
+        return f"{class_name}()"
+    elif len(param_codes) == 1:
+        return f"{class_name}({param_codes[0]})"
+    else:
+        lines = [f"{class_name}("]
+        for i, code in enumerate(param_codes):
+            comma = "," if i < len(param_codes) - 1 else ""
+            lines.append(f"        {code}{comma}")
+        lines.append("    )")
+        return "\n".join(lines)
 
-    return all_params
+
+def _format_with_settings(
+    class_name: str, direct_codes: list[str], settings_codes: list[str]
+) -> str:
+    """Format initialization code with nested Settings(...) block."""
+    lines = [f"{class_name}("]
+    for code in direct_codes:
+        lines.append(f"        {code},")
+    lines.append(f"        settings={class_name}.Settings(")
+    for code in settings_codes:
+        lines.append(f"            {code},")
+    lines.append("        ),")
+    lines.append("    )")
+    return "\n".join(lines)
 
 
 def generate_service_config(service_value: str) -> str | None:
@@ -240,36 +269,58 @@ def generate_service_config(service_value: str) -> str | None:
 
     # Get all parameters including from parent classes
     try:
-        all_params = get_all_init_parameters(service_class)
+        all_params = get_init_parameters(service_class)
     except Exception as e:
         print(f"  # Could not inspect {class_name}: {e}", file=sys.stderr)
         return None
 
-    # Generate parameter code
-    param_codes = []
+    # Check if this service uses the Settings pattern
+    settings_param_names = service_meta.settings_params if service_meta else None
+
+    # Generate parameter code, splitting into direct and settings buckets
+    direct_codes = []
+    settings_codes = []
+
     for param_name, param in all_params.items():
         if should_skip_parameter(param_name, param):
             continue
 
         param_code = generate_param_code(service_value, param_name, param)
         if param_code:
-            param_codes.append(param_code)
+            if settings_param_names is not None and param_name in settings_param_names:
+                # Use hardcoded value if defined, otherwise use the generated env var code
+                if param_name in HARDCODED_SETTINGS:
+                    settings_codes.append(f"{param_name}={HARDCODED_SETTINGS[param_name]}")
+                else:
+                    settings_codes.append(param_code)
+            else:
+                direct_codes.append(param_code)
 
-    # Format the initialization code
-    if not param_codes:
-        # No parameters (unlikely but handle it)
-        return f"{class_name}()"
-    elif len(param_codes) == 1:
-        # Single parameter - keep on one line
-        return f"{class_name}({param_codes[0]})"
+    # Generate entries for include_params not found in the constructor
+    # (e.g. api_key lives on a parent class but the child's __init__ doesn't expose it)
+    found_params = {code.split("=")[0] for code in direct_codes + settings_codes}
+    include_params = service_meta.include_params or [] if service_meta else []
+    for ip in include_params:
+        if ip not in found_params and ip not in (settings_param_names or []):
+            env_var = get_env_var_name(service_value, ip)
+            direct_codes.append(f'{ip}=os.getenv("{env_var}")')
+
+    if settings_param_names is not None:
+        # Generate entries for settings_params that weren't found in the constructor
+        # (they are Settings-only fields, e.g. "voice" exists on Settings but the
+        # constructor uses "voice_id" which is an alias)
+        found_settings = {code.split("=")[0] for code in settings_codes}
+        for sp in settings_param_names:
+            if sp not in found_settings:
+                if sp in HARDCODED_SETTINGS:
+                    settings_codes.append(f"{sp}={HARDCODED_SETTINGS[sp]}")
+                else:
+                    env_var = get_env_var_name(service_value, sp)
+                    settings_codes.append(f'{sp}=os.getenv("{env_var}")')
+
+        return _format_with_settings(class_name, direct_codes, settings_codes)
     else:
-        # Multiple parameters - format as multi-line
-        lines = [f"{class_name}("]
-        for i, code in enumerate(param_codes):
-            comma = "," if i < len(param_codes) - 1 else ""
-            lines.append(f"        {code}{comma}")
-        lines.append("    )")
-        return "\n".join(lines)
+        return _format_direct(class_name, direct_codes)
 
 
 def generate_all_configs() -> dict[str, str]:

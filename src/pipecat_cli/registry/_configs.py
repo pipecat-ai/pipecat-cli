@@ -36,7 +36,12 @@ SERVICE_CONFIGS = {
         "    )\n"
     ),
     "elevenlabs_realtime_stt": 'ElevenLabsRealtimeSTTService(api_key=os.getenv("ELEVENLABS_API_KEY"))',
-    "fal_stt": 'FalSTTService(api_key=os.getenv("FAL_API_KEY"))',
+    "fal_stt": (
+        "FalSTTService(\n"
+        '        api_key=os.getenv("FAL_API_KEY"),\n'
+        "        aiohttp_session=session\n"
+        "    )\n"
+    ),
     "gladia_stt": (
         "GladiaSTTService(\n"
         '        api_key=os.getenv("GLADIA_API_KEY"),\n'
@@ -51,301 +56,419 @@ SERVICE_CONFIGS = {
     ),
     "gradium_stt": 'GradiumSTTService(api_key=os.getenv("GRADIUM_API_KEY"))',
     "groq_stt": 'GroqSTTService(api_key=os.getenv("GROQ_API_KEY"))',
-    "hathora_stt": (
-        "HathoraSTTService(\n"
-        '        model=os.getenv("HATHORA_MODEL"),\n'
-        '        api_key=os.getenv("HATHORA_API_KEY")\n'
-        "    )\n"
-    ),
     "nvidia_stt": 'NvidiaSTTService(api_key=os.getenv("NVIDIA_API_KEY"))',
     "openai_stt": 'OpenAISTTService(api_key=os.getenv("OPENAI_API_KEY"))',
     "openai_realtime_stt": 'OpenAIRealtimeSTTService(api_key=os.getenv("OPENAI_API_KEY"))',
     "sambanova_stt": (
         "SambaNovaSTTService(\n"
-        '        model=os.getenv("SAMBANOVA_MODEL"),\n'
-        '        api_key=os.getenv("SAMBANOVA_API_KEY")\n'
+        '        api_key=os.getenv("SAMBANOVA_API_KEY"),\n'
+        "        settings=SambaNovaSTTService.Settings(\n"
+        '            model=os.getenv("SAMBANOVA_MODEL"),\n'
+        "        ),\n"
         "    )\n"
     ),
     "sarvam_stt": (
         "SarvamSTTService(\n"
         '        api_key=os.getenv("SARVAM_API_KEY"),\n'
-        '        model=os.getenv("SARVAM_MODEL")\n'
+        "        settings=SarvamSTTService.Settings(\n"
+        '            model=os.getenv("SARVAM_MODEL"),\n'
+        "        ),\n"
         "    )\n"
     ),
     "soniox_stt": 'SonioxSTTService(api_key=os.getenv("SONIOX_API_KEY"))',
     "speechmatics_stt": 'SpeechmaticsSTTService(api_key=os.getenv("SPEECHMATICS_API_KEY"))',
-    "whisper_stt": 'WhisperSTTService(model=os.getenv("OPENAI_MODEL"))',
+    "whisper_stt": (
+        "WhisperSTTService(\n"
+        "        settings=WhisperSTTService.Settings(\n"
+        '            model=os.getenv("OPENAI_MODEL"),\n'
+        "        ),\n"
+        "    )\n"
+    ),
     # LLM Services
     "anthropic_llm": (
         "AnthropicLLMService(\n"
         '        api_key=os.getenv("ANTHROPIC_API_KEY"),\n'
-        '        model=os.getenv("ANTHROPIC_MODEL")\n'
+        "        settings=AnthropicLLMService.Settings(\n"
+        '            model=os.getenv("ANTHROPIC_MODEL"),\n'
+        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "        ),\n"
         "    )\n"
     ),
     "aws_bedrock_llm": (
         "AWSBedrockLLMService(\n"
         '    aws_region=os.getenv("AWS_REGION"),\n'
-        '    model=os.getenv("AWS_BEDROCK_MODEL"),\n'
-        "    params=AWSBedrockLLMService.InputParams(temperature=0.8)\n"
+        "    settings=AWSBedrockLLMService.Settings(\n"
+        '        model=os.getenv("AWS_BEDROCK_MODEL"),\n'
+        '        system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "    ),\n"
         ")\n"
     ),
     "azure_llm": (
         "AzureLLMService(\n"
-        '        model=os.getenv("AZURE_CHATGPT_MODEL"),\n'
         '        api_key=os.getenv("AZURE_CHATGPT_API_KEY"),\n'
-        '        endpoint=os.getenv("AZURE_CHATGPT_ENDPOINT")\n'
+        '        endpoint=os.getenv("AZURE_CHATGPT_ENDPOINT"),\n'
+        "        settings=AzureLLMService.Settings(\n"
+        '            model=os.getenv("AZURE_CHATGPT_MODEL"),\n'
+        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "        ),\n"
         "    )\n"
     ),
     "cerebras_llm": (
         "CerebrasLLMService(\n"
-        '        model=os.getenv("CEREBRAS_MODEL"),\n'
-        '        api_key=os.getenv("CEREBRAS_API_KEY")\n'
+        '        api_key=os.getenv("CEREBRAS_API_KEY"),\n'
+        "        settings=CerebrasLLMService.Settings(\n"
+        '            model=os.getenv("CEREBRAS_MODEL"),\n'
+        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "        ),\n"
         "    )\n"
     ),
     "deepseek_llm": (
         "DeepSeekLLMService(\n"
-        '        model=os.getenv("DEEPSEEK_MODEL"),\n'
-        '        api_key=os.getenv("DEEPSEEK_API_KEY")\n'
+        '        api_key=os.getenv("DEEPSEEK_API_KEY"),\n'
+        "        settings=DeepSeekLLMService.Settings(\n"
+        '            model=os.getenv("DEEPSEEK_MODEL"),\n'
+        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "        ),\n"
         "    )\n"
     ),
     "fireworks_llm": (
         "FireworksLLMService(\n"
-        '        model=os.getenv("FIREWORKS_MODEL"),\n'
-        '        api_key=os.getenv("FIREWORKS_API_KEY")\n'
+        '        api_key=os.getenv("FIREWORKS_API_KEY"),\n'
+        "        settings=FireworksLLMService.Settings(\n"
+        '            model=os.getenv("FIREWORKS_MODEL"),\n'
+        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "        ),\n"
         "    )\n"
     ),
     "google_gemini_llm": (
         "GoogleLLMService(\n"
         '        api_key=os.getenv("GOOGLE_API_KEY"),\n'
-        '        model=os.getenv("GOOGLE_MODEL")\n'
+        "        settings=GoogleLLMService.Settings(\n"
+        '            model=os.getenv("GOOGLE_MODEL"),\n'
+        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "        ),\n"
         "    )\n"
     ),
     "google_vertex_llm": (
         "GoogleVertexLLMService(\n"
         '        credentials=os.getenv("GOOGLE_APPLICATION_CREDENTIALS"),\n'
         '        location=os.getenv("GOOGLE_LOCATION"),\n'
-        '        project_id=os.getenv("GOOGLE_PROJECT_ID")\n'
+        '        project_id=os.getenv("GOOGLE_PROJECT_ID"),\n'
+        "        settings=GoogleVertexLLMService.Settings(\n"
+        '            model=os.getenv("GOOGLE_MODEL"),\n'
+        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "        ),\n"
         "    )\n"
     ),
     "grok_llm": (
         "GrokLLMService(\n"
-        '        model=os.getenv("GROK_MODEL"),\n'
-        '        api_key=os.getenv("GROK_API_KEY")\n'
+        '        api_key=os.getenv("GROK_API_KEY"),\n'
+        "        settings=GrokLLMService.Settings(\n"
+        '            model=os.getenv("GROK_MODEL"),\n'
+        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "        ),\n"
         "    )\n"
     ),
     "groq_llm": (
         "GroqLLMService(\n"
-        '        model=os.getenv("GROQ_MODEL"),\n'
-        '        api_key=os.getenv("GROQ_API_KEY")\n'
+        '        api_key=os.getenv("GROQ_API_KEY"),\n'
+        "        settings=GroqLLMService.Settings(\n"
+        '            model=os.getenv("GROQ_MODEL"),\n'
+        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "        ),\n"
         "    )\n"
     ),
     "mistral_llm": (
         "MistralLLMService(\n"
-        '        model=os.getenv("MISTRAL_MODEL"),\n'
-        '        api_key=os.getenv("MISTRAL_API_KEY")\n'
+        '        api_key=os.getenv("MISTRAL_API_KEY"),\n'
+        "        settings=MistralLLMService.Settings(\n"
+        '            model=os.getenv("MISTRAL_MODEL"),\n'
+        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "        ),\n"
         "    )\n"
     ),
     "nvidia_llm": (
         "NvidiaLLMService(\n"
-        '        model=os.getenv("NVIDIA_MODEL"),\n'
-        '        api_key=os.getenv("NVIDIA_API_KEY")\n'
+        '        api_key=os.getenv("NVIDIA_API_KEY"),\n'
+        "        settings=NvidiaLLMService.Settings(\n"
+        '            model=os.getenv("NVIDIA_MODEL"),\n'
+        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "        ),\n"
         "    )\n"
     ),
-    "ollama_llm": 'OLLamaLLMService(model=os.getenv("OLLAMA_MODEL"))',
+    "ollama_llm": (
+        "OLLamaLLMService(\n"
+        "        settings=OLLamaLLMService.Settings(\n"
+        '            model=os.getenv("OLLAMA_MODEL"),\n'
+        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "        ),\n"
+        "    )\n"
+    ),
     "openai_llm": (
         "OpenAILLMService(\n"
-        '        model=os.getenv("OPENAI_MODEL"),\n'
-        '        api_key=os.getenv("OPENAI_API_KEY")\n'
+        '        api_key=os.getenv("OPENAI_API_KEY"),\n'
+        "        settings=OpenAILLMService.Settings(\n"
+        '            model=os.getenv("OPENAI_MODEL"),\n'
+        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "        ),\n"
         "    )\n"
     ),
     "openpipe_llm": (
         "OpenPipeLLMService(\n"
         '        api_key=os.getenv("OPENPIPE_API_KEY"),\n'
-        '        openpipe_api_key=os.getenv("OPENPIPE_OPENPIPE_API_KEY")\n'
+        '        openpipe_api_key=os.getenv("OPENPIPE_OPENPIPE_API_KEY"),\n'
+        "        settings=OpenPipeLLMService.Settings(\n"
+        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "        ),\n"
         "    )\n"
     ),
     "openrouter_llm": (
         "OpenRouterLLMService(\n"
-        '        model=os.getenv("OPENROUTER_MODEL"),\n'
-        '        api_key=os.getenv("OPENROUTER_API_KEY")\n'
+        '        api_key=os.getenv("OPENROUTER_API_KEY"),\n'
+        "        settings=OpenRouterLLMService.Settings(\n"
+        '            model=os.getenv("OPENROUTER_MODEL"),\n'
+        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "        ),\n"
         "    )\n"
     ),
     "perplexity_llm": (
         "PerplexityLLMService(\n"
-        '        model=os.getenv("PERPLEXITY_MODEL"),\n'
-        '        api_key=os.getenv("PERPLEXITY_API_KEY")\n'
+        '        api_key=os.getenv("PERPLEXITY_API_KEY"),\n'
+        "        settings=PerplexityLLMService.Settings(\n"
+        '            model=os.getenv("PERPLEXITY_MODEL"),\n'
+        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "        ),\n"
         "    )\n"
     ),
     "qwen_llm": (
         "QwenLLMService(\n"
-        '        model=os.getenv("QWEN_MODEL"),\n'
-        '        api_key=os.getenv("QWEN_API_KEY")\n'
+        '        api_key=os.getenv("QWEN_API_KEY"),\n'
+        "        settings=QwenLLMService.Settings(\n"
+        '            model=os.getenv("QWEN_MODEL"),\n'
+        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "        ),\n"
         "    )\n"
     ),
     "sambanova_llm": (
         "SambaNovaLLMService(\n"
-        '        model=os.getenv("SAMBANOVA_MODEL"),\n'
-        '        api_key=os.getenv("SAMBANOVA_API_KEY")\n'
+        '        api_key=os.getenv("SAMBANOVA_API_KEY"),\n'
+        "        settings=SambaNovaLLMService.Settings(\n"
+        '            model=os.getenv("SAMBANOVA_MODEL"),\n'
+        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "        ),\n"
         "    )\n"
     ),
     "together_llm": (
         "TogetherLLMService(\n"
-        '        model=os.getenv("TOGETHER_MODEL"),\n'
-        '        api_key=os.getenv("TOGETHER_API_KEY")\n'
+        '        api_key=os.getenv("TOGETHER_API_KEY"),\n'
+        "        settings=TogetherLLMService.Settings(\n"
+        '            model=os.getenv("TOGETHER_MODEL"),\n'
+        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "        ),\n"
         "    )\n"
     ),
     # TTS Services
     "asyncai_tts": (
         "AsyncAITTSService(\n"
         '        api_key=os.getenv("ASYNCAI_API_KEY"),\n'
-        '        voice_id=os.getenv("ASYNCAI_VOICE_ID")\n'
+        "        settings=AsyncAITTSService.Settings(\n"
+        '            voice=os.getenv("ASYNCAI_VOICE_ID"),\n'
+        "        ),\n"
         "    )\n"
     ),
     "aws_polly_tts": (
         "AWSPollyTTSService(\n"
-        '    region=os.getenv("AWS_REGION"),\n'
-        '    voice_id=os.getenv("AWS_VOICE_ID"),\n'
-        '    params=AWSPollyTTSService.InputParams(engine="generative"),\n'
-        ")\n"
+        '        region=os.getenv("AWS_REGION"),\n'
+        "        settings=AWSPollyTTSService.Settings(\n"
+        '            voice=os.getenv("AWS_VOICE_ID"),\n'
+        "        ),\n"
+        "    )\n"
     ),
     "azure_tts": (
         "AzureTTSService(\n"
         '        api_key=os.getenv("AZURE_SPEECH_API_KEY"),\n'
         '        region=os.getenv("AZURE_SPEECH_REGION"),\n'
-        '        voice=os.getenv("AZURE_SPEECH_VOICE_ID")\n'
+        "        settings=AzureTTSService.Settings(\n"
+        '            voice=os.getenv("AZURE_SPEECH_VOICE_ID"),\n'
+        "        ),\n"
         "    )\n"
     ),
     "camb_tts": (
         "CambTTSService(\n"
         '        api_key=os.getenv("CAMB_API_KEY"),\n'
-        '        voice_id=os.getenv("CAMB_VOICE_ID")\n'
+        "        settings=CambTTSService.Settings(\n"
+        '            voice=os.getenv("CAMB_VOICE_ID"),\n'
+        "        ),\n"
         "    )\n"
     ),
     "cartesia_tts": (
         "CartesiaTTSService(\n"
         '        api_key=os.getenv("CARTESIA_API_KEY"),\n'
-        '        voice_id=os.getenv("CARTESIA_VOICE_ID")\n'
+        "        settings=CartesiaTTSService.Settings(\n"
+        '            voice=os.getenv("CARTESIA_VOICE_ID"),\n'
+        "        ),\n"
         "    )\n"
     ),
     "deepgram_tts": (
         "DeepgramTTSService(\n"
         '        api_key=os.getenv("DEEPGRAM_API_KEY"),\n'
-        '        voice=os.getenv("DEEPGRAM_VOICE_ID")\n'
+        "        settings=DeepgramTTSService.Settings(\n"
+        '            voice=os.getenv("DEEPGRAM_VOICE_ID"),\n'
+        "        ),\n"
         "    )\n"
     ),
     "elevenlabs_tts": (
         "ElevenLabsTTSService(\n"
         '        api_key=os.getenv("ELEVENLABS_API_KEY"),\n'
-        '        voice_id=os.getenv("ELEVENLABS_VOICE_ID")\n'
+        "        settings=ElevenLabsTTSService.Settings(\n"
+        '            voice=os.getenv("ELEVENLABS_VOICE_ID"),\n'
+        "        ),\n"
         "    )\n"
     ),
     "fish_tts": (
         "FishAudioTTSService(\n"
         '        api_key=os.getenv("FISH_API_KEY"),\n'
-        '        model=os.getenv("FISH_MODEL")\n'
+        "        settings=FishAudioTTSService.Settings(\n"
+        '            voice=os.getenv("FISH_VOICE_ID"),\n'
+        "        ),\n"
         "    )\n"
     ),
     "gemini_tts": (
         "GeminiTTSService(\n"
         '        credentials=os.getenv("GOOGLE_APPLICATION_CREDENTIALS"),\n'
-        '        voice_id=os.getenv("GOOGLE_VOICE_ID")\n'
+        "        settings=GeminiTTSService.Settings(\n"
+        '            voice=os.getenv("GOOGLE_VOICE_ID"),\n'
+        "        ),\n"
         "    )\n"
     ),
     "google_tts": (
         "GoogleTTSService(\n"
         '        credentials=os.getenv("GOOGLE_APPLICATION_CREDENTIALS"),\n'
-        '        voice_id=os.getenv("GOOGLE_VOICE_ID")\n'
+        "        settings=GoogleTTSService.Settings(\n"
+        '            voice=os.getenv("GOOGLE_VOICE_ID"),\n'
+        "        ),\n"
         "    )\n"
     ),
     "gradium_tts": (
         "GradiumTTSService(\n"
         '        api_key=os.getenv("GRADIUM_API_KEY"),\n'
-        '        voice_id=os.getenv("GRADIUM_VOICE_ID")\n'
+        "        settings=GradiumTTSService.Settings(\n"
+        '            voice=os.getenv("GRADIUM_VOICE_ID"),\n'
+        "        ),\n"
         "    )\n"
     ),
     "groq_tts": (
         "GroqTTSService(\n"
         '        api_key=os.getenv("GROQ_API_KEY"),\n'
-        '        voice_id=os.getenv("GROQ_VOICE_ID")\n'
-        "    )\n"
-    ),
-    "hathora_tts": (
-        "HathoraTTSService(\n"
-        '        model=os.getenv("HATHORA_MODEL"),\n'
-        '        voice_id=os.getenv("HATHORA_VOICE_ID"),\n'
-        '        api_key=os.getenv("HATHORA_API_KEY")\n'
+        "        settings=GroqTTSService.Settings(\n"
+        '            voice=os.getenv("GROQ_VOICE_ID"),\n'
+        "        ),\n"
         "    )\n"
     ),
     "hume_tts": (
         "HumeTTSService(\n"
         '        api_key=os.getenv("HUME_API_KEY"),\n'
-        '        voice_id=os.getenv("HUME_VOICE_ID")\n'
+        "        settings=HumeTTSService.Settings(\n"
+        '            voice=os.getenv("HUME_VOICE_ID"),\n'
+        "        ),\n"
         "    )\n"
     ),
     "inworld_tts": (
         "InworldTTSService(\n"
         '        api_key=os.getenv("INWORLD_API_KEY"),\n'
-        '        voice_id=os.getenv("INWORLD_VOICE_ID")\n'
+        "        settings=InworldTTSService.Settings(\n"
+        '            voice=os.getenv("INWORLD_VOICE_ID"),\n'
+        "        ),\n"
         "    )\n"
     ),
-    "kokoro_tts": 'KokoroTTSService(voice_id=os.getenv("KOKORO_VOICE_ID"))',
+    "kokoro_tts": (
+        "KokoroTTSService(\n"
+        "        settings=KokoroTTSService.Settings(\n"
+        '            voice=os.getenv("KOKORO_VOICE_ID"),\n'
+        "        ),\n"
+        "    )\n"
+    ),
     "lmnt_tts": (
         "LmntTTSService(\n"
         '        api_key=os.getenv("LMNT_API_KEY"),\n'
-        '        voice_id=os.getenv("LMNT_VOICE_ID")\n'
+        "        settings=LmntTTSService.Settings(\n"
+        '            voice=os.getenv("LMNT_VOICE_ID"),\n'
+        "        ),\n"
         "    )\n"
     ),
     "minimax_tts": (
         "MiniMaxHttpTTSService(\n"
         '        api_key=os.getenv("MINIMAX_API_KEY"),\n'
         '        group_id=os.getenv("MINIMAX_GROUP_ID"),\n'
-        '        voice_id=os.getenv("MINIMAX_VOICE_ID"),\n'
-        "        aiohttp_session=session\n"
+        "        aiohttp_session=session,\n"
+        "        settings=MiniMaxHttpTTSService.Settings(\n"
+        '            voice=os.getenv("MINIMAX_VOICE_ID"),\n'
+        "        ),\n"
         "    )\n"
     ),
     "neuphonic_tts": (
         "NeuphonicTTSService(\n"
         '        api_key=os.getenv("NEUPHONIC_API_KEY"),\n'
-        '        voice_id=os.getenv("NEUPHONIC_VOICE_ID")\n'
+        "        settings=NeuphonicTTSService.Settings(\n"
+        '            voice=os.getenv("NEUPHONIC_VOICE_ID"),\n'
+        "        ),\n"
         "    )\n"
     ),
     "nvidia_tts": (
         "NvidiaTTSService(\n"
         '        api_key=os.getenv("NVIDIA_API_KEY"),\n'
-        '        voice_id=os.getenv("NVIDIA_VOICE_ID")\n'
+        "        settings=NvidiaTTSService.Settings(\n"
+        '            voice=os.getenv("NVIDIA_VOICE_ID"),\n'
+        "        ),\n"
         "    )\n"
     ),
     "openai_tts": (
         "OpenAITTSService(\n"
         '        api_key=os.getenv("OPENAI_API_KEY"),\n'
-        '        voice=os.getenv("OPENAI_VOICE_ID")\n'
+        "        settings=OpenAITTSService.Settings(\n"
+        '            voice=os.getenv("OPENAI_VOICE_ID"),\n'
+        "        ),\n"
         "    )\n"
     ),
-    "piper_tts": 'PiperTTSService(voice_id=os.getenv("PIPER_VOICE_ID"))',
+    "piper_tts": (
+        "PiperTTSService(\n"
+        "        settings=PiperTTSService.Settings(\n"
+        '            voice=os.getenv("PIPER_VOICE_ID"),\n'
+        "        ),\n"
+        "    )\n"
+    ),
     "resemble_tts": (
         "ResembleAITTSService(\n"
         '        api_key=os.getenv("RESEMBLE_API_KEY"),\n'
-        '        voice_id=os.getenv("RESEMBLE_VOICE_ID")\n'
+        "        settings=ResembleAITTSService.Settings(\n"
+        '            voice=os.getenv("RESEMBLE_VOICE_ID"),\n'
+        "        ),\n"
         "    )\n"
     ),
     "rime_tts": (
         "RimeTTSService(\n"
         '        api_key=os.getenv("RIME_API_KEY"),\n'
-        '        voice_id=os.getenv("RIME_VOICE_ID")\n'
+        "        settings=RimeTTSService.Settings(\n"
+        '            voice=os.getenv("RIME_VOICE_ID"),\n'
+        "        ),\n"
         "    )\n"
     ),
     "sarvam_tts": (
         "SarvamTTSService(\n"
         '        api_key=os.getenv("SARVAM_API_KEY"),\n'
-        '        model=os.getenv("SARVAM_MODEL"),\n'
-        '        voice_id=os.getenv("SARVAM_VOICE_ID")\n'
+        "        settings=SarvamTTSService.Settings(\n"
+        '            model=os.getenv("SARVAM_MODEL"),\n'
+        '            voice=os.getenv("SARVAM_VOICE_ID"),\n'
+        "        ),\n"
         "    )\n"
     ),
     "xtts_tts": (
         "XTTSService(\n"
-        '        voice_id=os.getenv("XTTS_VOICE_ID"),\n'
         '        base_url=os.getenv("XTTS_BASE_URL"),\n'
-        "        aiohttp_session=session\n"
+        "        aiohttp_session=session,\n"
+        "        settings=XTTSService.Settings(\n"
+        '            voice=os.getenv("XTTS_VOICE_ID"),\n'
+        "        ),\n"
         "    )\n"
     ),
     # Realtime Services
@@ -355,27 +478,33 @@ SERVICE_CONFIGS = {
         '    access_key_id=os.getenv("AWS_ACCESS_KEY_ID"),\n'
         '    region=os.getenv("AWS_REGION"),\n'
         '    session_token=os.getenv("AWS_SESSION_TOKEN"),\n'
-        '    voice_id=os.getenv("AWS_VOICE_ID"),\n'
+        "    settings=AWSNovaSonicLLMService.Settings(\n"
+        '        voice=os.getenv("AWS_VOICE_ID"),\n'
+        '        system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "    ),\n"
         ")\n"
     ),
     "azure_realtime": (
         "session_properties = SessionProperties(\n"
         '    input_audio_transcription=InputAudioTranscription(model="whisper-1"),\n'
-        '    instructions=os.getenv("AZURE_INSTRUCTIONS"),\n'
         ")\n"
         "llm = AzureRealtimeLLMService(\n"
         '    api_key=os.getenv("AZURE_REALTIME_API_KEY"),\n'
         '    base_url=os.getenv("AZURE_REALTIME_BASE_URL"),\n'
-        "    session_properties=session_properties,\n"
-        "    start_audio_paused=False,\n"
+        "    settings=AzureRealtimeLLMService.Settings(\n"
+        "        session_properties=session_properties,\n"
+        '        system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "    ),\n"
         ")\n"
     ),
     "gemini_live_realtime": (
         "llm = GeminiLiveLLMService(\n"
         '    api_key=os.getenv("GOOGLE_API_KEY"),\n'
-        '    model=os.getenv("GOOGLE_MODEL"),\n'
-        '    voice_id=os.getenv("GOOGLE_VOICE_ID"),\n'
-        '    system_instruction=os.getenv("GOOGLE_SYSTEM_INSTRUCTION"),\n'
+        "    settings=GeminiLiveLLMService.Settings(\n"
+        '        model=os.getenv("GOOGLE_MODEL"),\n'
+        '        voice=os.getenv("GOOGLE_VOICE_ID"),\n'
+        '        system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "    ),\n"
         ")\n"
     ),
     "gemini_vertex_live_realtime": (
@@ -383,18 +512,24 @@ SERVICE_CONFIGS = {
         '        credentials=os.getenv("GOOGLE_APPLICATION_CREDENTIALS"),\n'
         '        project_id=os.getenv("GOOGLE_PROJECT_ID"),\n'
         '        location=os.getenv("GOOGLE_LOCATION"),\n'
-        '        voice_id=os.getenv("GOOGLE_VOICE_ID"),\n'
-        '        system_instruction=os.getenv("GOOGLE_SYSTEM_INSTRUCTION"),\n'
+        "        settings=GeminiLiveVertexLLMService.Settings(\n"
+        '            model=os.getenv("GOOGLE_MODEL"),\n'
+        '            voice=os.getenv("GOOGLE_VOICE_ID"),\n'
+        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "        ),\n"
+        "    ),\n"
         ")\n"
     ),
     "grok_realtime": (
         "session_properties = SessionProperties(\n"
         '    voice=os.getenv("GROK_VOICE_ID"),\n'
-        '    instructions=os.getenv("GROK_INSTRUCTIONS"),\n'
         ")\n"
         "llm = GrokRealtimeLLMService(\n"
         '    api_key=os.getenv("GROK_API_KEY"),\n'
-        "    session_properties=session_properties,\n"
+        "    settings=GrokRealtimeLLMService.Settings(\n"
+        "        session_properties=session_properties,\n"
+        '        system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "    ),\n"
         ")\n"
     ),
     "openai_realtime": (
@@ -406,11 +541,13 @@ SERVICE_CONFIGS = {
         '            noise_reduction=InputAudioNoiseReduction(type="near_field"),\n'
         "        )\n"
         "    ),\n"
-        '    instructions=os.getenv("OPENAI_INSTRUCTIONS"),\n'
         ")\n"
         "llm = OpenAIRealtimeLLMService(\n"
         '    api_key=os.getenv("OPENAI_API_KEY"),\n'
-        "    session_properties=session_properties,\n"
+        "    settings=OpenAIRealtimeLLMService.Settings(\n"
+        "        session_properties=session_properties,\n"
+        '        system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "    ),\n"
         ")\n"
     ),
     "ultravox": (
