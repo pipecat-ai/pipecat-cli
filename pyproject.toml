@@ -39,7 +39,7 @@ Website = "https://pipecat.ai"
 Issues = "https://github.com/pipecat-ai/pipecat-cli/issues"
 
 [project.optional-dependencies]
-tail = [ "pipecat-ai-tail>=0.0.2" ]
+tail = [ "pipecat-ai-tail>=0.0.3" ]
 
 [project.scripts]
 pipecat = "pipecat_cli.main:app"
