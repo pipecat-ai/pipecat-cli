@@ -5,6 +5,20 @@ All notable changes to **Pipecat** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.2.2] - 2026-03-11
+
+### Changed
+
+- Updated support and patterns for `pipecat-ai` 0.0.105:
+  - LLM, TTS, and STT services now use the `Service.Settings(...)` pattern for
+    configuration (e.g. `model`, `voice`, `system_instruction`).
+  - `system_instruction` moves from `LLMContext(messages)` to each LLM service's
+    `Settings` block. `LLMContext()` is now created with no arguments.
+
+### Removed
+
+- Removed `HathoraSTTService` and `HathoraTTSService` as Hathora has shut down.
+
 ## [0.2.1] - 2026-02-11
 
 ### Added
@@ -266,7 +280,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Core CLI commands:
-
   - `pipecat init` - Interactive project scaffolding
   - `pipecat tail` - Real-time bot monitoring
   - `pipecat cloud` - Deployment and management commands for Pipecat Cloud

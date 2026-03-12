@@ -22,14 +22,7 @@ async def save_audio_file(audio: bytes, filename: str, sample_rate: int, num_cha
 
 {# Context and message setup #}
 {% macro setup_context() %}
-messages = [
-    {
-        "role": "system",
-        "content": "You are a friendly AI assistant. Respond naturally and keep your answers conversational.",
-    },
-]
-
-context = LLMContext(messages)
+context = LLMContext()
 user_aggregator, assistant_aggregator = LLMContextAggregatorPair(
     context,
     user_params=LLMUserAggregatorParams(

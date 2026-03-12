@@ -9,6 +9,7 @@ Reusable event handlers for different transport types
 @task.rtvi.event_handler("on_client_ready")
 async def on_client_ready(rtvi):
     # Kick off the conversation
+    context.add_message({"role": "user", "content": "Please introduce yourself."})
     await task.queue_frames([LLMRunFrame()])
 
 {% endif %}
@@ -21,7 +22,7 @@ async def on_client_connected(transport, client):
     {% endif %}
     {% if bot_type != 'web' %}
     # Kick off the conversation
-    messages.append({"role": "system", "content": "Say hello and briefly introduce yourself."})
+    context.add_message({"role": "user", "content": "Please introduce yourself."})
     await task.queue_frames([LLMRunFrame()])
     {% endif %}
 
@@ -41,6 +42,7 @@ async def on_first_participant_joined(transport, participant):
     await audio_buffer.start_recording()
     {% endif %}
     # Kick off the conversation
+    context.add_message({"role": "user", "content": "Please introduce yourself."})
     await task.queue_frames([LLMRunFrame()])
 
 @transport.event_handler("on_client_disconnected")
@@ -115,7 +117,8 @@ async def on_client_connected(transport, client):
     # Start recording audio
     await audio_buffer.start_recording()
     {% endif %}
-    await task.queue_frame(LLMRunFrame())
+    context.add_message({"role": "user", "content": "Please introduce yourself."})
+    await task.queue_frames([LLMRunFrame()])
 
 @transport.event_handler("on_client_disconnected")
 async def on_client_disconnected(transport, client):
