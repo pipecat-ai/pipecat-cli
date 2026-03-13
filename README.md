@@ -70,8 +70,7 @@ Deploy and manage your bot in production with [Pipecat Cloud](https://www.daily.
 # Authenticate
 pipecat cloud auth login
 
-# Build and deploy
-pipecat cloud docker build-push
+# Deploy
 pipecat cloud deploy
 
 # Manage deployments
@@ -87,7 +86,7 @@ Cloud commands provide:
 - 📊 Agent status and log monitoring
 - 🔧 Runtime configuration management
 
-**Note:** When you enable "Deploy to Pipecat Cloud" during project creation, the necessary Docker and deployment config files are automatically generated.
+**Note:** When you enable "Deploy to Pipecat Cloud" during project creation, the necessary deployment config files are automatically generated.
 
 Learn more in the [Pipecat Cloud documentation](https://docs.pipecat.ai/deployment/pipecat-cloud/introduction).
 
