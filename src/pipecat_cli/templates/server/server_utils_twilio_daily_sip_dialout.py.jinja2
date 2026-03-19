@@ -109,7 +109,7 @@ async def create_daily_room(
         raise HTTPException(status_code=400, detail="Invalid SIP URI")
 
     try:
-        return await configure(session, sip_caller_phone=sip_caller_phone)
+        return await configure(session, sip_caller_phone=sip_caller_phone, enable_dialout=True)
     except Exception as e:
         logger.error(f"Error creating Daily room: {e}")
         raise HTTPException(status_code=500, detail=f"Failed to create Daily room: {str(e)}")
