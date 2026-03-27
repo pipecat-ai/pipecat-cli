@@ -30,7 +30,13 @@ uv tool install "pipecat-ai-cli[tail]"
 
 ## Create a New Project
 
-Create a new Pipecat project interactively:
+Create a new quickstart Pipecat project with default settings:
+
+```bash
+pipecat init quickstart
+```
+
+Or create a new Pipecat project interactively:
 
 ```bash
 pipecat init

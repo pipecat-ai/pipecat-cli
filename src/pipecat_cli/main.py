@@ -12,7 +12,7 @@ from importlib.metadata import version
 import typer
 from rich.console import Console
 
-from pipecat_cli.commands import init
+from pipecat_cli.commands.init import init_app
 
 app = typer.Typer(
     name="pipecat",
@@ -23,8 +23,7 @@ app = typer.Typer(
 console = Console()
 
 # Register commands
-# Single-level commands use app.command() decorator
-app.command(name="init", help="Initialize a new Pipecat project")(init.init_command)
+app.add_typer(init_app, name="init", help="Initialize a new Pipecat project")
 
 # Load pipecat-cli extensions.
 extensions = []

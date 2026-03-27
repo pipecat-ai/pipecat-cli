@@ -14,10 +14,12 @@ import typer
 from rich.console import Console
 
 from pipecat_cli.generators import ProjectGenerator
-from pipecat_cli.prompts import ask_project_questions
+from pipecat_cli.prompts import ProjectConfig, ask_project_questions
 from pipecat_cli.registry.service_metadata import ServiceRegistry
 
 console = Console()
+
+init_app = typer.Typer(invoke_without_command=True)
 
 
 def _list_options_callback(value: bool):
@@ -44,7 +46,9 @@ def _list_options_callback(value: bool):
     raise typer.Exit(0)
 
 
+@init_app.callback(invoke_without_command=True)
 def init_command(
+    ctx: typer.Context,
     output_dir: Optional[Path] = typer.Option(
         None, "--output", "-o", help="Output directory (defaults to current directory)"
     ),
@@ -131,6 +135,9 @@ def init_command(
         pc init --config project-config.json             # From config file
         pc init --name my-bot ... --dry-run              # Preview config as JSON
     """
+    if ctx.invoked_subcommand is not None:
+        return
+
     try:
         non_interactive = name is not None or config is not None
 
@@ -220,6 +227,69 @@ def init_command(
 
             # Show next steps
             generator.print_next_steps(project_path)
+
+    except KeyboardInterrupt:
+        console.print("\n[yellow]Project creation cancelled.[/yellow]")
+        raise typer.Exit(1)
+    except typer.Exit:
+        raise
+    except FileExistsError as e:
+        console.print(f"\n[red]Error: {e}[/red]")
+        raise typer.Exit(1)
+    except Exception as e:
+        console.print(f"\n[red]Error creating project: {e}[/red]")
+        raise typer.Exit(1)
+
+
+@init_app.command("quickstart")
+def quickstart_command(
+    output_dir: Optional[Path] = typer.Option(
+        None, "--output", "-o", help="Output directory (defaults to current directory)"
+    ),
+):
+    """
+    Create a new Pipecat project with quickstart defaults.
+
+    Sets up a project with SmallWebRTC, Deepgram STT, OpenAI LLM, and Cartesia TTS
+    — the fastest way to get a voice agent running.
+
+    Examples:
+        pc init quickstart
+        pc init quickstart -o /path/to/output
+    """
+    try:
+        project_name = "pipecat-quickstart"
+
+        console.print("[bold cyan]Let's create your Pipecat project![/bold cyan]\n")
+
+        # Display all pre-selected defaults
+        console.print(f"[green]✔[/green] Project name: [cyan]{project_name}[/cyan]")
+        console.print("[green]✔[/green] Bot type: [cyan]Web/Mobile[/cyan]")
+        console.print("[green]✔[/green] Transport: [cyan]SmallWebRTC[/cyan]")
+        console.print("[green]✔[/green] Pipeline architecture: [cyan]Cascade (STT → LLM → TTS)[/cyan]")
+        console.print("[green]✔[/green] Speech-to-Text: [cyan]Deepgram[/cyan]")
+        console.print("[green]✔[/green] Language model: [cyan]OpenAI[/cyan]")
+        console.print("[green]✔[/green] Text-to-Speech: [cyan]Cartesia[/cyan]")
+        console.print("[green]✔[/green] Deploy to Pipecat Cloud: [cyan]Yes[/cyan]")
+
+        # Build config with quickstart defaults
+        project_config = ProjectConfig(
+            project_name="pipecat-quickstart",
+            bot_type="web",
+            transports=["smallwebrtc"],
+            mode="cascade",
+            stt_service="deepgram_stt",
+            llm_service="openai_llm",
+            tts_service="cartesia_tts",
+            deploy_to_cloud=True,
+        )
+
+        # Generate project
+        generator = ProjectGenerator(project_config)
+        project_path = generator.generate(output_dir)
+
+        # Show next steps
+        generator.print_next_steps(project_path)
 
     except KeyboardInterrupt:
         console.print("\n[yellow]Project creation cancelled.[/yellow]")
