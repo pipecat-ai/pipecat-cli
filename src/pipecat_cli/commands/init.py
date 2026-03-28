@@ -286,7 +286,7 @@ def quickstart_command(
 
         # Generate project
         generator = ProjectGenerator(project_config)
-        project_path = generator.generate(output_dir)
+        project_path = generator.generate(output_dir, non_interactive=True)
 
         # Show next steps
         generator.print_next_steps(project_path)
