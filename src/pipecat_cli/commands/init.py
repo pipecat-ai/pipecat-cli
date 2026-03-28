@@ -265,7 +265,7 @@ def quickstart_command(
         # Display all pre-selected defaults
         console.print(f"[green]✔[/green] Project name: [cyan]{project_name}[/cyan]")
         console.print("[green]✔[/green] Bot type: [cyan]Web/Mobile[/cyan]")
-        console.print("[green]✔[/green] Transport: [cyan]SmallWebRTC[/cyan]")
+        console.print("[green]✔[/green] Transport: [cyan]SmallWebRTC, Daily[/cyan]")
         console.print("[green]✔[/green] Pipeline architecture: [cyan]Cascade (STT → LLM → TTS)[/cyan]")
         console.print("[green]✔[/green] Speech-to-Text: [cyan]Deepgram[/cyan]")
         console.print("[green]✔[/green] Language model: [cyan]OpenAI[/cyan]")
@@ -274,9 +274,9 @@ def quickstart_command(
 
         # Build config with quickstart defaults
         project_config = ProjectConfig(
-            project_name="pipecat-quickstart",
+            project_name=project_name,
             bot_type="web",
-            transports=["smallwebrtc"],
+            transports=["smallwebrtc", "daily"],
             mode="cascade",
             stt_service="deepgram_stt",
             llm_service="openai_llm",
