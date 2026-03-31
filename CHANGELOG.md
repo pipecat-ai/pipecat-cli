@@ -5,6 +5,27 @@ All notable changes to **Pipecat** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.1] - 2026-03-30
+
+### Added
+
+- Added support for:
+  - `NovitaLLMService`
+  - `SarvamLLMService`
+  - `SmallestTTSService`
+  - `XAIHttpTTSService`
+
+### Changed
+
+- Updated for `pipecat-ai` 0.0.108:
+  - Renamed Grok services from `grok_llm` / `grok_realtime` to `xai_llm` /
+    `xai_realtime`, matching the new `pipecat.services.xai` module path.
+  - All XAI/Grok services now use `XAI_API_KEY` instead of `GROK_API_KEY`.
+
+### Removed
+
+- Removed `SambaNovaSTTService` (removed upstream in `pipecat-ai` 0.0.108).
+
 ## [0.3.0] - 2026-03-30
 
 ### Added

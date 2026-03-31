@@ -87,7 +87,6 @@ IMPORTS = {
     "nvidia_stt": ["from pipecat.services.nvidia.stt import NvidiaSTTService"],
     "openai_stt": ["from pipecat.services.openai.stt import OpenAISTTService"],
     "openai_realtime_stt": ["from pipecat.services.openai.stt import OpenAIRealtimeSTTService"],
-    "sambanova_stt": ["from pipecat.services.sambanova.stt import SambaNovaSTTService"],
     "sarvam_stt": ["from pipecat.services.sarvam.stt import SarvamSTTService"],
     "soniox_stt": ["from pipecat.services.soniox.stt import SonioxSTTService"],
     "speechmatics_stt": ["from pipecat.services.speechmatics.stt import SpeechmaticsSTTService"],
@@ -101,9 +100,10 @@ IMPORTS = {
     "fireworks_llm": ["from pipecat.services.fireworks.llm import FireworksLLMService"],
     "google_gemini_llm": ["from pipecat.services.google.llm import GoogleLLMService"],
     "google_vertex_llm": ["from pipecat.services.google.vertex.llm import GoogleVertexLLMService"],
-    "grok_llm": ["from pipecat.services.grok.llm import GrokLLMService"],
+    "xai_llm": ["from pipecat.services.xai.llm import GrokLLMService"],
     "groq_llm": ["from pipecat.services.groq.llm import GroqLLMService"],
     "mistral_llm": ["from pipecat.services.mistral.llm import MistralLLMService"],
+    "novita_llm": ["from pipecat.services.novita.llm import NovitaLLMService"],
     "nvidia_llm": ["from pipecat.services.nvidia.llm import NvidiaLLMService"],
     "ollama_llm": ["from pipecat.services.ollama.llm import OLLamaLLMService"],
     "openai_llm": ["from pipecat.services.openai.llm import OpenAILLMService"],
@@ -112,6 +112,7 @@ IMPORTS = {
     "perplexity_llm": ["from pipecat.services.perplexity.llm import PerplexityLLMService"],
     "qwen_llm": ["from pipecat.services.qwen.llm import QwenLLMService"],
     "sambanova_llm": ["from pipecat.services.sambanova.llm import SambaNovaLLMService"],
+    "sarvam_llm": ["from pipecat.services.sarvam.llm import SarvamLLMService"],
     "together_llm": ["from pipecat.services.together.llm import TogetherLLMService"],
     # TTS Services
     "asyncai_tts": ["from pipecat.services.asyncai.tts import AsyncAITTSService"],
@@ -138,6 +139,8 @@ IMPORTS = {
     "resemble_tts": ["from pipecat.services.resembleai.tts import ResembleAITTSService"],
     "rime_tts": ["from pipecat.services.rime.tts import RimeTTSService"],
     "sarvam_tts": ["from pipecat.services.sarvam.tts import SarvamTTSService"],
+    "smallest_tts": ["from pipecat.services.smallest.tts import SmallestTTSService"],
+    "xai_tts": ["from pipecat.services.xai.tts import XAIHttpTTSService"],
     "xtts_tts": ["from pipecat.services.xtts.tts import XTTSService"],
     # Realtime Services
     "aws_nova_realtime": ["from pipecat.services.aws.nova_sonic.llm import AWSNovaSonicLLMService"],
@@ -151,9 +154,9 @@ IMPORTS = {
     "gemini_vertex_live_realtime": [
         "from pipecat.services.google.gemini_live.vertex.llm import GeminiLiveVertexLLMService"
     ],
-    "grok_realtime": [
-        "from pipecat.services.grok.realtime.events import SessionProperties",
-        "from pipecat.services.grok.realtime.llm import GrokRealtimeLLMService",
+    "xai_realtime": [
+        "from pipecat.services.xai.realtime.events import SessionProperties",
+        "from pipecat.services.xai.realtime.llm import GrokRealtimeLLMService",
     ],
     "openai_realtime": [
         "from pipecat.services.openai.realtime.events import SessionProperties, AudioConfiguration, AudioInput, InputAudioTranscription, SemanticTurnDetection, InputAudioNoiseReduction",

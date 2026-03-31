@@ -376,15 +376,6 @@ class ServiceRegistry:
             include_params=["api_key"],
         ),
         ServiceDefinition(
-            value="sambanova_stt",
-            label="SambaNova (Whisper)",
-            package="pipecat-ai[sambanova]",
-            class_name=["SambaNovaSTTService"],
-            env_prefix="SAMBANOVA",
-            include_params=["api_key"],
-            settings_params=["model"],
-        ),
-        ServiceDefinition(
             value="sarvam_stt",
             label="Sarvam",
             package="pipecat-ai[sarvam]",
@@ -495,11 +486,11 @@ class ServiceRegistry:
             settings_params=["model", "system_instruction"],
         ),
         ServiceDefinition(
-            value="grok_llm",
+            value="xai_llm",
             label="Grok",
-            package="pipecat-ai[grok]",
+            package="pipecat-ai[xai]",
             class_name=["GrokLLMService"],
-            env_prefix="GROK",
+            env_prefix="XAI",
             include_params=["api_key"],
             settings_params=["model", "system_instruction"],
         ),
@@ -518,6 +509,15 @@ class ServiceRegistry:
             package="pipecat-ai[mistral]",
             class_name=["MistralLLMService"],
             env_prefix="MISTRAL",
+            include_params=["api_key"],
+            settings_params=["model", "system_instruction"],
+        ),
+        ServiceDefinition(
+            value="novita_llm",
+            label="Novita",
+            package="pipecat-ai[novita]",
+            class_name=["NovitaLLMService"],
+            env_prefix="NOVITA",
             include_params=["api_key"],
             settings_params=["model", "system_instruction"],
         ),
@@ -589,6 +589,15 @@ class ServiceRegistry:
             package="pipecat-ai[sambanova]",
             class_name=["SambaNovaLLMService"],
             env_prefix="SAMBANOVA",
+            include_params=["api_key"],
+            settings_params=["model", "system_instruction"],
+        ),
+        ServiceDefinition(
+            value="sarvam_llm",
+            label="Sarvam",
+            package="pipecat-ai[sarvam]",
+            class_name=["SarvamLLMService"],
+            env_prefix="SARVAM",
             include_params=["api_key"],
             settings_params=["model", "system_instruction"],
         ),
@@ -820,6 +829,24 @@ class ServiceRegistry:
             settings_params=["model", "voice"],
         ),
         ServiceDefinition(
+            value="smallest_tts",
+            label="Smallest",
+            package="pipecat-ai[smallest]",
+            class_name=["SmallestTTSService"],
+            env_prefix="SMALLEST",
+            include_params=["api_key"],
+            settings_params=["voice"],
+        ),
+        ServiceDefinition(
+            value="xai_tts",
+            label="XAI",
+            package="pipecat-ai[xai]",
+            class_name=["XAIHttpTTSService"],
+            env_prefix="XAI",
+            include_params=["api_key"],
+            settings_params=["voice"],
+        ),
+        ServiceDefinition(
             value="xtts_tts",
             label="XTTS (Coqui)",
             package="pipecat-ai[xtts]",
@@ -872,11 +899,11 @@ class ServiceRegistry:
             manual_config=True,
         ),
         ServiceDefinition(
-            value="grok_realtime",
+            value="xai_realtime",
             label="Grok Realtime",
-            package="pipecat-ai[grok]",
+            package="pipecat-ai[xai]",
             class_name=["GrokRealtimeLLMService", "SessionProperties"],
-            env_prefix="GROK",
+            env_prefix="XAI",
             include_params=[],
             manual_config=True,
         ),
@@ -1013,13 +1040,13 @@ MANUAL_SERVICE_CONFIGS = {
         "    ),\n"
         ")"
     ),
-    "grok_realtime": (
+    "xai_realtime": (
         "session_properties = SessionProperties(\n"
-        '    voice=os.getenv("GROK_VOICE_ID"),\n'
+        '    voice=os.getenv("XAI_VOICE_ID"),\n'
         ")\n"
         "\n"
         "llm = GrokRealtimeLLMService(\n"
-        '    api_key=os.getenv("GROK_API_KEY"),\n'
+        '    api_key=os.getenv("XAI_API_KEY"),\n'
         "    settings=GrokRealtimeLLMService.Settings(\n"
         "        session_properties=session_properties,\n"
         '        system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'

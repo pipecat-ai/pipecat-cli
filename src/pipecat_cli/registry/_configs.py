@@ -59,14 +59,6 @@ SERVICE_CONFIGS = {
     "nvidia_stt": 'NvidiaSTTService(api_key=os.getenv("NVIDIA_API_KEY"))',
     "openai_stt": 'OpenAISTTService(api_key=os.getenv("OPENAI_API_KEY"))',
     "openai_realtime_stt": 'OpenAIRealtimeSTTService(api_key=os.getenv("OPENAI_API_KEY"))',
-    "sambanova_stt": (
-        "SambaNovaSTTService(\n"
-        '        api_key=os.getenv("SAMBANOVA_API_KEY"),\n'
-        "        settings=SambaNovaSTTService.Settings(\n"
-        '            model=os.getenv("SAMBANOVA_MODEL"),\n'
-        "        ),\n"
-        "    )\n"
-    ),
     "sarvam_stt": (
         "SarvamSTTService(\n"
         '        api_key=os.getenv("SARVAM_API_KEY"),\n'
@@ -160,11 +152,11 @@ SERVICE_CONFIGS = {
         "        ),\n"
         "    )\n"
     ),
-    "grok_llm": (
+    "xai_llm": (
         "GrokLLMService(\n"
-        '        api_key=os.getenv("GROK_API_KEY"),\n'
+        '        api_key=os.getenv("XAI_API_KEY"),\n'
         "        settings=GrokLLMService.Settings(\n"
-        '            model=os.getenv("GROK_MODEL"),\n'
+        '            model=os.getenv("XAI_MODEL"),\n'
         '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
         "        ),\n"
         "    )\n"
@@ -183,6 +175,15 @@ SERVICE_CONFIGS = {
         '        api_key=os.getenv("MISTRAL_API_KEY"),\n'
         "        settings=MistralLLMService.Settings(\n"
         '            model=os.getenv("MISTRAL_MODEL"),\n'
+        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "        ),\n"
+        "    )\n"
+    ),
+    "novita_llm": (
+        "NovitaLLMService(\n"
+        '        api_key=os.getenv("NOVITA_API_KEY"),\n'
+        "        settings=NovitaLLMService.Settings(\n"
+        '            model=os.getenv("NOVITA_MODEL"),\n'
         '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
         "        ),\n"
         "    )\n"
@@ -254,6 +255,15 @@ SERVICE_CONFIGS = {
         '        api_key=os.getenv("SAMBANOVA_API_KEY"),\n'
         "        settings=SambaNovaLLMService.Settings(\n"
         '            model=os.getenv("SAMBANOVA_MODEL"),\n'
+        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        "        ),\n"
+        "    )\n"
+    ),
+    "sarvam_llm": (
+        "SarvamLLMService(\n"
+        '        api_key=os.getenv("SARVAM_API_KEY"),\n'
+        "        settings=SarvamLLMService.Settings(\n"
+        '            model=os.getenv("SARVAM_MODEL"),\n'
         '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
         "        ),\n"
         "    )\n"
@@ -462,6 +472,23 @@ SERVICE_CONFIGS = {
         "        ),\n"
         "    )\n"
     ),
+    "smallest_tts": (
+        "SmallestTTSService(\n"
+        '        api_key=os.getenv("SMALLEST_API_KEY"),\n'
+        "        settings=SmallestTTSService.Settings(\n"
+        '            voice=os.getenv("SMALLEST_VOICE_ID"),\n'
+        "        ),\n"
+        "    )\n"
+    ),
+    "xai_tts": (
+        "XAIHttpTTSService(\n"
+        '        api_key=os.getenv("XAI_API_KEY"),\n'
+        "        aiohttp_session=session,\n"
+        "        settings=XAIHttpTTSService.Settings(\n"
+        '            voice=os.getenv("XAI_VOICE_ID"),\n'
+        "        ),\n"
+        "    )\n"
+    ),
     "xtts_tts": (
         "XTTSService(\n"
         '        base_url=os.getenv("XTTS_BASE_URL"),\n'
@@ -520,12 +547,12 @@ SERVICE_CONFIGS = {
         "    ),\n"
         ")\n"
     ),
-    "grok_realtime": (
+    "xai_realtime": (
         "session_properties = SessionProperties(\n"
-        '    voice=os.getenv("GROK_VOICE_ID"),\n'
+        '    voice=os.getenv("XAI_VOICE_ID"),\n'
         ")\n"
         "llm = GrokRealtimeLLMService(\n"
-        '    api_key=os.getenv("GROK_API_KEY"),\n'
+        '    api_key=os.getenv("XAI_API_KEY"),\n'
         "    settings=GrokRealtimeLLMService.Settings(\n"
         "        session_properties=session_properties,\n"
         '        system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
