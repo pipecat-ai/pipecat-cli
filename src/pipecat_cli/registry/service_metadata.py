@@ -58,6 +58,10 @@ class ServiceDefinition:
         manual_config: If True, config must be manually written (not auto-generated)
         recommended: If True, this service is marked as recommended in prompts
         additional_imports: List of full import statements that can't be auto-discovered
+        param_defaults: Default values for settings params. When set, the config generator
+            produces os.getenv("ENV_VAR", "default") instead of os.getenv("ENV_VAR").
+            Use this for params where the quickstart should work without the user
+            setting the env var (e.g., model or voice defaults).
     """
 
     value: str
@@ -70,6 +74,7 @@ class ServiceDefinition:
     manual_config: bool = False
     recommended: bool = False
     additional_imports: list[str] | None = None
+    param_defaults: dict[str, str] | None = None
 
     def __post_init__(self):
         """Validate service definition after initialization."""
@@ -546,6 +551,7 @@ class ServiceRegistry:
             env_prefix="OPENAI",
             include_params=["api_key"],
             settings_params=["model", "system_instruction"],
+            param_defaults={"model": "gpt-4.1"},
         ),
         ServiceDefinition(
             value="openpipe_llm",
@@ -658,6 +664,7 @@ class ServiceRegistry:
             env_prefix="CARTESIA",
             include_params=["api_key"],
             settings_params=["voice"],
+            param_defaults={"voice": "71a7ad14-091c-4e8e-a314-022ece01c121"},
         ),
         ServiceDefinition(
             value="deepgram_tts",

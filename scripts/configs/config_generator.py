@@ -202,6 +202,12 @@ def generate_param_code(
     if has_default and param.default == "":
         return f'{param_name}=os.getenv("{env_var}", "")'
 
+    # Check for param_defaults (e.g., model or voice defaults for quickstart)
+    if service_meta and service_meta.param_defaults:
+        default_value = service_meta.param_defaults.get(param_name)
+        if default_value is not None:
+            return f'{param_name}=os.getenv("{env_var}", "{default_value}")'
+
     return f'{param_name}=os.getenv("{env_var}")'
 
 
@@ -316,7 +322,17 @@ def generate_service_config(service_value: str) -> str | None:
                     settings_codes.append(f"{sp}={HARDCODED_SETTINGS[sp]}")
                 else:
                     env_var = get_env_var_name(service_value, sp)
-                    settings_codes.append(f'{sp}=os.getenv("{env_var}")')
+                    default_value = (
+                        service_meta.param_defaults.get(sp)
+                        if service_meta and service_meta.param_defaults
+                        else None
+                    )
+                    if default_value is not None:
+                        settings_codes.append(
+                            f'{sp}=os.getenv("{env_var}", "{default_value}")'
+                        )
+                    else:
+                        settings_codes.append(f'{sp}=os.getenv("{env_var}")')
 
         return _format_with_settings(class_name, direct_codes, settings_codes)
     else:

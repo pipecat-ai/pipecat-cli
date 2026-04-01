@@ -3085,7 +3085,7 @@ dev = [
 requires-dist = [
     { name = "jinja2", specifier = ">=3.1.0,<4" },
     { name = "pipecat-ai-tail", marker = "extra == 'tail'", specifier = ">=0.0.5" },
-    { name = "pipecatcloud", specifier = ">=0.2.20" },
+    { name = "pipecatcloud", specifier = ">=0.4.1" },
     { name = "questionary", specifier = ">=2.0.0,<3" },
     { name = "rich", specifier = ">=13.0.0,<14" },
     { name = "ruff", specifier = ">=0.12.1,<1" },
@@ -3123,7 +3123,7 @@ wheels = [
 
 [[package]]
 name = "pipecatcloud"
-version = "0.2.20"
+version = "0.4.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiohttp" },
@@ -3136,9 +3136,9 @@ dependencies = [
     { name = "typer" },
     { name = "uvicorn" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/47/c5/ecf2c8c40b9f2dda7a31d067497173c96153e32d51230c58995a2616e0b8/pipecatcloud-0.2.20.tar.gz", hash = "sha256:c0bfb332ef3fe75c7a242cc429e4ef803f175eb16d74e8262c278253878a5a48", size = 242769, upload-time = "2026-02-11T14:22:46.879Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/dd/9e/3c1c9312a8c4bd3e67a1723da409bc5b123236eb5dd7d52ef3d7795cb1c8/pipecatcloud-0.4.1.tar.gz", hash = "sha256:7ced9aad9b2d40676f9ee8aad7f45ea0b9dd4cbb2c4371b09048c4aa0c833234", size = 275727, upload-time = "2026-03-30T12:38:11.873Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a2/07/a418bca1f36beacf2f669ba285cf21ed59c73493e5c0764f479c708b4548/pipecatcloud-0.2.20-py3-none-any.whl", hash = "sha256:76c9c0444c66f29d57a3e4fce53ce7d6a85c540a11a5726ce30e6c2c349faaa2", size = 56820, upload-time = "2026-02-11T14:22:45.562Z" },
+    { url = "https://files.pythonhosted.org/packages/e5/33/f2c1753d0f7cacac70c68dedfa8ef3a1ebbae5001b94c3d8e520462baf90/pipecatcloud-0.4.1-py3-none-any.whl", hash = "sha256:b7649db840724049eb81baa64d2805ab0d561da212e2c12574d9fafea8948b1e", size = 74377, upload-time = "2026-03-30T12:38:10.235Z" },
 ]
 
 [[package]]

@@ -5,6 +5,17 @@ All notable changes to **Pipecat** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.2] - 2026-04-01
+
+### Added
+
+- Added `param_defaults` field to `ServiceDefinition` for specifying fallback
+  values in generated `os.getenv()` calls. This lets the quickstart work out of
+  the box with only API keys — no model or voice env vars required.
+  - `OpenAILLMService` defaults to `gpt-4.1`.
+  - `CartesiaTTSService` defaults to voice `71a7ad14-091c-4e8e-a314-022ece01c121`
+    (British Reading Lady).
+
 ## [0.3.1] - 2026-03-30
 
 ### Added
