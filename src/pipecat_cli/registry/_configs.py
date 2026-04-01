@@ -209,7 +209,7 @@ SERVICE_CONFIGS = {
         "OpenAILLMService(\n"
         '        api_key=os.getenv("OPENAI_API_KEY"),\n'
         "        settings=OpenAILLMService.Settings(\n"
-        '            model=os.getenv("OPENAI_MODEL"),\n'
+        '            # model=os.getenv("OPENAI_MODEL"), # Optional; uncomment to pass in a specific model from .env\n'
         '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
         "        ),\n"
         "    )\n"
