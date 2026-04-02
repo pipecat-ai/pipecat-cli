@@ -28,6 +28,8 @@ For operations on services, use ServiceLoader from service_loader.py.
 from dataclasses import dataclass
 from typing import Literal
 
+DEFAULT_SYSTEM_INSTRUCTION = "You are a helpful assistant in a voice conversation. Your responses will be spoken aloud, so avoid emojis, bullet points, or other formatting that can't be spoken. Respond to what the user said in a creative, helpful, and brief way."
+
 from ._configs import SERVICE_CONFIGS
 from ._imports import BASE_IMPORTS, FEATURE_IMPORTS, IMPORTS
 
@@ -987,7 +989,7 @@ MANUAL_SERVICE_CONFIGS = {
         '    aws_region=os.getenv("AWS_REGION"),\n'
         "    settings=AWSBedrockLLMService.Settings(\n"
         '        model=os.getenv("AWS_BEDROCK_MODEL"),\n'
-        '        system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        f'        system_instruction="{DEFAULT_SYSTEM_INSTRUCTION}",\n'
         "    ),\n"
         ")"
     ),
@@ -1001,7 +1003,7 @@ MANUAL_SERVICE_CONFIGS = {
         '    base_url=os.getenv("AZURE_REALTIME_BASE_URL"),\n'
         "    settings=AzureRealtimeLLMService.Settings(\n"
         "        session_properties=session_properties,\n"
-        '        system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        f'        system_instruction="{DEFAULT_SYSTEM_INSTRUCTION}",\n'
         "    ),\n"
         ")"
     ),
@@ -1020,7 +1022,7 @@ MANUAL_SERVICE_CONFIGS = {
         '    api_key=os.getenv("OPENAI_API_KEY"),\n'
         "    settings=OpenAIRealtimeLLMService.Settings(\n"
         "        session_properties=session_properties,\n"
-        '        system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        f'        system_instruction="{DEFAULT_SYSTEM_INSTRUCTION}",\n'
         "    ),\n"
         ")"
     ),
@@ -1030,7 +1032,7 @@ MANUAL_SERVICE_CONFIGS = {
         "    settings=GeminiLiveLLMService.Settings(\n"
         '        model=os.getenv("GOOGLE_MODEL"),\n'
         '        voice=os.getenv("GOOGLE_VOICE_ID"),\n'
-        '        system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        f'        system_instruction="{DEFAULT_SYSTEM_INSTRUCTION}",\n'
         "    ),\n"
         ")"
     ),
@@ -1042,7 +1044,7 @@ MANUAL_SERVICE_CONFIGS = {
         "        settings=GeminiLiveVertexLLMService.Settings(\n"
         '            model=os.getenv("GOOGLE_MODEL"),\n'
         '            voice=os.getenv("GOOGLE_VOICE_ID"),\n'
-        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        f'            system_instruction="{DEFAULT_SYSTEM_INSTRUCTION}",\n'
         "        ),\n"
         "    ),\n"
         ")"
@@ -1056,7 +1058,7 @@ MANUAL_SERVICE_CONFIGS = {
         '    api_key=os.getenv("XAI_API_KEY"),\n'
         "    settings=GrokRealtimeLLMService.Settings(\n"
         "        session_properties=session_properties,\n"
-        '        system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        f'        system_instruction="{DEFAULT_SYSTEM_INSTRUCTION}",\n'
         "    ),\n"
         ")"
     ),
@@ -1068,7 +1070,7 @@ MANUAL_SERVICE_CONFIGS = {
         '    session_token=os.getenv("AWS_SESSION_TOKEN"),\n'
         "    settings=AWSNovaSonicLLMService.Settings(\n"
         '        voice=os.getenv("AWS_VOICE_ID"),\n'
-        '        system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        f'        system_instruction="{DEFAULT_SYSTEM_INSTRUCTION}",\n'
         "    ),\n"
         ")"
     ),

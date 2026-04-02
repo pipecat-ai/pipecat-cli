@@ -82,7 +82,7 @@ SERVICE_CONFIGS = {
         '        api_key=os.getenv("ANTHROPIC_API_KEY"),\n'
         "        settings=AnthropicLLMService.Settings(\n"
         '            model=os.getenv("ANTHROPIC_MODEL"),\n'
-        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        '            system_instruction="You are a helpful assistant in a voice conversation. Your responses will be spoken aloud, so avoid emojis, bullet points, or other formatting that can\'t be spoken. Respond to what the user said in a creative, helpful, and brief way.",\n'
         "        ),\n"
         "    )\n"
     ),
@@ -91,7 +91,7 @@ SERVICE_CONFIGS = {
         '    aws_region=os.getenv("AWS_REGION"),\n'
         "    settings=AWSBedrockLLMService.Settings(\n"
         '        model=os.getenv("AWS_BEDROCK_MODEL"),\n'
-        '        system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        '        system_instruction="You are a helpful assistant in a voice conversation. Your responses will be spoken aloud, so avoid emojis, bullet points, or other formatting that can\'t be spoken. Respond to what the user said in a creative, helpful, and brief way.",\n'
         "    ),\n"
         ")\n"
     ),
@@ -101,7 +101,7 @@ SERVICE_CONFIGS = {
         '        endpoint=os.getenv("AZURE_CHATGPT_ENDPOINT"),\n'
         "        settings=AzureLLMService.Settings(\n"
         '            model=os.getenv("AZURE_CHATGPT_MODEL"),\n'
-        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        '            system_instruction="You are a helpful assistant in a voice conversation. Your responses will be spoken aloud, so avoid emojis, bullet points, or other formatting that can\'t be spoken. Respond to what the user said in a creative, helpful, and brief way.",\n'
         "        ),\n"
         "    )\n"
     ),
@@ -110,7 +110,7 @@ SERVICE_CONFIGS = {
         '        api_key=os.getenv("CEREBRAS_API_KEY"),\n'
         "        settings=CerebrasLLMService.Settings(\n"
         '            model=os.getenv("CEREBRAS_MODEL"),\n'
-        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        '            system_instruction="You are a helpful assistant in a voice conversation. Your responses will be spoken aloud, so avoid emojis, bullet points, or other formatting that can\'t be spoken. Respond to what the user said in a creative, helpful, and brief way.",\n'
         "        ),\n"
         "    )\n"
     ),
@@ -119,7 +119,7 @@ SERVICE_CONFIGS = {
         '        api_key=os.getenv("DEEPSEEK_API_KEY"),\n'
         "        settings=DeepSeekLLMService.Settings(\n"
         '            model=os.getenv("DEEPSEEK_MODEL"),\n'
-        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        '            system_instruction="You are a helpful assistant in a voice conversation. Your responses will be spoken aloud, so avoid emojis, bullet points, or other formatting that can\'t be spoken. Respond to what the user said in a creative, helpful, and brief way.",\n'
         "        ),\n"
         "    )\n"
     ),
@@ -128,7 +128,7 @@ SERVICE_CONFIGS = {
         '        api_key=os.getenv("FIREWORKS_API_KEY"),\n'
         "        settings=FireworksLLMService.Settings(\n"
         '            model=os.getenv("FIREWORKS_MODEL"),\n'
-        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        '            system_instruction="You are a helpful assistant in a voice conversation. Your responses will be spoken aloud, so avoid emojis, bullet points, or other formatting that can\'t be spoken. Respond to what the user said in a creative, helpful, and brief way.",\n'
         "        ),\n"
         "    )\n"
     ),
@@ -137,7 +137,7 @@ SERVICE_CONFIGS = {
         '        api_key=os.getenv("GOOGLE_API_KEY"),\n'
         "        settings=GoogleLLMService.Settings(\n"
         '            model=os.getenv("GOOGLE_MODEL"),\n'
-        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        '            system_instruction="You are a helpful assistant in a voice conversation. Your responses will be spoken aloud, so avoid emojis, bullet points, or other formatting that can\'t be spoken. Respond to what the user said in a creative, helpful, and brief way.",\n'
         "        ),\n"
         "    )\n"
     ),
@@ -148,7 +148,7 @@ SERVICE_CONFIGS = {
         '        project_id=os.getenv("GOOGLE_PROJECT_ID"),\n'
         "        settings=GoogleVertexLLMService.Settings(\n"
         '            model=os.getenv("GOOGLE_MODEL"),\n'
-        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        '            system_instruction="You are a helpful assistant in a voice conversation. Your responses will be spoken aloud, so avoid emojis, bullet points, or other formatting that can\'t be spoken. Respond to what the user said in a creative, helpful, and brief way.",\n'
         "        ),\n"
         "    )\n"
     ),
@@ -157,7 +157,7 @@ SERVICE_CONFIGS = {
         '        api_key=os.getenv("XAI_API_KEY"),\n'
         "        settings=GrokLLMService.Settings(\n"
         '            model=os.getenv("XAI_MODEL"),\n'
-        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        '            system_instruction="You are a helpful assistant in a voice conversation. Your responses will be spoken aloud, so avoid emojis, bullet points, or other formatting that can\'t be spoken. Respond to what the user said in a creative, helpful, and brief way.",\n'
         "        ),\n"
         "    )\n"
     ),
@@ -166,7 +166,7 @@ SERVICE_CONFIGS = {
         '        api_key=os.getenv("GROQ_API_KEY"),\n'
         "        settings=GroqLLMService.Settings(\n"
         '            model=os.getenv("GROQ_MODEL"),\n'
-        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        '            system_instruction="You are a helpful assistant in a voice conversation. Your responses will be spoken aloud, so avoid emojis, bullet points, or other formatting that can\'t be spoken. Respond to what the user said in a creative, helpful, and brief way.",\n'
         "        ),\n"
         "    )\n"
     ),
@@ -175,7 +175,7 @@ SERVICE_CONFIGS = {
         '        api_key=os.getenv("MISTRAL_API_KEY"),\n'
         "        settings=MistralLLMService.Settings(\n"
         '            model=os.getenv("MISTRAL_MODEL"),\n'
-        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        '            system_instruction="You are a helpful assistant in a voice conversation. Your responses will be spoken aloud, so avoid emojis, bullet points, or other formatting that can\'t be spoken. Respond to what the user said in a creative, helpful, and brief way.",\n'
         "        ),\n"
         "    )\n"
     ),
@@ -184,7 +184,7 @@ SERVICE_CONFIGS = {
         '        api_key=os.getenv("NOVITA_API_KEY"),\n'
         "        settings=NovitaLLMService.Settings(\n"
         '            model=os.getenv("NOVITA_MODEL"),\n'
-        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        '            system_instruction="You are a helpful assistant in a voice conversation. Your responses will be spoken aloud, so avoid emojis, bullet points, or other formatting that can\'t be spoken. Respond to what the user said in a creative, helpful, and brief way.",\n'
         "        ),\n"
         "    )\n"
     ),
@@ -193,7 +193,7 @@ SERVICE_CONFIGS = {
         '        api_key=os.getenv("NVIDIA_API_KEY"),\n'
         "        settings=NvidiaLLMService.Settings(\n"
         '            model=os.getenv("NVIDIA_MODEL"),\n'
-        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        '            system_instruction="You are a helpful assistant in a voice conversation. Your responses will be spoken aloud, so avoid emojis, bullet points, or other formatting that can\'t be spoken. Respond to what the user said in a creative, helpful, and brief way.",\n'
         "        ),\n"
         "    )\n"
     ),
@@ -201,7 +201,7 @@ SERVICE_CONFIGS = {
         "OLLamaLLMService(\n"
         "        settings=OLLamaLLMService.Settings(\n"
         '            model=os.getenv("OLLAMA_MODEL"),\n'
-        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        '            system_instruction="You are a helpful assistant in a voice conversation. Your responses will be spoken aloud, so avoid emojis, bullet points, or other formatting that can\'t be spoken. Respond to what the user said in a creative, helpful, and brief way.",\n'
         "        ),\n"
         "    )\n"
     ),
@@ -210,7 +210,7 @@ SERVICE_CONFIGS = {
         '        api_key=os.getenv("OPENAI_API_KEY"),\n'
         "        settings=OpenAILLMService.Settings(\n"
         '            model=os.getenv("OPENAI_MODEL", "gpt-4.1"),\n'
-        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        '            system_instruction="You are a helpful assistant in a voice conversation. Your responses will be spoken aloud, so avoid emojis, bullet points, or other formatting that can\'t be spoken. Respond to what the user said in a creative, helpful, and brief way.",\n'
         "        ),\n"
         "    )\n"
     ),
@@ -219,7 +219,7 @@ SERVICE_CONFIGS = {
         '        api_key=os.getenv("OPENPIPE_API_KEY"),\n'
         '        openpipe_api_key=os.getenv("OPENPIPE_OPENPIPE_API_KEY"),\n'
         "        settings=OpenPipeLLMService.Settings(\n"
-        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        '            system_instruction="You are a helpful assistant in a voice conversation. Your responses will be spoken aloud, so avoid emojis, bullet points, or other formatting that can\'t be spoken. Respond to what the user said in a creative, helpful, and brief way.",\n'
         "        ),\n"
         "    )\n"
     ),
@@ -228,7 +228,7 @@ SERVICE_CONFIGS = {
         '        api_key=os.getenv("OPENROUTER_API_KEY"),\n'
         "        settings=OpenRouterLLMService.Settings(\n"
         '            model=os.getenv("OPENROUTER_MODEL"),\n'
-        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        '            system_instruction="You are a helpful assistant in a voice conversation. Your responses will be spoken aloud, so avoid emojis, bullet points, or other formatting that can\'t be spoken. Respond to what the user said in a creative, helpful, and brief way.",\n'
         "        ),\n"
         "    )\n"
     ),
@@ -237,7 +237,7 @@ SERVICE_CONFIGS = {
         '        api_key=os.getenv("PERPLEXITY_API_KEY"),\n'
         "        settings=PerplexityLLMService.Settings(\n"
         '            model=os.getenv("PERPLEXITY_MODEL"),\n'
-        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        '            system_instruction="You are a helpful assistant in a voice conversation. Your responses will be spoken aloud, so avoid emojis, bullet points, or other formatting that can\'t be spoken. Respond to what the user said in a creative, helpful, and brief way.",\n'
         "        ),\n"
         "    )\n"
     ),
@@ -246,7 +246,7 @@ SERVICE_CONFIGS = {
         '        api_key=os.getenv("QWEN_API_KEY"),\n'
         "        settings=QwenLLMService.Settings(\n"
         '            model=os.getenv("QWEN_MODEL"),\n'
-        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        '            system_instruction="You are a helpful assistant in a voice conversation. Your responses will be spoken aloud, so avoid emojis, bullet points, or other formatting that can\'t be spoken. Respond to what the user said in a creative, helpful, and brief way.",\n'
         "        ),\n"
         "    )\n"
     ),
@@ -255,7 +255,7 @@ SERVICE_CONFIGS = {
         '        api_key=os.getenv("SAMBANOVA_API_KEY"),\n'
         "        settings=SambaNovaLLMService.Settings(\n"
         '            model=os.getenv("SAMBANOVA_MODEL"),\n'
-        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        '            system_instruction="You are a helpful assistant in a voice conversation. Your responses will be spoken aloud, so avoid emojis, bullet points, or other formatting that can\'t be spoken. Respond to what the user said in a creative, helpful, and brief way.",\n'
         "        ),\n"
         "    )\n"
     ),
@@ -264,7 +264,7 @@ SERVICE_CONFIGS = {
         '        api_key=os.getenv("SARVAM_API_KEY"),\n'
         "        settings=SarvamLLMService.Settings(\n"
         '            model=os.getenv("SARVAM_MODEL"),\n'
-        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        '            system_instruction="You are a helpful assistant in a voice conversation. Your responses will be spoken aloud, so avoid emojis, bullet points, or other formatting that can\'t be spoken. Respond to what the user said in a creative, helpful, and brief way.",\n'
         "        ),\n"
         "    )\n"
     ),
@@ -273,7 +273,7 @@ SERVICE_CONFIGS = {
         '        api_key=os.getenv("TOGETHER_API_KEY"),\n'
         "        settings=TogetherLLMService.Settings(\n"
         '            model=os.getenv("TOGETHER_MODEL"),\n'
-        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        '            system_instruction="You are a helpful assistant in a voice conversation. Your responses will be spoken aloud, so avoid emojis, bullet points, or other formatting that can\'t be spoken. Respond to what the user said in a creative, helpful, and brief way.",\n'
         "        ),\n"
         "    )\n"
     ),
@@ -507,7 +507,7 @@ SERVICE_CONFIGS = {
         '    session_token=os.getenv("AWS_SESSION_TOKEN"),\n'
         "    settings=AWSNovaSonicLLMService.Settings(\n"
         '        voice=os.getenv("AWS_VOICE_ID"),\n'
-        '        system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        '        system_instruction="You are a helpful assistant in a voice conversation. Your responses will be spoken aloud, so avoid emojis, bullet points, or other formatting that can\'t be spoken. Respond to what the user said in a creative, helpful, and brief way.",\n'
         "    ),\n"
         ")\n"
     ),
@@ -520,7 +520,7 @@ SERVICE_CONFIGS = {
         '    base_url=os.getenv("AZURE_REALTIME_BASE_URL"),\n'
         "    settings=AzureRealtimeLLMService.Settings(\n"
         "        session_properties=session_properties,\n"
-        '        system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        '        system_instruction="You are a helpful assistant in a voice conversation. Your responses will be spoken aloud, so avoid emojis, bullet points, or other formatting that can\'t be spoken. Respond to what the user said in a creative, helpful, and brief way.",\n'
         "    ),\n"
         ")\n"
     ),
@@ -530,7 +530,7 @@ SERVICE_CONFIGS = {
         "    settings=GeminiLiveLLMService.Settings(\n"
         '        model=os.getenv("GOOGLE_MODEL"),\n'
         '        voice=os.getenv("GOOGLE_VOICE_ID"),\n'
-        '        system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        '        system_instruction="You are a helpful assistant in a voice conversation. Your responses will be spoken aloud, so avoid emojis, bullet points, or other formatting that can\'t be spoken. Respond to what the user said in a creative, helpful, and brief way.",\n'
         "    ),\n"
         ")\n"
     ),
@@ -542,7 +542,7 @@ SERVICE_CONFIGS = {
         "        settings=GeminiLiveVertexLLMService.Settings(\n"
         '            model=os.getenv("GOOGLE_MODEL"),\n'
         '            voice=os.getenv("GOOGLE_VOICE_ID"),\n'
-        '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        '            system_instruction="You are a helpful assistant in a voice conversation. Your responses will be spoken aloud, so avoid emojis, bullet points, or other formatting that can\'t be spoken. Respond to what the user said in a creative, helpful, and brief way.",\n'
         "        ),\n"
         "    ),\n"
         ")\n"
@@ -555,7 +555,7 @@ SERVICE_CONFIGS = {
         '    api_key=os.getenv("XAI_API_KEY"),\n'
         "    settings=GrokRealtimeLLMService.Settings(\n"
         "        session_properties=session_properties,\n"
-        '        system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        '        system_instruction="You are a helpful assistant in a voice conversation. Your responses will be spoken aloud, so avoid emojis, bullet points, or other formatting that can\'t be spoken. Respond to what the user said in a creative, helpful, and brief way.",\n'
         "    ),\n"
         ")\n"
     ),
@@ -573,7 +573,7 @@ SERVICE_CONFIGS = {
         '    api_key=os.getenv("OPENAI_API_KEY"),\n'
         "    settings=OpenAIRealtimeLLMService.Settings(\n"
         "        session_properties=session_properties,\n"
-        '        system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
+        '        system_instruction="You are a helpful assistant in a voice conversation. Your responses will be spoken aloud, so avoid emojis, bullet points, or other formatting that can\'t be spoken. Respond to what the user said in a creative, helpful, and brief way.",\n'
         "    ),\n"
         ")\n"
     ),
