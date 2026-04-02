@@ -209,7 +209,7 @@ SERVICE_CONFIGS = {
         "OpenAILLMService(\n"
         '        api_key=os.getenv("OPENAI_API_KEY"),\n'
         "        settings=OpenAILLMService.Settings(\n"
-        '            model=os.getenv("OPENAI_MODEL"),\n'
+        '            model=os.getenv("OPENAI_MODEL", "gpt-4.1"),\n'
         '            system_instruction="You are a friendly AI assistant. Respond naturally and keep your answers conversational.",\n'
         "        ),\n"
         "    )\n"
@@ -315,7 +315,7 @@ SERVICE_CONFIGS = {
         "CartesiaTTSService(\n"
         '        api_key=os.getenv("CARTESIA_API_KEY"),\n'
         "        settings=CartesiaTTSService.Settings(\n"
-        '            voice=os.getenv("CARTESIA_VOICE_ID"),\n'
+        '            voice=os.getenv("CARTESIA_VOICE_ID", "71a7ad14-091c-4e8e-a314-022ece01c121"),\n'
         "        ),\n"
         "    )\n"
     ),
