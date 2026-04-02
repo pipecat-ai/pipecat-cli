@@ -24,7 +24,7 @@ sys.path.insert(0, str(project_root / "scripts" / "imports"))
 from import_generator import find_class_in_directory  # type: ignore
 
 from pipecat_cli.registry import ServiceRegistry
-from pipecat_cli.registry.service_metadata import MANUAL_SERVICE_CONFIGS
+from pipecat_cli.registry.service_metadata import DEFAULT_SYSTEM_INSTRUCTION, MANUAL_SERVICE_CONFIGS
 
 # Parameter name -> environment variable suffix mapping
 # Handles special cases where parameter names don't match env var conventions
@@ -63,10 +63,7 @@ HARDCODED_PARAMS = {
 
 # Settings-only params that use a hardcoded literal value instead of an env var
 HARDCODED_SETTINGS = {
-    "system_instruction": (
-        '"You are a friendly AI assistant. '
-        'Respond naturally and keep your answers conversational."'
-    ),
+    "system_instruction": f'"{DEFAULT_SYSTEM_INSTRUCTION}"',
 }
 
 
@@ -400,7 +397,8 @@ def format_config_dict(configs: dict[str, str]) -> str:
                     lines.append(f"    '{service_value}': (")
                     for line in config_code.split("\n"):
                         if line:
-                            lines.append(f"        '{line}\\n'")
+                            escaped_line = line.replace("'", "\\'")
+                            lines.append(f"        '{escaped_line}\\n'")
                     lines.append("    ),")
                 else:
                     # Single-line config - use single quotes throughout
