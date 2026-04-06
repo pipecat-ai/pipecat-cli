@@ -80,10 +80,10 @@ class TestServiceRegistryIntegrity:
         for service in all_services:
             package = service.package
             # Should not raise an exception
-            extra = extract_package_extra(package)
-            # If package has brackets, extra should be extracted
+            extras = extract_package_extra(package)
+            # If package has brackets, extras should be extracted
             if "[" in package:
-                assert extra is not None, f"Failed to extract extra from {package}"
+                assert len(extras) > 0, f"Failed to extract extras from {package}"
 
 
 class TestServiceLoader:
@@ -197,19 +197,18 @@ class TestServiceLoader:
         package = service.package
 
         # Should not raise an exception
-        extra = extract_package_extra(package)
+        extras = extract_package_extra(package)
 
         # Package should have correct format
         assert package.startswith(
             "pipecat-ai"
         ), f"Service {service_value} package should start with 'pipecat-ai', got: {package}"
 
-        # If package has brackets, extra should be extracted
+        # If package has brackets, extras should be extracted
         if "[" in package:
             assert (
-                extra is not None
-            ), f"Failed to extract extra from {service_value} package: {package}"
-            assert len(extra) > 0, f"Empty extra extracted from {service_value} package: {package}"
+                len(extras) > 0
+            ), f"Failed to extract extras from {service_value} package: {package}"
 
     def test_extract_extras_for_cascade(self):
         """Test extracting extras for a cascade pipeline."""
@@ -268,6 +267,50 @@ class TestServiceLoader:
         assert "deepgram" in extras
         assert "openai" in extras
         assert "cartesia" in extras
+
+    def test_extract_multi_extra_package(self):
+        """Test extracting multiple extras from a multi-extra package string."""
+        from pipecat_cli.registry import extract_package_extra
+
+        extras = extract_package_extra("pipecat-ai[deepgram,sagemaker]")
+        assert extras == ["deepgram", "sagemaker"]
+
+    def test_extract_single_extra_package(self):
+        """Test extracting a single extra returns a one-element list."""
+        from pipecat_cli.registry import extract_package_extra
+
+        extras = extract_package_extra("pipecat-ai[deepgram]")
+        assert extras == ["deepgram"]
+
+    def test_extract_no_extra_package(self):
+        """Test extracting extras from a package with no extras returns empty list."""
+        from pipecat_cli.registry import extract_package_extra
+
+        extras = extract_package_extra("pipecat-ai")
+        assert extras == []
+
+    def test_extract_extras_for_sagemaker_service(self):
+        """Test that SageMaker services produce separate extras, not a combined string."""
+        # Find a SageMaker STT service if it exists
+        sagemaker_stt = ServiceLoader.get_service_by_value(
+            ServiceRegistry.STT_SERVICES, "deepgram_sagemaker_stt"
+        )
+        if sagemaker_stt is None:
+            pytest.skip("deepgram_sagemaker_stt service not in registry")
+
+        services = {
+            "transports": ["daily"],
+            "stt": "deepgram_sagemaker_stt",
+            "llm": "openai_llm",
+            "tts": "cartesia_tts",
+        }
+
+        extras = ServiceLoader.extract_extras_for_services(services)
+
+        # Should contain separate "deepgram" and "sagemaker" extras, not "deepgram,sagemaker"
+        assert "deepgram" in extras
+        assert "sagemaker" in extras
+        assert "deepgram,sagemaker" not in extras
 
     def test_validate_service_exists(self):
         """Test service existence validation."""

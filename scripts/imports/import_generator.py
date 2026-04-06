@@ -296,6 +296,14 @@ def format_feature_imports(pipecat_path: Path) -> list[str]:
         module_to_classes: dict[str, list[str]] = {}
 
         for class_name in class_names:
+            # Check for explicit module overrides first
+            if class_name in _MODULE_OVERRIDES:
+                module_path = _MODULE_OVERRIDES[class_name]
+                if module_path not in module_to_classes:
+                    module_to_classes[module_path] = []
+                module_to_classes[module_path].append(class_name)
+                continue
+
             # Try to find the class in the pipecat codebase (search entire pipecat directory)
             result = find_class_in_directory(pipecat_path, class_name)
             if result:
@@ -354,6 +362,14 @@ def _get_external_module_path(class_name: str) -> str | None:
         "aiofiles": "aiofiles",
     }
     return external_mappings.get(class_name)
+
+
+# Module overrides for classes that exist in multiple modules.
+# The auto-discovery picks the first match alphabetically, which may be
+# a deprecated module. This mapping forces the correct module.
+_MODULE_OVERRIDES: dict[str, str] = {
+    "LLMUserAggregatorParams": "pipecat.processors.aggregators.llm_response_universal",
+}
 
 
 def format_imports_dict(imports_dict: dict[str, list[str]], pipecat_path: Path) -> str:

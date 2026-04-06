@@ -103,6 +103,7 @@ FEATURE_DEFINITIONS: dict[str, list[str]] = {
         "BaseTransport",
     ],
     "observability": ["WhiskerObserver", "TailObserver"],
+    "external_turn_strategies": ["ExternalUserTurnStrategies"],
 }
 
 
@@ -301,6 +302,22 @@ class ServiceRegistry:
             class_name=["DeepgramFluxSTTService"],
             env_prefix="DEEPGRAM",
             include_params=["api_key"],
+        ),
+        ServiceDefinition(
+            value="deepgram_flux_sagemaker_stt",
+            label="Deepgram Flux SageMaker",
+            package="pipecat-ai[deepgram,sagemaker]",
+            class_name=["DeepgramFluxSageMakerSTTService"],
+            env_prefix="DEEPGRAM_FLUX_SAGEMAKER_STT",
+            include_params=["endpoint_name", "region"],
+        ),
+        ServiceDefinition(
+            value="deepgram_sagemaker_stt",
+            label="Deepgram SageMaker",
+            package="pipecat-ai[deepgram,sagemaker]",
+            class_name=["DeepgramSageMakerSTTService"],
+            env_prefix="DEEPGRAM_SAGEMAKER_STT",
+            include_params=["endpoint_name", "region"],
         ),
         ServiceDefinition(
             value="elevenlabs_stt",
@@ -675,6 +692,15 @@ class ServiceRegistry:
             class_name=["DeepgramTTSService"],
             env_prefix="DEEPGRAM",
             include_params=["api_key"],
+            settings_params=["voice"],
+        ),
+        ServiceDefinition(
+            value="deepgram_sagemaker_tts",
+            label="Deepgram SageMaker",
+            package="pipecat-ai[deepgram,sagemaker]",
+            class_name=["DeepgramSageMakerTTSService"],
+            env_prefix="DEEPGRAM_SAGEMAKER_TTS",
+            include_params=["endpoint_name", "region"],
             settings_params=["voice"],
         ),
         ServiceDefinition(

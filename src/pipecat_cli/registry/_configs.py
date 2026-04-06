@@ -29,6 +29,18 @@ SERVICE_CONFIGS = {
     "cartesia_stt": 'CartesiaSTTService(api_key=os.getenv("CARTESIA_API_KEY"))',
     "deepgram_stt": 'DeepgramSTTService(api_key=os.getenv("DEEPGRAM_API_KEY"))',
     "deepgram_flux_stt": 'DeepgramFluxSTTService(api_key=os.getenv("DEEPGRAM_API_KEY"))',
+    "deepgram_flux_sagemaker_stt": (
+        "DeepgramFluxSageMakerSTTService(\n"
+        '        endpoint_name=os.getenv("DEEPGRAM_FLUX_SAGEMAKER_STT_ENDPOINT_NAME"),\n'
+        '        region=os.getenv("DEEPGRAM_FLUX_SAGEMAKER_STT_REGION")\n'
+        "    )\n"
+    ),
+    "deepgram_sagemaker_stt": (
+        "DeepgramSageMakerSTTService(\n"
+        '        endpoint_name=os.getenv("DEEPGRAM_SAGEMAKER_STT_ENDPOINT_NAME"),\n'
+        '        region=os.getenv("DEEPGRAM_SAGEMAKER_STT_REGION")\n'
+        "    )\n"
+    ),
     "elevenlabs_stt": (
         "ElevenLabsSTTService(\n"
         '        api_key=os.getenv("ELEVENLABS_API_KEY"),\n'
@@ -324,6 +336,15 @@ SERVICE_CONFIGS = {
         '        api_key=os.getenv("DEEPGRAM_API_KEY"),\n'
         "        settings=DeepgramTTSService.Settings(\n"
         '            voice=os.getenv("DEEPGRAM_VOICE_ID"),\n'
+        "        ),\n"
+        "    )\n"
+    ),
+    "deepgram_sagemaker_tts": (
+        "DeepgramSageMakerTTSService(\n"
+        '        endpoint_name=os.getenv("DEEPGRAM_SAGEMAKER_TTS_ENDPOINT_NAME"),\n'
+        '        region=os.getenv("DEEPGRAM_SAGEMAKER_TTS_REGION"),\n'
+        "        settings=DeepgramSageMakerTTSService.Settings(\n"
+        '            voice=os.getenv("DEEPGRAM_SAGEMAKER_TTS_VOICE_ID"),\n'
         "        ),\n"
         "    )\n"
     ),

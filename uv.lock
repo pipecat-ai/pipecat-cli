@@ -467,6 +467,20 @@ wheels = [
 ]
 
 [[package]]
+name = "aws-sdk-sagemaker-runtime-http2"
+version = "0.4.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "smithy-aws-core", extra = ["eventstream", "json"], marker = "python_full_version >= '3.12'" },
+    { name = "smithy-core", marker = "python_full_version >= '3.12'" },
+    { name = "smithy-http", extra = ["awscrt"], marker = "python_full_version >= '3.12'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/55/52/655ab732fe8c974ab7b8c6f8c695bc0ae00ccdf952f70997b4802f6e8143/aws_sdk_sagemaker_runtime_http2-0.4.0.tar.gz", hash = "sha256:fa644aa80fa881b7491b6d7a57cf75665b4ec1f0310e1dbeb0296bf95fd262ea", size = 26699, upload-time = "2026-02-24T18:55:28.67Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ef/cc/95cc6a61885dcc2cbc34167bed9cfd3183cf0a0a79b0e06388d8f4a78b86/aws_sdk_sagemaker_runtime_http2-0.4.0-py3-none-any.whl", hash = "sha256:be1e3415047058a655f682cb97f2ba7cadd46a30100bb8f2ef1b1c2c8d41204b", size = 21802, upload-time = "2026-02-24T18:55:27.804Z" },
+]
+
+[[package]]
 name = "aws-sdk-signers"
 version = "0.1.0"
 source = { registry = "https://pypi.org/simple" }
@@ -3024,6 +3038,9 @@ resembleai = [
 rime = [
     { name = "websockets" },
 ]
+sagemaker = [
+    { name = "aws-sdk-sagemaker-runtime-http2", marker = "python_full_version >= '3.12'" },
+]
 sarvam = [
     { name = "sarvamai" },
     { name = "websockets" },
@@ -3072,7 +3089,7 @@ tail = [
 [package.dev-dependencies]
 dev = [
     { name = "build" },
-    { name = "pipecat-ai", extra = ["aic", "anthropic", "assemblyai", "asyncai", "aws", "aws-nova-sonic", "azure", "camb", "cartesia", "daily", "deepgram", "elevenlabs", "fish", "gladia", "google", "gradium", "groq", "heygen", "hume", "kokoro", "lmnt", "moondream", "neuphonic", "nvidia", "openai", "openpipe", "piper", "resembleai", "rime", "sarvam", "simli", "smallest", "soniox", "speechmatics", "ultravox", "webrtc", "websocket"] },
+    { name = "pipecat-ai", extra = ["aic", "anthropic", "assemblyai", "asyncai", "aws", "aws-nova-sonic", "azure", "camb", "cartesia", "daily", "deepgram", "elevenlabs", "fish", "gladia", "google", "gradium", "groq", "heygen", "hume", "kokoro", "lmnt", "moondream", "neuphonic", "nvidia", "openai", "openpipe", "piper", "resembleai", "rime", "sagemaker", "sarvam", "simli", "smallest", "soniox", "speechmatics", "ultravox", "webrtc", "websocket"] },
     { name = "pre-commit" },
     { name = "pytest" },
     { name = "pytest-cov" },
@@ -3096,7 +3113,7 @@ provides-extras = ["tail"]
 [package.metadata.requires-dev]
 dev = [
     { name = "build", specifier = "~=1.2.2" },
-    { name = "pipecat-ai", extras = ["aic", "anthropic", "assemblyai", "asyncai", "aws", "aws-nova-sonic", "azure", "camb", "cartesia", "cerebras", "daily", "deepseek", "deepgram", "elevenlabs", "fal", "fireworks", "fish", "gladia", "google", "gradium", "groq", "heygen", "hume", "inworld", "kokoro", "lmnt", "mistral", "moondream", "neuphonic", "novita", "nvidia", "openai", "openpipe", "openrouter", "perplexity", "piper", "qwen", "resembleai", "rime", "sambanova", "sarvam", "silero", "simli", "smallest", "soniox", "speechmatics", "tavus", "together", "ultravox", "webrtc", "websocket", "xai"], specifier = "==0.0.108" },
+    { name = "pipecat-ai", extras = ["aic", "anthropic", "assemblyai", "asyncai", "aws", "aws-nova-sonic", "azure", "camb", "cartesia", "cerebras", "daily", "deepseek", "deepgram", "elevenlabs", "fal", "fireworks", "fish", "gladia", "google", "gradium", "groq", "heygen", "hume", "inworld", "kokoro", "lmnt", "mistral", "moondream", "neuphonic", "novita", "nvidia", "openai", "openpipe", "openrouter", "perplexity", "piper", "qwen", "resembleai", "rime", "sagemaker", "sambanova", "sarvam", "silero", "simli", "smallest", "soniox", "speechmatics", "tavus", "together", "ultravox", "webrtc", "websocket", "xai"], specifier = "==0.0.108" },
     { name = "pre-commit", specifier = "~=4.2.0" },
     { name = "pytest", specifier = "~=8.4.1" },
     { name = "pytest-cov", specifier = "~=7.0.0" },
