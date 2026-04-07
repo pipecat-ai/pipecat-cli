@@ -75,6 +75,12 @@ IMPORTS = {
     "cartesia_stt": ["from pipecat.services.cartesia.stt import CartesiaSTTService"],
     "deepgram_stt": ["from pipecat.services.deepgram.stt import DeepgramSTTService"],
     "deepgram_flux_stt": ["from pipecat.services.deepgram.flux.stt import DeepgramFluxSTTService"],
+    "deepgram_flux_sagemaker_stt": [
+        "from pipecat.services.deepgram.flux.sagemaker.stt import DeepgramFluxSageMakerSTTService"
+    ],
+    "deepgram_sagemaker_stt": [
+        "from pipecat.services.deepgram.sagemaker.stt import DeepgramSageMakerSTTService"
+    ],
     "elevenlabs_stt": ["from pipecat.services.elevenlabs.stt import ElevenLabsSTTService"],
     "elevenlabs_realtime_stt": [
         "from pipecat.services.elevenlabs.stt import ElevenLabsRealtimeSTTService"
@@ -121,6 +127,9 @@ IMPORTS = {
     "camb_tts": ["from pipecat.services.camb.tts import CambTTSService"],
     "cartesia_tts": ["from pipecat.services.cartesia.tts import CartesiaTTSService"],
     "deepgram_tts": ["from pipecat.services.deepgram.tts import DeepgramTTSService"],
+    "deepgram_sagemaker_tts": [
+        "from pipecat.services.deepgram.sagemaker.tts import DeepgramSageMakerTTSService"
+    ],
     "elevenlabs_tts": ["from pipecat.services.elevenlabs.tts import ElevenLabsTTSService"],
     "fish_tts": ["from pipecat.services.fish.tts import FishAudioTTSService"],
     "gemini_tts": ["from pipecat.services.google.tts import GeminiTTSService"],
@@ -206,6 +215,9 @@ FEATURE_IMPORTS = {
     "observability": [
         "from pipecat_tail.observer import TailObserver",
         "from pipecat_whisker import WhiskerObserver",
+    ],
+    "external_turn_strategies": [
+        "from pipecat.turns.user_turn_strategies import ExternalUserTurnStrategies"
     ],
 }
 

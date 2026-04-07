@@ -15,25 +15,30 @@ from ._configs import SERVICE_CONFIGS
 from .service_metadata import BotType, ServiceDefinition, ServiceRegistry, ServiceType
 
 
-def extract_package_extra(package: str) -> str | None:
+def extract_package_extra(package: str) -> list[str]:
     """
-    Extract the extra name from a package string.
+    Extract the extra names from a package string.
 
     Args:
-        package: Package string like "pipecat-ai[deepgram]" or "pipecat-ai"
+        package: Package string like "pipecat-ai[deepgram]", "pipecat-ai[deepgram,sagemaker]",
+                 or "pipecat-ai"
 
     Returns:
-        The extra name (e.g., "deepgram") or None if no extra
+        List of extra names (e.g., ["deepgram"] or ["deepgram", "sagemaker"]),
+        or an empty list if no extras
 
     Examples:
         >>> extract_package_extra("pipecat-ai[deepgram]")
-        'deepgram'
+        ['deepgram']
+        >>> extract_package_extra("pipecat-ai[deepgram,sagemaker]")
+        ['deepgram', 'sagemaker']
         >>> extract_package_extra("pipecat-ai")
-        None
+        []
     """
     if "[" in package and "]" in package:
-        return package.split("[")[1].split("]")[0]
-    return None
+        raw = package.split("[")[1].split("]")[0]
+        return [e.strip() for e in raw.split(",")]
+    return []
 
 
 class ServiceLoader:
@@ -135,9 +140,7 @@ class ServiceLoader:
             for transport in transport_list:
                 transport_def = ServiceLoader.get_service_by_value(all_transports, transport)
                 if transport_def:
-                    extra = extract_package_extra(transport_def.package)
-                    if extra:
-                        extras.add(extra)
+                    extras.update(extract_package_extra(transport_def.package))
 
         # Process service types (stt, llm, tts, realtime, video)
         service_type_map = {
@@ -154,9 +157,7 @@ class ServiceLoader:
                     service_list, services[service_type]
                 )
                 if service_def:
-                    extra = extract_package_extra(service_def.package)
-                    if extra:
-                        extras.add(extra)
+                    extras.update(extract_package_extra(service_def.package))
 
         return extras
 
@@ -247,6 +248,11 @@ class ServiceLoader:
             imports.update(ServiceRegistry.FEATURE_IMPORTS["transcription"])
         if features.get("observability"):
             imports.update(ServiceRegistry.FEATURE_IMPORTS["observability"])
+
+        # Flux STT services use external turn detection
+        stt_value = services.get("stt", "")
+        if stt_value and "flux" in stt_value:
+            imports.update(ServiceRegistry.FEATURE_IMPORTS["external_turn_strategies"])
 
         return list(imports)
 
