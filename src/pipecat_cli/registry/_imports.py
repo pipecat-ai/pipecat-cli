@@ -113,7 +113,9 @@ IMPORTS = {
     "nvidia_llm": ["from pipecat.services.nvidia.llm import NvidiaLLMService"],
     "ollama_llm": ["from pipecat.services.ollama.llm import OLLamaLLMService"],
     "openai_llm": ["from pipecat.services.openai.llm import OpenAILLMService"],
-    "openpipe_llm": ["from pipecat.services.openpipe.llm import OpenPipeLLMService"],
+    "openai_responses_llm": [
+        "from pipecat.services.openai.responses.llm import OpenAIResponsesLLMService"
+    ],
     "openrouter_llm": ["from pipecat.services.openrouter.llm import OpenRouterLLMService"],
     "perplexity_llm": ["from pipecat.services.perplexity.llm import PerplexityLLMService"],
     "qwen_llm": ["from pipecat.services.qwen.llm import QwenLLMService"],
@@ -141,6 +143,7 @@ IMPORTS = {
     "kokoro_tts": ["from pipecat.services.kokoro.tts import KokoroTTSService"],
     "lmnt_tts": ["from pipecat.services.lmnt.tts import LmntTTSService"],
     "minimax_tts": ["from pipecat.services.minimax.tts import MiniMaxHttpTTSService"],
+    "mistral_tts": ["from pipecat.services.mistral.tts import MistralTTSService"],
     "neuphonic_tts": ["from pipecat.services.neuphonic.tts import NeuphonicTTSService"],
     "nvidia_tts": ["from pipecat.services.nvidia.tts import NvidiaTTSService"],
     "openai_tts": ["from pipecat.services.openai.tts import OpenAITTSService"],

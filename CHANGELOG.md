@@ -7,9 +7,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-04-14
+
 ### Added
 
 - Added Deepgram SageMaker STT and TTS services.
+
+- Added `OpenAIResponsesLLMService` as a new LLM option (WebSocket-based
+  Responses API).
+
+- Added `MistralTTSService` for streaming text-to-speech using Mistral's
+  Voxtral TTS API.
+
+### Changed
+
+- Updated for `pipecat-ai` 1.0.0.
+
+- Bumped minimum Python version from 3.10 to 3.11.
+
+- Bumped `pipecatcloud` minimum version to 0.4.4.
+
+### Removed
+
+- Removed `OpenPipeLLMService` (removed upstream in `pipecat-ai` 1.0.0).
 
 ## [0.3.3] - 2026-04-02
 
