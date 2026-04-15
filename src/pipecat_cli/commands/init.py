@@ -160,13 +160,15 @@ def init_command(
                 stt = stt or file_data.get("stt") or file_data.get("stt_service")
                 llm = llm or file_data.get("llm") or file_data.get("llm_service")
                 tts = tts or file_data.get("tts") or file_data.get("tts_service")
-                realtime = realtime or file_data.get("realtime") or file_data.get("realtime_service")
+                realtime = (
+                    realtime or file_data.get("realtime") or file_data.get("realtime_service")
+                )
                 video = video or file_data.get("video") or file_data.get("video_service")
                 client_framework = client_framework or file_data.get("client_framework")
                 client_server = client_server or file_data.get("client_server")
                 daily_pstn_mode = daily_pstn_mode or file_data.get("daily_pstn_mode")
-                twilio_daily_sip_mode = (
-                    twilio_daily_sip_mode or file_data.get("twilio_daily_sip_mode")
+                twilio_daily_sip_mode = twilio_daily_sip_mode or file_data.get(
+                    "twilio_daily_sip_mode"
                 )
                 recording = recording or file_data.get("recording", False)
                 transcription = transcription or file_data.get("transcription", False)
@@ -266,7 +268,9 @@ def quickstart_command(
         console.print(f"[green]✔[/green] Project name: [cyan]{project_name}[/cyan]")
         console.print("[green]✔[/green] Bot type: [cyan]Web/Mobile[/cyan]")
         console.print("[green]✔[/green] Transport: [cyan]SmallWebRTC, Daily[/cyan]")
-        console.print("[green]✔[/green] Pipeline architecture: [cyan]Cascade (STT → LLM → TTS)[/cyan]")
+        console.print(
+            "[green]✔[/green] Pipeline architecture: [cyan]Cascade (STT → LLM → TTS)[/cyan]"
+        )
         console.print("[green]✔[/green] Speech-to-Text: [cyan]Deepgram[/cyan]")
         console.print("[green]✔[/green] Language model: [cyan]OpenAI[/cyan]")
         console.print("[green]✔[/green] Text-to-Speech: [cyan]Cartesia[/cyan]")
@@ -279,7 +283,7 @@ def quickstart_command(
             transports=["smallwebrtc", "daily"],
             mode="cascade",
             stt_service="deepgram_stt",
-            llm_service="openai_llm",
+            llm_service="openai_responses_llm",
             tts_service="cartesia_tts",
             deploy_to_cloud=True,
         )

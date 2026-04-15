@@ -226,11 +226,11 @@ SERVICE_CONFIGS = {
         "        ),\n"
         "    )\n"
     ),
-    "openpipe_llm": (
-        "OpenPipeLLMService(\n"
-        '        api_key=os.getenv("OPENPIPE_API_KEY"),\n'
-        '        openpipe_api_key=os.getenv("OPENPIPE_OPENPIPE_API_KEY"),\n'
-        "        settings=OpenPipeLLMService.Settings(\n"
+    "openai_responses_llm": (
+        "OpenAIResponsesLLMService(\n"
+        '        api_key=os.getenv("OPENAI_API_KEY"),\n'
+        "        settings=OpenAIResponsesLLMService.Settings(\n"
+        '            model=os.getenv("OPENAI_MODEL", "gpt-4.1"),\n'
         '            system_instruction="You are a helpful assistant in a voice conversation. Your responses will be spoken aloud, so avoid emojis, bullet points, or other formatting that can\'t be spoken. Respond to what the user said in a creative, helpful, and brief way.",\n'
         "        ),\n"
         "    )\n"
@@ -434,6 +434,14 @@ SERVICE_CONFIGS = {
         "        aiohttp_session=session,\n"
         "        settings=MiniMaxHttpTTSService.Settings(\n"
         '            voice=os.getenv("MINIMAX_VOICE_ID"),\n'
+        "        ),\n"
+        "    )\n"
+    ),
+    "mistral_tts": (
+        "MistralTTSService(\n"
+        '        api_key=os.getenv("MISTRAL_API_KEY"),\n'
+        "        settings=MistralTTSService.Settings(\n"
+        '            voice=os.getenv("MISTRAL_VOICE_ID"),\n'
         "        ),\n"
         "    )\n"
     ),
