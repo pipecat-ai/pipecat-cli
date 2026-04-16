@@ -28,7 +28,7 @@ def find_service_class_in_file(file_path: Path, target_class_name: str | None = 
         Class/function name if found, None otherwise
     """
     try:
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path, encoding="utf-8") as f:
             source = f.read()
 
         tree = ast.parse(source)

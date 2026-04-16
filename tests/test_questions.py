@@ -1,6 +1,5 @@
 """Tests for interactive prompts and question flow."""
 
-import pytest
 from questionary import Choice
 
 from pipecat_cli.prompts.questions import ProjectConfig

@@ -8,7 +8,6 @@
 
 import sys
 from dataclasses import dataclass, field
-from typing import Optional
 
 import questionary
 from questionary import Choice, Style
@@ -73,26 +72,26 @@ class ProjectConfig:
     mode: str = "cascade"  # "cascade" or "realtime"
 
     # Services (for cascade mode)
-    stt_service: Optional[str] = None
-    llm_service: Optional[str] = None
-    tts_service: Optional[str] = None
+    stt_service: str | None = None
+    llm_service: str | None = None
+    tts_service: str | None = None
 
     # Realtime service
-    realtime_service: Optional[str] = None
+    realtime_service: str | None = None
 
     # Video service (avatars, for web/mobile bots)
-    video_service: Optional[str] = None
+    video_service: str | None = None
 
     # Client (for web/mobile bots)
     generate_client: bool = False
-    client_framework: Optional[str] = None  # "react"
-    client_server: Optional[str] = None  # "vite" or "nextjs"
+    client_framework: str | None = None  # "react"
+    client_server: str | None = None  # "vite" or "nextjs"
 
     # Daily PSTN specific
-    daily_pstn_mode: Optional[str] = None  # "dial-in" or "dial-out"
+    daily_pstn_mode: str | None = None  # "dial-in" or "dial-out"
 
     # Twilio + Daily SIP specific
-    twilio_daily_sip_mode: Optional[str] = None  # "dial-in" or "dial-out"
+    twilio_daily_sip_mode: str | None = None  # "dial-in" or "dial-out"
 
     # Features
     video_input: bool = False
