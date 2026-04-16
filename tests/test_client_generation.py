@@ -1,8 +1,5 @@
 """Integration tests for client generation."""
 
-import subprocess
-from pathlib import Path
-
 import pytest
 
 from pipecat_cli.generators.project import ProjectGenerator

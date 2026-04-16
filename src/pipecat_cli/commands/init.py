@@ -8,7 +8,6 @@
 
 import json
 from pathlib import Path
-from typing import Optional
 
 import typer
 from rich.console import Console
@@ -49,7 +48,7 @@ def _list_options_callback(value: bool):
 @init_app.callback(invoke_without_command=True)
 def init_command(
     ctx: typer.Context,
-    output_dir: Optional[Path] = typer.Option(
+    output_dir: Path | None = typer.Option(
         None, "--output", "-o", help="Output directory (defaults to current directory)"
     ),
     list_options: bool = typer.Option(
@@ -60,35 +59,35 @@ def init_command(
         is_eager=True,
     ),
     # --- Non-interactive flags ---
-    name: Optional[str] = typer.Option(
+    name: str | None = typer.Option(
         None, "--name", "-n", help="Project name (triggers non-interactive mode)"
     ),
-    bot_type: Optional[str] = typer.Option(
+    bot_type: str | None = typer.Option(
         None, "--bot-type", "-b", help="Bot type: 'web' or 'telephony'"
     ),
-    transport: Optional[list[str]] = typer.Option(
+    transport: list[str] | None = typer.Option(
         None, "--transport", "-t", help="Transport (repeatable, e.g. -t daily -t smallwebrtc)"
     ),
-    mode: Optional[str] = typer.Option(
+    mode: str | None = typer.Option(
         None, "--mode", "-m", help="Pipeline mode: 'cascade' or 'realtime'"
     ),
-    stt: Optional[str] = typer.Option(None, "--stt", help="STT service (cascade mode)"),
-    llm: Optional[str] = typer.Option(None, "--llm", help="LLM service (cascade mode)"),
-    tts: Optional[str] = typer.Option(None, "--tts", help="TTS service (cascade mode)"),
-    realtime: Optional[str] = typer.Option(
+    stt: str | None = typer.Option(None, "--stt", help="STT service (cascade mode)"),
+    llm: str | None = typer.Option(None, "--llm", help="LLM service (cascade mode)"),
+    tts: str | None = typer.Option(None, "--tts", help="TTS service (cascade mode)"),
+    realtime: str | None = typer.Option(
         None, "--realtime", help="Realtime service (realtime mode)"
     ),
-    video: Optional[str] = typer.Option(None, "--video", help="Video avatar service"),
-    client_framework: Optional[str] = typer.Option(
+    video: str | None = typer.Option(None, "--video", help="Video avatar service"),
+    client_framework: str | None = typer.Option(
         None, "--client-framework", help="Client framework: 'react', 'vanilla', or 'none'"
     ),
-    client_server: Optional[str] = typer.Option(
+    client_server: str | None = typer.Option(
         None, "--client-server", help="Client dev server: 'vite' or 'nextjs'"
     ),
-    daily_pstn_mode: Optional[str] = typer.Option(
+    daily_pstn_mode: str | None = typer.Option(
         None, "--daily-pstn-mode", help="Daily PSTN mode: 'dial-in' or 'dial-out'"
     ),
-    twilio_daily_sip_mode: Optional[str] = typer.Option(
+    twilio_daily_sip_mode: str | None = typer.Option(
         None, "--twilio-daily-sip-mode", help="Twilio+Daily SIP mode: 'dial-in' or 'dial-out'"
     ),
     recording: bool = typer.Option(False, "--recording/--no-recording", help="Enable recording"),
@@ -110,7 +109,7 @@ def init_command(
     observability: bool = typer.Option(
         False, "--observability/--no-observability", help="Enable observability"
     ),
-    config: Optional[Path] = typer.Option(
+    config: Path | None = typer.Option(
         None, "--config", "-c", help="JSON config file (triggers non-interactive mode)"
     ),
     dry_run: bool = typer.Option(
@@ -245,7 +244,7 @@ def init_command(
 
 @init_app.command("quickstart")
 def quickstart_command(
-    output_dir: Optional[Path] = typer.Option(
+    output_dir: Path | None = typer.Option(
         None, "--output", "-o", help="Output directory (defaults to current directory)"
     ),
 ):

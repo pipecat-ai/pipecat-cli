@@ -8,10 +8,9 @@
 
 import json
 from pathlib import Path
-from typing import Optional
 
 from pipecat_cli.prompts.questions import ProjectConfig
-from pipecat_cli.registry import ServiceLoader, ServiceRegistry
+from pipecat_cli.registry import ServiceRegistry
 
 
 class ConfigValidationError(Exception):
@@ -33,19 +32,19 @@ def _get_valid_values(service_list) -> list[str]:
 
 def validate_and_build_config(
     *,
-    name: Optional[str] = None,
-    bot_type: Optional[str] = None,
-    transport: Optional[list[str]] = None,
-    mode: Optional[str] = None,
-    stt: Optional[str] = None,
-    llm: Optional[str] = None,
-    tts: Optional[str] = None,
-    realtime: Optional[str] = None,
-    video: Optional[str] = None,
-    client_framework: Optional[str] = None,
-    client_server: Optional[str] = None,
-    daily_pstn_mode: Optional[str] = None,
-    twilio_daily_sip_mode: Optional[str] = None,
+    name: str | None = None,
+    bot_type: str | None = None,
+    transport: list[str] | None = None,
+    mode: str | None = None,
+    stt: str | None = None,
+    llm: str | None = None,
+    tts: str | None = None,
+    realtime: str | None = None,
+    video: str | None = None,
+    client_framework: str | None = None,
+    client_server: str | None = None,
+    daily_pstn_mode: str | None = None,
+    twilio_daily_sip_mode: str | None = None,
     recording: bool = False,
     transcription: bool = False,
     video_input: bool = False,
