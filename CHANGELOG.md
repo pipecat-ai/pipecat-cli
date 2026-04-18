@@ -5,7 +5,13 @@ All notable changes to **Pipecat** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [1.0.1] - 2026-04-18
+
+### Changed
+
+- Bumped client template dependencies (`@pipecat-ai/*`, Next.js 16, Vite 8,
+  ESLint 10, TypeScript 6, and related type packages) across the
+  vanilla-js-vite, react-vite, and react-nextjs templates.
 
 ## [1.0.0] - 2026-04-14
 
