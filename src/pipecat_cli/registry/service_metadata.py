@@ -376,6 +376,14 @@ class ServiceRegistry:
             include_params=["api_key"],
         ),
         ServiceDefinition(
+            value="mistral_stt",
+            label="Mistral",
+            package="pipecat-ai[mistral]",
+            class_name=["MistralSTTService"],
+            env_prefix="MISTRAL",
+            include_params=["api_key"],
+        ),
+        ServiceDefinition(
             value="nvidia_stt",
             label="NVIDIA",
             package="pipecat-ai[nvidia]",
@@ -431,6 +439,14 @@ class ServiceRegistry:
             class_name=["WhisperSTTService"],
             env_prefix="OPENAI",
             settings_params=["model"],
+        ),
+        ServiceDefinition(
+            value="xai_stt",
+            label="XAI",
+            package="pipecat-ai[xai]",
+            class_name=["XAISTTService"],
+            env_prefix="XAI",
+            include_params=["api_key"],
         ),
     ]
 
@@ -883,10 +899,19 @@ class ServiceRegistry:
             settings_params=["voice"],
         ),
         ServiceDefinition(
+            value="soniox_tts",
+            label="Soniox",
+            package="pipecat-ai[soniox]",
+            class_name=["SonioxTTSService"],
+            env_prefix="SONIOX",
+            include_params=["api_key"],
+            settings_params=["voice"],
+        ),
+        ServiceDefinition(
             value="xai_tts",
             label="XAI",
             package="pipecat-ai[xai]",
-            class_name=["XAIHttpTTSService"],
+            class_name=["XAITTSService"],
             env_prefix="XAI",
             include_params=["api_key"],
             settings_params=["voice"],

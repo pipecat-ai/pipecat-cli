@@ -90,6 +90,7 @@ IMPORTS = {
     "google_stt": ["from pipecat.services.google.stt import GoogleSTTService"],
     "gradium_stt": ["from pipecat.services.gradium.stt import GradiumSTTService"],
     "groq_stt": ["from pipecat.services.groq.stt import GroqSTTService"],
+    "mistral_stt": ["from pipecat.services.mistral.stt import MistralSTTService"],
     "nvidia_stt": ["from pipecat.services.nvidia.stt import NvidiaSTTService"],
     "openai_stt": ["from pipecat.services.openai.stt import OpenAISTTService"],
     "openai_realtime_stt": ["from pipecat.services.openai.stt import OpenAIRealtimeSTTService"],
@@ -97,6 +98,7 @@ IMPORTS = {
     "soniox_stt": ["from pipecat.services.soniox.stt import SonioxSTTService"],
     "speechmatics_stt": ["from pipecat.services.speechmatics.stt import SpeechmaticsSTTService"],
     "whisper_stt": ["from pipecat.services.whisper.stt import WhisperSTTService"],
+    "xai_stt": ["from pipecat.services.xai.stt import XAISTTService"],
     # LLM Services
     "anthropic_llm": ["from pipecat.services.anthropic.llm import AnthropicLLMService"],
     "aws_bedrock_llm": ["from pipecat.services.aws.llm import AWSBedrockLLMService"],
@@ -152,7 +154,8 @@ IMPORTS = {
     "rime_tts": ["from pipecat.services.rime.tts import RimeTTSService"],
     "sarvam_tts": ["from pipecat.services.sarvam.tts import SarvamTTSService"],
     "smallest_tts": ["from pipecat.services.smallest.tts import SmallestTTSService"],
-    "xai_tts": ["from pipecat.services.xai.tts import XAIHttpTTSService"],
+    "soniox_tts": ["from pipecat.services.soniox.tts import SonioxTTSService"],
+    "xai_tts": ["from pipecat.services.xai.tts import XAITTSService"],
     "xtts_tts": ["from pipecat.services.xtts.tts import XTTSService"],
     # Realtime Services
     "aws_nova_realtime": ["from pipecat.services.aws.nova_sonic.llm import AWSNovaSonicLLMService"],
