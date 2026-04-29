@@ -68,6 +68,7 @@ SERVICE_CONFIGS = {
     ),
     "gradium_stt": 'GradiumSTTService(api_key=os.getenv("GRADIUM_API_KEY"))',
     "groq_stt": 'GroqSTTService(api_key=os.getenv("GROQ_API_KEY"))',
+    "mistral_stt": 'MistralSTTService(api_key=os.getenv("MISTRAL_API_KEY"))',
     "nvidia_stt": 'NvidiaSTTService(api_key=os.getenv("NVIDIA_API_KEY"))',
     "openai_stt": 'OpenAISTTService(api_key=os.getenv("OPENAI_API_KEY"))',
     "openai_realtime_stt": 'OpenAIRealtimeSTTService(api_key=os.getenv("OPENAI_API_KEY"))',
@@ -88,6 +89,7 @@ SERVICE_CONFIGS = {
         "        ),\n"
         "    )\n"
     ),
+    "xai_stt": 'XAISTTService(api_key=os.getenv("XAI_API_KEY"))',
     # LLM Services
     "anthropic_llm": (
         "AnthropicLLMService(\n"
@@ -509,11 +511,18 @@ SERVICE_CONFIGS = {
         "        ),\n"
         "    )\n"
     ),
+    "soniox_tts": (
+        "SonioxTTSService(\n"
+        '        api_key=os.getenv("SONIOX_API_KEY"),\n'
+        "        settings=SonioxTTSService.Settings(\n"
+        '            voice=os.getenv("SONIOX_VOICE_ID"),\n'
+        "        ),\n"
+        "    )\n"
+    ),
     "xai_tts": (
-        "XAIHttpTTSService(\n"
+        "XAITTSService(\n"
         '        api_key=os.getenv("XAI_API_KEY"),\n'
-        "        aiohttp_session=session,\n"
-        "        settings=XAIHttpTTSService.Settings(\n"
+        "        settings=XAITTSService.Settings(\n"
         '            voice=os.getenv("XAI_VOICE_ID"),\n'
         "        ),\n"
         "    )\n"

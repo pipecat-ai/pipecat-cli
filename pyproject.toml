@@ -47,12 +47,12 @@ pc = "pipecat_cli.main:app"
 
 [dependency-groups]
 dev = [
-    "pytest~=8.4.1",
+    "pytest>=9.0.0,<10",
     "pytest-cov~=7.0.0",
-    "pre-commit~=4.2.0",
-    "build~=1.2.2",
+    "pre-commit~=4.5.1",
+    "build~=1.4.0",
     # Pipecat with all service extras for auto-generating imports and configs
-    "pipecat-ai[aic,anthropic,assemblyai,asyncai,aws,aws-nova-sonic,azure,camb,cartesia,cerebras,daily,deepseek,deepgram,elevenlabs,fal,fireworks,fish,gladia,google,gradium,groq,heygen,hume,inworld,kokoro,lmnt,mistral,moondream,neuphonic,novita,nvidia,openai,openrouter,perplexity,piper,qwen,resembleai,rime,sagemaker,sambanova,sarvam,silero,simli,smallest,soniox,speechmatics,tavus,together,ultravox,webrtc,websocket,xai]==1.0.0",
+    "pipecat-ai[aic,anthropic,assemblyai,asyncai,aws,aws-nova-sonic,azure,camb,cartesia,cerebras,daily,deepseek,deepgram,elevenlabs,fal,fireworks,fish,gladia,google,gradium,groq,heygen,hume,inworld,kokoro,lmnt,mistral,moondream,neuphonic,novita,nvidia,openai,openrouter,perplexity,piper,qwen,resembleai,rime,sagemaker,sambanova,sarvam,silero,simli,smallest,soniox,speechmatics,tavus,together,ultravox,webrtc,websocket,xai]==1.1.0",
     "tomli>=2.0.0; python_version<'3.11'",  # TOML parsing for tests
     "setuptools~=78.1.1",
     "setuptools_scm~=8.3.1",

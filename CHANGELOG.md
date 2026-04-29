@@ -7,7 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added Mistral STT and xAI STT as new STT service options.
+
+- Added Soniox TTS as a new TTS service option.
+
 ### Changed
+
+- Updated for `pipecat-ai` 1.1.0.
+
+- Renamed `XAIHttpTTSService` to `XAITTSService` to match the upstream rename
+  in `pipecat-ai` 1.1.0.
+
+- Bumped `@pipecat-ai/voice-ui-kit` to 0.9.0 in the react-vite and
+  react-nextjs client templates.
 
 - Bumped `@pipecat-ai/client-react` dependency to the latest version, 1.3.0.
 
