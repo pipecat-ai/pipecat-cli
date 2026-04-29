@@ -113,6 +113,7 @@ jobs:
             GH_TOKEN=$DOCS_SYNC_TOKEN gh pr create \
               --repo pipecat-ai/docs \
               --label auto-docs \
+              --label cli \
               --title "docs: update for pipecat-cli PR #${{ steps.pr.outputs.number }}" \
               --body "$(cat <<'BODY'
             Automated documentation update for [pipecat-cli PR #${{ steps.pr.outputs.number }}](https://github.com/pipecat-ai/pipecat-cli/pull/${{ steps.pr.outputs.number }}).
