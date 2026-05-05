@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Bumped client template dependencies:
   - `@pipecat-ai/client-js` to 1.8.0 across the vanilla-js-vite, react-vite,
     and react-nextjs templates.
+  - `@pipecat-ai/client-react` to 1.4.0 across the react-vite and react-nextjs
+    templates.
   - `@pipecat-ai/voice-ui-kit` to 0.10.0 in the react-vite and react-nextjs
     templates.
 
