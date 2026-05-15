@@ -110,6 +110,21 @@ class TestServiceLoader:
         assert "DeepgramSTTService" in config
         assert "DEEPGRAM_API_KEY" in config
 
+    def test_nvidia_sagemaker_configs_use_aws_region(self):
+        """Test NVIDIA SageMaker services use shared AWS_REGION."""
+        stt_config = ServiceLoader.get_service_config("nvidia_sagemaker_stt")
+        tts_config = ServiceLoader.get_service_config("nvidia_sagemaker_tts")
+
+        assert stt_config is not None
+        assert tts_config is not None
+        assert 'endpoint_name=os.getenv("NVIDIA_SAGEMAKER_STT_ENDPOINT_NAME")' in stt_config
+        assert 'endpoint_name=os.getenv("NVIDIA_SAGEMAKER_TTS_ENDPOINT_NAME")' in tts_config
+        assert 'region=os.getenv("AWS_REGION")' in stt_config
+        assert 'region=os.getenv("AWS_REGION")' in tts_config
+        assert "NVIDIA_SAGEMAKER_STT_REGION" not in stt_config
+        assert "NVIDIA_SAGEMAKER_TTS_REGION" not in tts_config
+        assert 'voice=os.getenv("NVIDIA_SAGEMAKER_TTS_VOICE_ID")' in tts_config
+
     def test_get_service_import(self):
         """Test retrieving service imports."""
         imports = ServiceLoader.get_service_import("deepgram_stt")
