@@ -394,7 +394,7 @@ class ServiceRegistry:
         ServiceDefinition(
             value="nvidia_sagemaker_stt",
             label="NVIDIA SageMaker",
-            package="pipecat-ai[nvidia,sagemaker]",
+            package="pipecat-ai[aws,sagemaker]",
             class_name=["NvidiaSageMakerSTTService"],
             env_prefix="NVIDIA_SAGEMAKER_STT",
             include_params=["endpoint_name", "region"],
@@ -856,7 +856,7 @@ class ServiceRegistry:
         ServiceDefinition(
             value="nvidia_sagemaker_tts",
             label="NVIDIA SageMaker",
-            package="pipecat-ai[nvidia,sagemaker]",
+            package="pipecat-ai[aws,sagemaker]",
             class_name=["NvidiaSageMakerTTSService"],
             env_prefix="NVIDIA_SAGEMAKER_TTS",
             include_params=["endpoint_name", "region"],
@@ -1062,6 +1062,21 @@ class ServiceRegistry:
 # These services have complex initialization logic that cannot be auto-generated
 # (e.g., nested InputParams, SessionProperties, or other special requirements)
 MANUAL_SERVICE_CONFIGS = {
+    "nvidia_sagemaker_stt": (
+        "NvidiaSageMakerSTTService(\n"
+        '    endpoint_name=os.getenv("NVIDIA_SAGEMAKER_STT_ENDPOINT_NAME"),\n'
+        '    region=os.getenv("AWS_REGION")\n'
+        ")"
+    ),
+    "nvidia_sagemaker_tts": (
+        "NvidiaSageMakerTTSService(\n"
+        '    endpoint_name=os.getenv("NVIDIA_SAGEMAKER_TTS_ENDPOINT_NAME"),\n'
+        '    region=os.getenv("AWS_REGION"),\n'
+        "    settings=NvidiaSageMakerTTSService.Settings(\n"
+        '        voice=os.getenv("NVIDIA_SAGEMAKER_TTS_VOICE_ID"),\n'
+        "    ),\n"
+        ")"
+    ),
     "aws_bedrock_llm": (
         "AWSBedrockLLMService(\n"
         '    aws_region=os.getenv("AWS_REGION"),\n'

@@ -72,9 +72,9 @@ SERVICE_CONFIGS = {
     "nvidia_stt": 'NvidiaSTTService(api_key=os.getenv("NVIDIA_API_KEY"))',
     "nvidia_sagemaker_stt": (
         "NvidiaSageMakerSTTService(\n"
-        '        endpoint_name=os.getenv("NVIDIA_SAGEMAKER_STT_ENDPOINT_NAME"),\n'
-        '        region=os.getenv("NVIDIA_SAGEMAKER_STT_REGION")\n'
-        "    )\n"
+        '    endpoint_name=os.getenv("NVIDIA_SAGEMAKER_STT_ENDPOINT_NAME"),\n'
+        '    region=os.getenv("AWS_REGION")\n'
+        ")\n"
     ),
     "openai_stt": 'OpenAISTTService(api_key=os.getenv("OPENAI_API_KEY"))',
     "openai_realtime_stt": 'OpenAIRealtimeSTTService(api_key=os.getenv("OPENAI_API_KEY"))',
@@ -471,12 +471,12 @@ SERVICE_CONFIGS = {
     ),
     "nvidia_sagemaker_tts": (
         "NvidiaSageMakerTTSService(\n"
-        '        endpoint_name=os.getenv("NVIDIA_SAGEMAKER_TTS_ENDPOINT_NAME"),\n'
-        '        region=os.getenv("NVIDIA_SAGEMAKER_TTS_REGION"),\n'
-        "        settings=NvidiaSageMakerTTSService.Settings(\n"
-        '            voice=os.getenv("NVIDIA_SAGEMAKER_TTS_VOICE_ID"),\n'
-        "        ),\n"
-        "    )\n"
+        '    endpoint_name=os.getenv("NVIDIA_SAGEMAKER_TTS_ENDPOINT_NAME"),\n'
+        '    region=os.getenv("AWS_REGION"),\n'
+        "    settings=NvidiaSageMakerTTSService.Settings(\n"
+        '        voice=os.getenv("NVIDIA_SAGEMAKER_TTS_VOICE_ID"),\n'
+        "    ),\n"
+        ")\n"
     ),
     "openai_tts": (
         "OpenAITTSService(\n"
