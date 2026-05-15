@@ -15,10 +15,10 @@ classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Software Development :: Code Generators",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Multimedia :: Sound/Audio",
@@ -30,7 +30,7 @@ dependencies = [
     "jinja2>=3.1.0,<4",
     "questionary>=2.0.0,<3",
     "ruff>=0.12.1,<1",
-    "pipecatcloud>=0.4.4"
+    "pipecatcloud>=0.7.1"
 ]
 
 [project.urls]
@@ -52,7 +52,7 @@ dev = [
     "pre-commit~=4.5.1",
     "build~=1.4.0",
     # Pipecat with all service extras for auto-generating imports and configs
-    "pipecat-ai[aic,anthropic,assemblyai,asyncai,aws,aws-nova-sonic,azure,camb,cartesia,cerebras,daily,deepseek,deepgram,elevenlabs,fal,fireworks,fish,gladia,google,gradium,groq,heygen,hume,inworld,kokoro,lmnt,mistral,moondream,neuphonic,novita,nvidia,openai,openrouter,perplexity,piper,qwen,resembleai,rime,sagemaker,sambanova,sarvam,silero,simli,smallest,soniox,speechmatics,tavus,together,ultravox,webrtc,websocket,xai]==1.1.0",
+    "pipecat-ai[aic,anthropic,assemblyai,asyncai,aws,aws-nova-sonic,azure,camb,cartesia,cerebras,daily,deepseek,deepgram,elevenlabs,fal,fireworks,fish,gladia,google,gradium,groq,heygen,hume,inworld,kokoro,lmnt,mistral,moondream,neuphonic,novita,nvidia,openai,openrouter,perplexity,piper,qwen,resembleai,rime,sagemaker,sambanova,sarvam,silero,simli,smallest,soniox,speechmatics,tavus,together,ultravox,webrtc,websocket,xai]==1.2.0",
     "tomli>=2.0.0; python_version<'3.11'",  # TOML parsing for tests
     "setuptools~=78.1.1",
     "setuptools_scm~=8.3.1",

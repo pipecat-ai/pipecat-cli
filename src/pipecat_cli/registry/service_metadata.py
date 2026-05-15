@@ -392,6 +392,14 @@ class ServiceRegistry:
             include_params=["api_key"],
         ),
         ServiceDefinition(
+            value="nvidia_sagemaker_stt",
+            label="NVIDIA SageMaker",
+            package="pipecat-ai[nvidia,sagemaker]",
+            class_name=["NvidiaSageMakerSTTService"],
+            env_prefix="NVIDIA_SAGEMAKER_STT",
+            include_params=["endpoint_name", "region"],
+        ),
+        ServiceDefinition(
             value="openai_stt",
             label="OpenAI (Whisper)",
             package="pipecat-ai[openai]",
@@ -843,6 +851,15 @@ class ServiceRegistry:
             class_name=["NvidiaTTSService"],
             env_prefix="NVIDIA",
             include_params=["api_key"],
+            settings_params=["voice"],
+        ),
+        ServiceDefinition(
+            value="nvidia_sagemaker_tts",
+            label="NVIDIA SageMaker",
+            package="pipecat-ai[nvidia,sagemaker]",
+            class_name=["NvidiaSageMakerTTSService"],
+            env_prefix="NVIDIA_SAGEMAKER_TTS",
+            include_params=["endpoint_name", "region"],
             settings_params=["voice"],
         ),
         ServiceDefinition(
