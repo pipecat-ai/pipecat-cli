@@ -9,12 +9,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@pipecat-ai/client-js": "^1.8.0"
+    "@pipecat-ai/client-js": "^1.9.0"
 {%- for transport in transports -%}
 {%- if transport.value == 'daily' %},
-    "@pipecat-ai/daily-transport": "^1.6.3"
+    "@pipecat-ai/daily-transport": "^1.6.4"
 {%- elif transport.value == 'smallwebrtc' %},
-    "@pipecat-ai/small-webrtc-transport": "^1.10.1"
+    "@pipecat-ai/small-webrtc-transport": "^1.10.2"
 {%- endif %}
 {%- endfor %}
   },
