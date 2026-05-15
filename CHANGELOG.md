@@ -7,7 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added NVIDIA SageMaker STT and TTS service options:
+  - `NvidiaSageMakerSTTService`
+  - `NvidiaSageMakerTTSService`
+
 ### Changed
+
+- Bumped the generated server template minimum Python version from 3.10 to
+  3.11.
 
 - Bumped client template dependencies:
   - `@pipecat-ai/client-js` to 1.8.0 across the vanilla-js-vite, react-vite,

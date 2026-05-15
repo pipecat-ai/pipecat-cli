@@ -92,6 +92,9 @@ IMPORTS = {
     "groq_stt": ["from pipecat.services.groq.stt import GroqSTTService"],
     "mistral_stt": ["from pipecat.services.mistral.stt import MistralSTTService"],
     "nvidia_stt": ["from pipecat.services.nvidia.stt import NvidiaSTTService"],
+    "nvidia_sagemaker_stt": [
+        "from pipecat.services.nvidia.sagemaker.stt import NvidiaSageMakerSTTService"
+    ],
     "openai_stt": ["from pipecat.services.openai.stt import OpenAISTTService"],
     "openai_realtime_stt": ["from pipecat.services.openai.stt import OpenAIRealtimeSTTService"],
     "sarvam_stt": ["from pipecat.services.sarvam.stt import SarvamSTTService"],
@@ -148,6 +151,9 @@ IMPORTS = {
     "mistral_tts": ["from pipecat.services.mistral.tts import MistralTTSService"],
     "neuphonic_tts": ["from pipecat.services.neuphonic.tts import NeuphonicTTSService"],
     "nvidia_tts": ["from pipecat.services.nvidia.tts import NvidiaTTSService"],
+    "nvidia_sagemaker_tts": [
+        "from pipecat.services.nvidia.sagemaker.tts import NvidiaSageMakerTTSService"
+    ],
     "openai_tts": ["from pipecat.services.openai.tts import OpenAITTSService"],
     "piper_tts": ["from pipecat.services.piper.tts import PiperTTSService"],
     "resemble_tts": ["from pipecat.services.resembleai.tts import ResembleAITTSService"],
