@@ -423,7 +423,9 @@ def test_project_generation(config_data, temp_output_dir):
 
     # Verify core files exist (in monorepo structure)
     assert (project_path / "server" / "bot.py").exists(), "server/bot.py should exist"
-    assert (project_path / "server" / "pyproject.toml").exists(), "server/pyproject.toml should exist"
+    assert (project_path / "server" / "pyproject.toml").exists(), (
+        "server/pyproject.toml should exist"
+    )
     assert (project_path / "server" / ".env.example").exists(), "server/.env.example should exist"
     assert (project_path / ".gitignore").exists(), ".gitignore should exist"
     assert (project_path / "README.md").exists(), "README.md should exist"
@@ -511,12 +513,14 @@ def test_project_generation(config_data, temp_output_dir):
         elif config.video_service == "heygen_video":
             assert "HeyGenVideoService" in bot_content, "HeyGenVideoService should be imported"
             assert "heygen" in pyproject_content, "heygen extra should be in dependencies"
-            assert "NewSessionRequest" in bot_content, "NewSessionRequest should be imported for HeyGen"
+            assert "NewSessionRequest" in bot_content, (
+                "NewSessionRequest should be imported for HeyGen"
+            )
             assert "AvatarQuality" in bot_content, "AvatarQuality should be imported for HeyGen"
         elif config.video_service == "simli_video":
             assert "SimliVideoService" in bot_content, "SimliVideoService should be imported"
             assert "simli" in pyproject_content, "simli extra should be in dependencies"
-        
+
         # Video service should be initialized in bot.py
         assert "video" in bot_content.lower(), "video service variable should be present"
 
@@ -592,6 +596,63 @@ def test_project_name_conflict(temp_output_dir):
 
     # Note: The CLI prompts for a new name on conflict, but we can't test
     # that interactively here. This test just verifies the first generation works.
+
+
+def test_generation_uses_utf8_on_windows_locale(monkeypatch, temp_output_dir):
+    """Regression test for pipecat-ai/pipecat#4523.
+
+    On Windows, ``Path.write_text(data)`` without an explicit ``encoding``
+    falls back to the locale codec (cp1252), which cannot encode the ``→``
+    characters in cascade-mode templates such as ``bot_cascade.py.jinja2``
+    and ``README.md.jinja2``. This test simulates that environment by
+    patching ``Path.write_text`` / ``Path.read_text`` to fail when
+    ``encoding`` is omitted, then runs the quickstart configuration end to
+    end and verifies the arrow-bearing files were written intact.
+    """
+    from pathlib import Path
+
+    original_write = Path.write_text
+    original_read = Path.read_text
+
+    def patched_write(self, data, *args, **kwargs):
+        if kwargs.get("encoding") is None and (len(args) == 0 or args[0] is None):
+            # Simulate Windows cp1252 fallback — fails on '→' (U+2192).
+            data.encode("cp1252")
+        return original_write(self, data, *args, **kwargs)
+
+    def patched_read(self, *args, **kwargs):
+        if kwargs.get("encoding") is None and (len(args) == 0 or args[0] is None):
+            # Reading a UTF-8 template containing '→' as cp1252 raises
+            # UnicodeDecodeError on Windows. Force the same failure mode.
+            return original_read(self, *args, encoding="cp1252", **kwargs)
+        return original_read(self, *args, **kwargs)
+
+    monkeypatch.setattr(Path, "write_text", patched_write)
+    monkeypatch.setattr(Path, "read_text", patched_read)
+
+    # Mirror the quickstart_command config from commands/init.py.
+    config = ProjectConfig(
+        project_name="pipecat-quickstart",
+        bot_type="web",
+        transports=["smallwebrtc", "daily"],
+        mode="cascade",
+        stt_service="deepgram_stt",
+        llm_service="openai_responses_llm",
+        tts_service="cartesia_tts",
+        deploy_to_cloud=True,
+    )
+    ProjectGenerator(config).generate(output_dir=temp_output_dir, non_interactive=True)
+
+    project = temp_output_dir / "pipecat-quickstart"
+    bot = project / "server" / "bot.py"
+    readme = project / "README.md"
+
+    assert bot.exists(), "bot.py was not written"
+    assert readme.exists(), "README.md was not written"
+    # The cascade-mode template carries '→' in a code comment; confirm it
+    # survived the cp1252-simulating environment.
+    assert "→" in bot.read_text(encoding="utf-8")
+    assert "→" in readme.read_text(encoding="utf-8")
 
 
 def test_invalid_service_combination():

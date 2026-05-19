@@ -5,6 +5,15 @@ All notable changes to **Pipecat** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Fixed
+
+- `pipecat init` no longer fails on Windows when the system default
+  encoding is not UTF-8 (e.g. cp1252). Generated text files and template
+  reads in `generators/project.py` now explicitly use UTF-8, preserving
+  Unicode characters such as `→` that appear in cascade-mode templates.
+
 ## [1.2.1] - 2026-05-15
 
 ### Changed

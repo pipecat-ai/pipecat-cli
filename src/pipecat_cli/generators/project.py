@@ -177,12 +177,12 @@ class ProjectGenerator:
         # Generate server.py
         server_template = self.env.get_template(server_template_name)
         server_content = server_template.render()
-        (project_path / "server.py").write_text(server_content)
+        (project_path / "server.py").write_text(server_content, encoding="utf-8")
 
         # Generate server_utils.py
         utils_template = self.env.get_template(utils_template_name)
         utils_content = utils_template.render()
-        (project_path / "server_utils.py").write_text(utils_content)
+        (project_path / "server_utils.py").write_text(utils_content, encoding="utf-8")
 
     def _needs_aiohttp_session(self) -> bool:
         """Check if any selected service requires an aiohttp session."""
@@ -281,7 +281,7 @@ class ProjectGenerator:
         # Render and write
         content = template.render(**context)
         bot_file = project_path / "bot.py"
-        bot_file.write_text(content)
+        bot_file.write_text(content, encoding="utf-8")
 
     def _generate_pyproject(self, project_path: Path) -> None:
         """Generate pyproject.toml with dependencies."""
@@ -318,7 +318,7 @@ class ProjectGenerator:
         }
 
         content = template.render(**context)
-        (project_path / "pyproject.toml").write_text(content)
+        (project_path / "pyproject.toml").write_text(content, encoding="utf-8")
 
     def _generate_env_example(self, project_path: Path) -> None:
         """Generate .env.example with required API keys."""
@@ -337,7 +337,7 @@ class ProjectGenerator:
         }
 
         content = template.render(**context)
-        (project_path / ".env.example").write_text(content)
+        (project_path / ".env.example").write_text(content, encoding="utf-8")
 
     def _generate_gitignore(self, project_path: Path) -> None:
         """Generate .gitignore file."""
@@ -346,7 +346,7 @@ class ProjectGenerator:
             "generate_client": self.config.generate_client,
         }
         content = template.render(**context)
-        (project_path / ".gitignore").write_text(content)
+        (project_path / ".gitignore").write_text(content, encoding="utf-8")
 
     def _get_service_label(self, service_value: str | None, service_list: list) -> str | None:
         """Get human-readable label for a service value."""
@@ -412,7 +412,7 @@ class ProjectGenerator:
         }
 
         content = template.render(**context)
-        (project_path / "README.md").write_text(content)
+        (project_path / "README.md").write_text(content, encoding="utf-8")
 
     def _generate_dockerfile(self, project_path: Path) -> None:
         """Generate Dockerfile for Pipecat Cloud deployment."""
@@ -425,7 +425,7 @@ class ProjectGenerator:
         }
 
         content = template.render(**context)
-        (project_path / "Dockerfile").write_text(content)
+        (project_path / "Dockerfile").write_text(content, encoding="utf-8")
 
     def _generate_pcc_deploy(self, project_path: Path) -> None:
         """Generate pcc-deploy.toml for Pipecat Cloud deployment."""
@@ -437,7 +437,7 @@ class ProjectGenerator:
         }
 
         content = template.render(**context)
-        (project_path / "pcc-deploy.toml").write_text(content)
+        (project_path / "pcc-deploy.toml").write_text(content, encoding="utf-8")
 
     def print_next_steps(self, project_path: Path) -> None:
         """Print next steps for the user."""
@@ -654,7 +654,7 @@ class ProjectGenerator:
             dest_file: Destination file path (without .jinja2)
         """
         # Create Jinja2 environment for this specific file
-        template_content = template_file.read_text()
+        template_content = template_file.read_text(encoding="utf-8")
         from jinja2 import Template
 
         try:
@@ -675,7 +675,7 @@ class ProjectGenerator:
 
         # Render and write
         rendered = template.render(**context)
-        dest_file.write_text(rendered)
+        dest_file.write_text(rendered, encoding="utf-8")
 
     def _format_python_files(self, project_path: Path) -> None:
         """Format generated Python files with Ruff."""
