@@ -8,6 +8,7 @@
 
 import shutil
 import subprocess
+import sys
 from pathlib import Path
 
 import questionary
@@ -677,22 +678,56 @@ class ProjectGenerator:
         rendered = template.render(**context)
         dest_file.write_text(rendered, encoding="utf-8")
 
+    def _ruff_command(self) -> list[str]:
+        """Resolve the command used to invoke Ruff.
+
+        Ruff is a hard dependency of the CLI, so it is always installed in the
+        same environment. We invoke the bundled binary directly (rather than a
+        bare ``ruff`` on PATH), because when the CLI is installed as an isolated
+        tool (``uv tool install`` / ``pipx``) only the ``pipecat``/``pc`` scripts
+        are exposed on PATH — Ruff's console script is not.
+        """
+        try:
+            from ruff.__main__ import find_ruff_bin
+
+            return [find_ruff_bin()]
+        except (ImportError, FileNotFoundError):
+            # Fall back to invoking Ruff as a module via the current interpreter.
+            return [sys.executable, "-m", "ruff"]
+
     def _format_python_files(self, project_path: Path) -> None:
         """Format generated Python files with Ruff."""
+        ruff = self._ruff_command()
         try:
             # Run ruff format on the project directory
-            subprocess.run(
-                ["ruff", "format", str(project_path)],
+            fmt = subprocess.run(
+                [*ruff, "format", str(project_path)],
                 capture_output=True,
-                check=False,  # Don't raise if ruff isn't installed
+                text=True,
+                check=False,
             )
 
             # Run ruff check --fix to organize imports
-            subprocess.run(
-                ["ruff", "check", "--fix", "--select", "I", str(project_path)],
+            imports = subprocess.run(
+                [*ruff, "check", "--fix", "--select", "I", str(project_path)],
                 capture_output=True,
+                text=True,
                 check=False,
             )
-        except FileNotFoundError:
-            # Ruff not installed, skip formatting
-            pass
+        except (FileNotFoundError, OSError) as e:
+            console.print(
+                f"[yellow]⚠️  Could not run Ruff to format generated files ({e}). "
+                "Generated Python may be unformatted; run 'ruff format' manually.[/yellow]"
+            )
+            return
+
+        # Surface non-zero exits instead of silently shipping unformatted code.
+        for label, result in (("format", fmt), ("check --fix", imports)):
+            if result.returncode != 0:
+                detail = (result.stderr or result.stdout or "").strip()
+                console.print(
+                    f"[yellow]⚠️  Ruff {label} exited with code {result.returncode}; "
+                    "generated Python may be unformatted."
+                    + (f"\n{detail}" if detail else "")
+                    + "[/yellow]"
+                )
