@@ -7,7 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- `pipecat init` now reliably formats generated Python files. The post-
+  generation Ruff step shelled out to a bare `ruff` on `PATH`, which is not
+  exposed when the CLI is installed as an isolated tool (`uv tool install` /
+  `pipx`) — only the `pipecat`/`pc` scripts are. In that case formatting was
+  silently skipped, shipping raw template output. It now invokes the Ruff
+  binary bundled with the CLI's dependencies, and surfaces a warning if
+  formatting cannot run instead of failing silently.
+
 ### Changed
+
+- Generated projects now enable Ruff's `UP` (pyupgrade) lint rules in addition
+  to import sorting (`I`), so user-run linting modernizes generated code.
 
 - Bumped client template dependencies:
   - `@pipecat-ai/client-js` to 1.10.0 across the vanilla-js-vite, react-vite,

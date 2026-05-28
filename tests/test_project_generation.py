@@ -94,6 +94,26 @@ def validate_imports_resolvable(bot_file_path):
     return True, imports
 
 
+def assert_server_ruff_clean(server_path):
+    """Assert generated Python under server_path is already Ruff-formatted.
+
+    Uses the Ruff binary bundled with the CLI's dependencies (the same one
+    ``ProjectGenerator._format_python_files`` resolves), so the check does not
+    depend on ``ruff`` being on PATH.
+    """
+    from ruff.__main__ import find_ruff_bin
+
+    result = subprocess.run(
+        [find_ruff_bin(), "format", "--check", str(server_path)],
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0, (
+        f"Generated Python under {server_path} is not Ruff-formatted:\n"
+        f"{result.stdout}{result.stderr}"
+    )
+
+
 # Test configurations for different transport types
 TEST_CONFIGS = [
     # WebRTC Transports - Cascade
@@ -448,6 +468,11 @@ def test_project_generation(config_data, temp_output_dir):
     is_valid, imports = validate_imports_resolvable(bot_file)
     assert is_valid, "bot.py should have valid Pipecat imports"
 
+    # Generated Python must be Ruff-formatted. Regression guard: the formatting
+    # step used to silently no-op when `ruff` was not on PATH, shipping the raw
+    # (mis-indented, unsorted-imports) template output.
+    assert_server_ruff_clean(project_path / "server")
+
     # Verify bot.py structure
     bot_content = bot_file.read_text()
     assert "async def run_bot" in bot_content, "bot.py should have run_bot function"
@@ -653,6 +678,66 @@ def test_generation_uses_utf8_on_windows_locale(monkeypatch, temp_output_dir):
     # survived the cp1252-simulating environment.
     assert "→" in bot.read_text(encoding="utf-8")
     assert "→" in readme.read_text(encoding="utf-8")
+
+
+def test_generated_python_formatted_without_ruff_on_path(monkeypatch, tmp_path, temp_output_dir):
+    """Regression test: generated Python is formatted even when `ruff` is off PATH.
+
+    When the CLI is installed as an isolated tool (``uv tool install`` /
+    ``pipx``), only the ``pipecat``/``pc`` scripts land on PATH — Ruff's console
+    script does not. ``_format_python_files`` must still run by resolving the
+    bundled Ruff binary directly. Previously it shelled out to a bare ``ruff``
+    and silently skipped formatting via ``FileNotFoundError``, shipping raw
+    template output.
+    """
+    import shutil as _shutil
+
+    # Point PATH at an empty directory so a bare `ruff` lookup fails on any
+    # platform — mirroring an isolated tool install where ruff isn't exposed.
+    empty_dir = tmp_path / "empty_path"
+    empty_dir.mkdir()
+    monkeypatch.setenv("PATH", str(empty_dir))
+    assert _shutil.which("ruff") is None, "test setup: ruff should not be on PATH"
+
+    config = ProjectConfig(
+        project_name="fmt-no-path",
+        bot_type="web",
+        transports=["daily"],
+        mode="cascade",
+        stt_service="deepgram_stt",
+        llm_service="openai_llm",
+        tts_service="cartesia_tts",
+    )
+    ProjectGenerator(config).generate(output_dir=temp_output_dir, non_interactive=True)
+
+    assert_server_ruff_clean(temp_output_dir / "fmt-no-path" / "server")
+
+
+def test_format_warns_when_ruff_cannot_run(monkeypatch, temp_output_dir, capsys):
+    """Regression test: a formatting failure warns instead of being silently swallowed.
+
+    The old code caught ``FileNotFoundError`` and ``pass``ed, so a missing or
+    broken Ruff produced unformatted output with no signal to the user.
+    """
+    config = ProjectConfig(
+        project_name="warn-test",
+        bot_type="web",
+        transports=["daily"],
+        mode="cascade",
+        stt_service="deepgram_stt",
+        llm_service="openai_llm",
+        tts_service="cartesia_tts",
+    )
+    generator = ProjectGenerator(config)
+    # Force Ruff resolution to a non-existent binary so the subprocess raises
+    # FileNotFoundError — the case that used to be silently ignored.
+    monkeypatch.setattr(generator, "_ruff_command", lambda: ["pipecat-cli-no-such-ruff-binary"])
+    generator.generate(output_dir=temp_output_dir, non_interactive=True)
+
+    captured = capsys.readouterr()
+    assert "Could not run Ruff" in captured.out, (
+        f"expected a Ruff warning on stdout, got:\n{captured.out}"
+    )
 
 
 def test_invalid_service_combination():
