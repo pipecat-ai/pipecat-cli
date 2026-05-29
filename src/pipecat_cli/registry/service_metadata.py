@@ -155,6 +155,17 @@ class ServiceRegistry:
                 "SmallWebRTCRunnerArguments",
             ],
         ),
+        ServiceDefinition(
+            value="websocket",
+            label="WebSocket",
+            package="pipecat-ai[websocket]",
+            class_name=[
+                "FastAPIWebsocketTransport",
+                "FastAPIWebsocketParams",
+                "WebSocketRunnerArguments",
+                "ProtobufFrameSerializer",
+            ],
+        ),
     ]
 
     # Telephony Transports

@@ -9,11 +9,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Added a **WebSocket** transport option for web bots. Selecting it generates a
+  server using `FastAPIWebsocketTransport` with the Protobuf frame serializer,
+  and wires `@pipecat-ai/websocket-transport` into the vanilla-js-vite,
+  react-vite, and react-nextjs client templates. It can be selected on its own
+  or alongside Daily / SmallWebRTC in the same project.
+
 - Added support for:
   - `CartesiaTurnsSTTService`
   - `InceptionLLMService`
 
 ### Changed
+
+- Generated bots now kick off the conversation with a `developer`-role message
+  (`"Start by concisely introducing yourself."`) instead of a `user`-role
+  `"Please introduce yourself."` message.
+
 
 - Updated for `pipecat-ai` 1.3.0:
   - Generated bots now use the new worker API, replacing `PipelineTask` with

@@ -117,9 +117,11 @@ async def bot(runner_args: RunnerArguments):
         case SmallWebRTCRunnerArguments():
 {% include 'server/_blocks/bot_entry_smallwebrtc.jinja2' %}
         {% endif %}
-        {% if 'twilio' in transports or 'telnyx' in transports or 'plivo' in transports or 'exotel' in transports %}
+        {% if 'twilio' in transports or 'telnyx' in transports or 'plivo' in transports or 'exotel' in transports or 'websocket' in transports %}
         case WebSocketRunnerArguments():
-            {% if 'twilio' in transports %}
+            {% if 'websocket' in transports %}
+{% include 'server/_blocks/bot_entry_websocket.jinja2' %}
+            {% elif 'twilio' in transports %}
 {% include 'server/_blocks/bot_entry_twilio.jinja2' %}
             {% elif 'telnyx' in transports %}
 {% include 'server/_blocks/bot_entry_telnyx.jinja2' %}

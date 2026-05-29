@@ -39,12 +39,12 @@ class TestClientGeneration:
         assert "'smallwebrtc'" in config_content
         assert "AVAILABLE_TRANSPORTS" in config_content
         assert "DEFAULT_TRANSPORT" in config_content
-        assert "TRANSPORT_CONFIG" in config_content
+        assert "TRANSPORT_PROPS" in config_content
 
         # Verify static TypeScript has no Jinja2 syntax
         main_tsx = (project_path / "client" / "src" / "main.tsx").read_text()
         assert "{%" not in main_tsx
-        assert "TRANSPORT_CONFIG" in main_tsx
+        assert "TRANSPORT_PROPS" in main_tsx
 
     def test_nextjs_with_single_transport(self, tmp_path):
         """Test Next.js client generation with single transport."""

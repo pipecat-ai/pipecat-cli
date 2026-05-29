@@ -132,6 +132,29 @@ class TestServiceLoader:
         assert len(imports) > 0
         assert any("DeepgramSTTService" in imp for imp in imports)
 
+    def test_websocket_is_web_transport(self):
+        """WebSocket is a web (WebRTC list) transport, not telephony."""
+        web_options = ServiceLoader.get_transport_options("web")
+        assert any(t.value == "websocket" for t in web_options)
+        telephony_options = ServiceLoader.get_transport_options("telephony")
+        assert all(t.value != "websocket" for t in telephony_options)
+
+        transport = ServiceLoader.get_service_by_value(
+            ServiceRegistry.WEBRTC_TRANSPORTS, "websocket"
+        )
+        assert transport is not None
+        assert transport.package == "pipecat-ai[websocket]"
+
+    def test_websocket_transport_imports(self):
+        """WebSocket transport imports the FastAPI transport and Protobuf serializer."""
+        imports = ServiceLoader.get_service_import("websocket")
+        assert imports is not None
+        joined = "\n".join(imports)
+        assert "FastAPIWebsocketTransport" in joined
+        assert "FastAPIWebsocketParams" in joined
+        assert "WebSocketRunnerArguments" in joined
+        assert "ProtobufFrameSerializer" in joined
+
     @pytest.mark.parametrize(
         "service",
         ServiceRegistry.STT_SERVICES
