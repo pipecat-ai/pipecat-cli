@@ -21,13 +21,13 @@ async def save_audio_file(audio: bytes, filename: str, sample_rate: int, num_cha
 {% endmacro %}
 
 {# Context and message setup #}
-{% macro setup_context(stt_service='') %}
+{% macro setup_context(external_turn_detection=False) %}
 context = LLMContext()
 user_aggregator, assistant_aggregator = LLMContextAggregatorPair(
     context,
     user_params=LLMUserAggregatorParams(
         vad_analyzer=SileroVADAnalyzer(),
-{%- if stt_service and 'flux' in stt_service %}
+{%- if external_turn_detection %}
         user_turn_strategies=ExternalUserTurnStrategies(),
 {%- endif %}
     ),

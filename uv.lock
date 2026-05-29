@@ -3134,7 +3134,7 @@ provides-extras = ["tail"]
 [package.metadata.requires-dev]
 dev = [
     { name = "build", specifier = "~=1.4.0" },
-    { name = "pipecat-ai", extras = ["aic", "anthropic", "assemblyai", "asyncai", "aws", "aws-nova-sonic", "azure", "camb", "cartesia", "cerebras", "daily", "deepseek", "deepgram", "elevenlabs", "fal", "fireworks", "fish", "gladia", "google", "gradium", "groq", "heygen", "hume", "inworld", "kokoro", "lmnt", "mistral", "moondream", "neuphonic", "novita", "nvidia", "openai", "openrouter", "perplexity", "piper", "qwen", "resembleai", "rime", "sagemaker", "sambanova", "sarvam", "silero", "simli", "smallest", "soniox", "speechmatics", "tavus", "together", "ultravox", "webrtc", "websocket", "xai"], specifier = "==1.3.0" },
+    { name = "pipecat-ai", extras = ["aic", "anthropic", "assemblyai", "asyncai", "aws", "aws-nova-sonic", "azure", "camb", "cartesia", "cerebras", "daily", "deepseek", "deepgram", "elevenlabs", "fal", "fireworks", "fish", "gladia", "google", "gradium", "groq", "heygen", "hume", "inception", "inworld", "kokoro", "lmnt", "mistral", "moondream", "neuphonic", "novita", "nvidia", "openai", "openrouter", "perplexity", "piper", "qwen", "resembleai", "rime", "sagemaker", "sambanova", "sarvam", "silero", "simli", "smallest", "soniox", "speechmatics", "tavus", "together", "ultravox", "webrtc", "websocket", "xai"], specifier = "==1.3.0" },
     { name = "pre-commit", specifier = "~=4.5.1" },
     { name = "pytest", specifier = ">=9.0.0,<10" },
     { name = "pytest-cov", specifier = "~=7.0.0" },
