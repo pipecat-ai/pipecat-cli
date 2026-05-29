@@ -26,7 +26,7 @@
 {{ "# Pipeline - assembled from reusable components" | indent(indent_level, first=True) }}
 {{ pipeline.cascade_pipeline(bot_type, transcription, recording, video_service) | indent(indent_level, first=True) }}
 
-{{ "task = PipelineTask(" | indent(indent_level, first=True) }}
+{{ "worker = PipelineWorker(" | indent(indent_level, first=True) }}
 {{ "pipeline," | indent(indent_level + 4, first=True) }}
 {{ "params=PipelineParams(" | indent(indent_level + 4, first=True) }}
 {{ "enable_metrics=True," | indent(indent_level + 8, first=True) }}
@@ -73,7 +73,7 @@
 {{ handlers.recording_handler() | indent(indent_level, first=True) }}
 {% endif %}
 
-{{ "runner = PipelineRunner(handle_sigint=False)" | indent(indent_level, first=True) }}
+{{ "runner = WorkerRunner(handle_sigint=False)" | indent(indent_level, first=True) }}
 
-{{ "await runner.run(task)" | indent(indent_level, first=True) }}
+{{ "await runner.add_workers(worker)" | indent(indent_level, first=True) }}
 

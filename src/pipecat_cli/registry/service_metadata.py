@@ -94,7 +94,7 @@ FEATURE_DEFINITIONS: dict[str, list[str]] = {
     "recording": ["AudioBufferProcessor", "datetime", "io", "wave", "aiofiles"],
     "transcription": ["AssistantTurnStoppedMessage", "UserTurnStoppedMessage"],
     "vad": ["SileroVADAnalyzer"],
-    "pipeline": ["Pipeline", "PipelineRunner", "PipelineParams", "PipelineTask"],
+    "pipeline": ["Pipeline", "WorkerRunner", "PipelineParams", "PipelineWorker"],
     "context": ["LLMContext", "LLMContextAggregatorPair", "LLMUserAggregatorParams"],
     "runner": [
         "load_dotenv",

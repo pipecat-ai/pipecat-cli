@@ -211,8 +211,8 @@ FEATURE_IMPORTS = {
     "vad": ["from pipecat.audio.vad.silero import SileroVADAnalyzer"],
     "pipeline": [
         "from pipecat.pipeline.pipeline import Pipeline",
-        "from pipecat.pipeline.runner import PipelineRunner",
-        "from pipecat.pipeline.task import PipelineParams, PipelineTask",
+        "from pipecat.pipeline.worker import PipelineParams, PipelineWorker",
+        "from pipecat.workers.runner import WorkerRunner",
     ],
     "context": [
         "from pipecat.processors.aggregators.llm_context import LLMContext",

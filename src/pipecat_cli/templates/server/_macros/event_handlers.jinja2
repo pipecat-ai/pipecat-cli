@@ -6,11 +6,11 @@ Reusable event handlers for different transport types
 {# Standard event handlers for web/telephony #}
 {% macro standard_handlers(recording=False, bot_type='telephony') %}
 {% if bot_type == 'web' %}
-@task.rtvi.event_handler("on_client_ready")
+@worker.rtvi.event_handler("on_client_ready")
 async def on_client_ready(rtvi):
     # Kick off the conversation
     context.add_message({"role": "user", "content": "Please introduce yourself."})
-    await task.queue_frames([LLMRunFrame()])
+    await worker.queue_frames([LLMRunFrame()])
 
 {% endif %}
 @transport.event_handler("on_client_connected")
@@ -23,13 +23,13 @@ async def on_client_connected(transport, client):
     {% if bot_type != 'web' %}
     # Kick off the conversation
     context.add_message({"role": "user", "content": "Please introduce yourself."})
-    await task.queue_frames([LLMRunFrame()])
+    await worker.queue_frames([LLMRunFrame()])
     {% endif %}
 
 @transport.event_handler("on_client_disconnected")
 async def on_client_disconnected(transport, client):
     logger.info("Client disconnected")
-    await task.cancel()
+    await worker.cancel()
 {% endmacro %}
 
 {# Daily PSTN dial-in event handlers #}
@@ -43,17 +43,17 @@ async def on_first_participant_joined(transport, participant):
     {% endif %}
     # Kick off the conversation
     context.add_message({"role": "user", "content": "Please introduce yourself."})
-    await task.queue_frames([LLMRunFrame()])
+    await worker.queue_frames([LLMRunFrame()])
 
 @transport.event_handler("on_client_disconnected")
 async def on_client_disconnected(transport, client):
     logger.info(f"Client disconnected")
-    await task.cancel()
+    await worker.cancel()
 
 @transport.event_handler("on_dialin_error")
 async def on_dialin_error(transport, data):
     logger.error(f"Dial-in error: {data}")
-    await task.cancel()
+    await worker.cancel()
 {% endmacro %}
 
 {# Daily PSTN dial-out event handlers #}
@@ -79,12 +79,12 @@ async def on_dialout_error(transport, data: Any):
         await dialout_manager.attempt_dialout()
     else:
         logger.error(f"No more retries allowed, stopping bot.")
-        await task.cancel()
+        await worker.cancel()
 
 @transport.event_handler("on_client_disconnected")
 async def on_client_disconnected(transport, client):
     logger.info(f"Client disconnected")
-    await task.cancel()
+    await worker.cancel()
 {% endmacro %}
 
 {# Twilio + Daily SIP dial-in event handlers #}
@@ -103,12 +103,12 @@ async def on_dialin_ready(transport, sip_endpoint):
         logger.info("Call forwarded successfully")
     except Exception as e:
         logger.error(f"Failed to forward call: {str(e)}")
-        await task.cancel()
+        await worker.cancel()
 
 @transport.event_handler("on_dialin_error")
 async def on_dialin_error(transport, data):
     logger.error(f"Dial-in error: {data}")
-    await task.cancel()
+    await worker.cancel()
 
 @transport.event_handler("on_client_connected")
 async def on_client_connected(transport, client):
@@ -118,12 +118,12 @@ async def on_client_connected(transport, client):
     await audio_buffer.start_recording()
     {% endif %}
     context.add_message({"role": "user", "content": "Please introduce yourself."})
-    await task.queue_frames([LLMRunFrame()])
+    await worker.queue_frames([LLMRunFrame()])
 
 @transport.event_handler("on_client_disconnected")
 async def on_client_disconnected(transport, client):
     logger.info("Client disconnected")
-    await task.cancel()
+    await worker.cancel()
 {% endmacro %}
 
 {# Twilio + Daily SIP dial-out event handlers (same as Daily PSTN dial-out) #}
@@ -149,12 +149,12 @@ async def on_dialout_error(transport, data: Any):
         await dialout_manager.attempt_dialout()
     else:
         logger.error(f"No more retries allowed, stopping bot.")
-        await task.cancel()
+        await worker.cancel()
 
 @transport.event_handler("on_client_disconnected")
 async def on_client_disconnected(transport, client):
     logger.info(f"Client disconnected")
-    await task.cancel()
+    await worker.cancel()
 {% endmacro %}
 
 {# Transcription event handler (feature-based) #}

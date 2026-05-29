@@ -2922,7 +2922,7 @@ wheels = [
 
 [[package]]
 name = "pipecat-ai"
-version = "1.2.0"
+version = "1.3.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "aiofiles" },
@@ -2942,12 +2942,11 @@ dependencies = [
     { name = "pyloudnorm" },
     { name = "resampy" },
     { name = "soxr" },
-    { name = "transformers" },
     { name = "wait-for2", marker = "python_full_version < '3.12'" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/e2/42/bfed0fc7b74c18ce44728cec8160ba083970b531fe18606f6506670aa299/pipecat_ai-1.2.0.tar.gz", hash = "sha256:9ee206218678fd4422c5a4c6f653fa0e01880d31e51912b536748e8444f8c44d", size = 11119514, upload-time = "2026-05-14T21:49:30.1Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/92/cc/8352e30c47ee4fd075b9a0f3d91183294582578f07289180a30fc8228409/pipecat_ai-1.3.0.tar.gz", hash = "sha256:abeb9d95b1df2f35b855334cda1899fc603124d5448967c82ba08a94c604318f", size = 11260868, upload-time = "2026-05-29T01:03:00.532Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/e1/86/74cdda99ba30016be81acba3e1310ee2482010265d11182f1684cea6f6f8/pipecat_ai-1.2.0-py3-none-any.whl", hash = "sha256:a4e2d556dbe79fddb96d47832c5a172c8b1d38cba4acf9cc4a02e539a7100a0d", size = 10770141, upload-time = "2026-05-14T21:49:26.635Z" },
+    { url = "https://files.pythonhosted.org/packages/b6/73/fff17b48cd254ad1c358d612ce92fcc342838e0fc43cc235aca3c70527fb/pipecat_ai-1.3.0-py3-none-any.whl", hash = "sha256:59d4950a61a0a201cf551354d8cdec038c1bdf457df080cd41d29d7ff53e0b2e", size = 10905336, upload-time = "2026-05-29T01:02:57.764Z" },
 ]
 
 [package.optional-dependencies]
@@ -3135,7 +3134,7 @@ provides-extras = ["tail"]
 [package.metadata.requires-dev]
 dev = [
     { name = "build", specifier = "~=1.4.0" },
-    { name = "pipecat-ai", extras = ["aic", "anthropic", "assemblyai", "asyncai", "aws", "aws-nova-sonic", "azure", "camb", "cartesia", "cerebras", "daily", "deepseek", "deepgram", "elevenlabs", "fal", "fireworks", "fish", "gladia", "google", "gradium", "groq", "heygen", "hume", "inworld", "kokoro", "lmnt", "mistral", "moondream", "neuphonic", "novita", "nvidia", "openai", "openrouter", "perplexity", "piper", "qwen", "resembleai", "rime", "sagemaker", "sambanova", "sarvam", "silero", "simli", "smallest", "soniox", "speechmatics", "tavus", "together", "ultravox", "webrtc", "websocket", "xai"], specifier = "==1.2.0" },
+    { name = "pipecat-ai", extras = ["aic", "anthropic", "assemblyai", "asyncai", "aws", "aws-nova-sonic", "azure", "camb", "cartesia", "cerebras", "daily", "deepseek", "deepgram", "elevenlabs", "fal", "fireworks", "fish", "gladia", "google", "gradium", "groq", "heygen", "hume", "inworld", "kokoro", "lmnt", "mistral", "moondream", "neuphonic", "novita", "nvidia", "openai", "openrouter", "perplexity", "piper", "qwen", "resembleai", "rime", "sagemaker", "sambanova", "sarvam", "silero", "simli", "smallest", "soniox", "speechmatics", "tavus", "together", "ultravox", "webrtc", "websocket", "xai"], specifier = "==1.3.0" },
     { name = "pre-commit", specifier = "~=4.5.1" },
     { name = "pytest", specifier = ">=9.0.0,<10" },
     { name = "pytest-cov", specifier = "~=7.0.0" },
