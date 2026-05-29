@@ -64,6 +64,9 @@ class ServiceDefinition:
             produces os.getenv("ENV_VAR", "default") instead of os.getenv("ENV_VAR").
             Use this for params where the quickstart should work without the user
             setting the env var (e.g., model or voice defaults).
+        external_turn_detection: If True, this STT service performs its own end-of-turn
+            detection, so the generated bot uses ExternalUserTurnStrategies() in the user
+            aggregator instead of VAD-driven turn taking (e.g. Deepgram Flux, Cartesia Turns).
     """
 
     value: str
@@ -77,6 +80,7 @@ class ServiceDefinition:
     recommended: bool = False
     additional_imports: list[str] | None = None
     param_defaults: dict[str, str] | None = None
+    external_turn_detection: bool = False
 
     def __post_init__(self):
         """Validate service definition after initialization."""
@@ -94,7 +98,7 @@ FEATURE_DEFINITIONS: dict[str, list[str]] = {
     "recording": ["AudioBufferProcessor", "datetime", "io", "wave", "aiofiles"],
     "transcription": ["AssistantTurnStoppedMessage", "UserTurnStoppedMessage"],
     "vad": ["SileroVADAnalyzer"],
-    "pipeline": ["Pipeline", "PipelineRunner", "PipelineParams", "PipelineTask"],
+    "pipeline": ["Pipeline", "WorkerRunner", "PipelineParams", "PipelineWorker"],
     "context": ["LLMContext", "LLMContextAggregatorPair", "LLMUserAggregatorParams"],
     "runner": [
         "load_dotenv",
@@ -288,6 +292,15 @@ class ServiceRegistry:
             include_params=["api_key"],
         ),
         ServiceDefinition(
+            value="cartesia_turns_stt",
+            label="Cartesia Turns",
+            package="pipecat-ai[cartesia]",
+            class_name=["CartesiaTurnsSTTService"],
+            env_prefix="CARTESIA",
+            include_params=["api_key"],
+            external_turn_detection=True,
+        ),
+        ServiceDefinition(
             value="deepgram_stt",
             label="Deepgram",
             package="pipecat-ai[deepgram]",
@@ -302,6 +315,7 @@ class ServiceRegistry:
             class_name=["DeepgramFluxSTTService"],
             env_prefix="DEEPGRAM",
             include_params=["api_key"],
+            external_turn_detection=True,
         ),
         ServiceDefinition(
             value="deepgram_flux_sagemaker_stt",
@@ -310,6 +324,7 @@ class ServiceRegistry:
             class_name=["DeepgramFluxSageMakerSTTService"],
             env_prefix="DEEPGRAM_FLUX_SAGEMAKER_STT",
             include_params=["endpoint_name", "region"],
+            external_turn_detection=True,
         ),
         ServiceDefinition(
             value="deepgram_sagemaker_stt",
@@ -548,6 +563,15 @@ class ServiceRegistry:
             package="pipecat-ai[groq]",
             class_name=["GroqLLMService"],
             env_prefix="GROQ",
+            include_params=["api_key"],
+            settings_params=["model", "system_instruction"],
+        ),
+        ServiceDefinition(
+            value="inception_llm",
+            label="Inception",
+            package="pipecat-ai[inception]",
+            class_name=["InceptionLLMService"],
+            env_prefix="INCEPTION",
             include_params=["api_key"],
             settings_params=["model", "system_instruction"],
         ),
