@@ -16,7 +16,7 @@ import { App } from './components/App';
 import {
   AVAILABLE_TRANSPORTS,
   DEFAULT_TRANSPORT,
-  TRANSPORT_CONFIG,
+  TRANSPORT_PROPS,
 } from '../config';
 import type { TransportType } from '../config';
 
@@ -24,13 +24,13 @@ export default function Home() {
   const [transportType, setTransportType] =
     useState<TransportType>(DEFAULT_TRANSPORT);
 
-  const connectParams = TRANSPORT_CONFIG[transportType];
+  const transportProps = TRANSPORT_PROPS[transportType];
 
   return (
     <ThemeProvider defaultTheme="terminal" disableStorage>
       <FullScreenContainer>
         <PipecatAppBase
-          connectParams={connectParams}
+          {...transportProps}
           transportType={transportType}>
           {({
             client,

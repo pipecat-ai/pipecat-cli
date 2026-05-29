@@ -36,6 +36,8 @@ class VoiceChatClient {
         option.textContent = 'SmallWebRTC';
       } else if (transport === 'daily') {
         option.textContent = 'Daily';
+      } else if (transport === 'websocket') {
+        option.textContent = 'WebSocket';
       }
       this.transportSelect.appendChild(option);
     });
@@ -119,7 +121,16 @@ class VoiceChatClient {
 
       // Start bot and connect using config
       const connectParams = TRANSPORT_CONFIG[this.transportType];
-      await this.client.startBotAndConnect(connectParams);
+      if (this.transportType === 'websocket') {
+        // WebSocket connects in two steps: start the bot to obtain the
+        // WebSocket URL (and optional token), then connect to it.
+        const { wsUrl, token } = await this.client.startBot(connectParams);
+        await this.client.connect({
+          wsUrl: token ? `${wsUrl}?token=${encodeURIComponent(token)}` : wsUrl,
+        });
+      } else {
+        await this.client.startBotAndConnect(connectParams);
+      }
     } catch (error) {
       this.addEvent('error', error.message);
       console.error('Connection error:', error);

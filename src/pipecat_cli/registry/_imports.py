@@ -23,6 +23,11 @@ IMPORTS = {
         "from pipecat.transports.smallwebrtc.connection import SmallWebRTCConnection",
         "from pipecat.transports.smallwebrtc.transport import SmallWebRTCTransport",
     ],
+    "websocket": [
+        "from pipecat.runner.types import WebSocketRunnerArguments",
+        "from pipecat.serializers.protobuf import ProtobufFrameSerializer",
+        "from pipecat.transports.websocket.fastapi import FastAPIWebsocketTransport, FastAPIWebsocketParams",
+    ],
     # Transports - Telephony
     "twilio": [
         "from pipecat.runner.types import WebSocketRunnerArguments",

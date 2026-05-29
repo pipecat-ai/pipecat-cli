@@ -51,9 +51,23 @@ if (botStartPublicApiKey) {
   });
 }
 
+const websocketConfig = {
+  endpoint: botStartUrl,
+  requestData: {
+    transport: "websocket",
+  },
+};
+
+if (botStartPublicApiKey) {
+  websocketConfig.headers = new Headers({
+    Authorization: `Bearer ${botStartPublicApiKey}`,
+  });
+}
+
 export const TRANSPORT_CONFIG = {
   daily: dailyConfig,
   smallwebrtc: smallWebRTCConfig,
+  websocket: websocketConfig,
 };
 
 /**
@@ -72,6 +86,11 @@ export async function createTransport(transportType) {
     case 'smallwebrtc': {
       const { SmallWebRTCTransport } = await import('@pipecat-ai/small-webrtc-transport');
       return new SmallWebRTCTransport();
+    }
+{% elif transport.value == 'websocket' %}
+    case 'websocket': {
+      const { WebSocketTransport } = await import('@pipecat-ai/websocket-transport');
+      return new WebSocketTransport();
     }
 {% endif -%}
 {%- endfor %}

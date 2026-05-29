@@ -1,0 +1,14 @@
+{# WebSocket bot entry point #}
+            transport = FastAPIWebsocketTransport(
+                websocket=runner_args.websocket,
+                params=FastAPIWebsocketParams(
+                    audio_in_enabled=True,
+                    {% if enable_krisp %}
+                    audio_in_filter=krisp_filter,
+                    {% endif %}
+                    audio_out_enabled=True,
+                    add_wav_header=False,
+                    serializer=ProtobufFrameSerializer(),
+                ),
+            )
+
