@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Added support for:
+  - `CartesiaTurnsSTTService`
+  - `InceptionLLMService`
+
 ### Changed
 
 - Updated for `pipecat-ai` 1.3.0:

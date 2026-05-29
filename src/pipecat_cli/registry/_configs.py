@@ -27,6 +27,7 @@ SERVICE_CONFIGS = {
         "    )\n"
     ),
     "cartesia_stt": 'CartesiaSTTService(api_key=os.getenv("CARTESIA_API_KEY"))',
+    "cartesia_turns_stt": 'CartesiaTurnsSTTService(api_key=os.getenv("CARTESIA_API_KEY"))',
     "deepgram_stt": 'DeepgramSTTService(api_key=os.getenv("DEEPGRAM_API_KEY"))',
     "deepgram_flux_stt": 'DeepgramFluxSTTService(api_key=os.getenv("DEEPGRAM_API_KEY"))',
     "deepgram_flux_sagemaker_stt": (
@@ -186,6 +187,15 @@ SERVICE_CONFIGS = {
         '        api_key=os.getenv("GROQ_API_KEY"),\n'
         "        settings=GroqLLMService.Settings(\n"
         '            model=os.getenv("GROQ_MODEL"),\n'
+        '            system_instruction="You are a helpful assistant in a voice conversation. Your responses will be spoken aloud, so avoid emojis, bullet points, or other formatting that can\'t be spoken. Respond to what the user said in a creative, helpful, and brief way.",\n'
+        "        ),\n"
+        "    )\n"
+    ),
+    "inception_llm": (
+        "InceptionLLMService(\n"
+        '        api_key=os.getenv("INCEPTION_API_KEY"),\n'
+        "        settings=InceptionLLMService.Settings(\n"
+        '            model=os.getenv("INCEPTION_MODEL"),\n'
         '            system_instruction="You are a helpful assistant in a voice conversation. Your responses will be spoken aloud, so avoid emojis, bullet points, or other formatting that can\'t be spoken. Respond to what the user said in a creative, helpful, and brief way.",\n'
         "        ),\n"
         "    )\n"

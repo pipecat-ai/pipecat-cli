@@ -73,6 +73,9 @@ IMPORTS = {
     "aws_transcribe_stt": ["from pipecat.services.aws.stt import AWSTranscribeSTTService"],
     "azure_stt": ["from pipecat.services.azure.stt import AzureSTTService"],
     "cartesia_stt": ["from pipecat.services.cartesia.stt import CartesiaSTTService"],
+    "cartesia_turns_stt": [
+        "from pipecat.services.cartesia.turns.stt import CartesiaTurnsSTTService"
+    ],
     "deepgram_stt": ["from pipecat.services.deepgram.stt import DeepgramSTTService"],
     "deepgram_flux_stt": ["from pipecat.services.deepgram.flux.stt import DeepgramFluxSTTService"],
     "deepgram_flux_sagemaker_stt": [
@@ -113,6 +116,7 @@ IMPORTS = {
     "google_vertex_llm": ["from pipecat.services.google.vertex.llm import GoogleVertexLLMService"],
     "xai_llm": ["from pipecat.services.xai.llm import GrokLLMService"],
     "groq_llm": ["from pipecat.services.groq.llm import GroqLLMService"],
+    "inception_llm": ["from pipecat.services.inception.llm import InceptionLLMService"],
     "mistral_llm": ["from pipecat.services.mistral.llm import MistralLLMService"],
     "novita_llm": ["from pipecat.services.novita.llm import NovitaLLMService"],
     "nvidia_llm": ["from pipecat.services.nvidia.llm import NvidiaLLMService"],
