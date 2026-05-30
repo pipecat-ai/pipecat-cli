@@ -9,7 +9,7 @@
 import json
 from pathlib import Path
 
-from pipecat_cli.prompts.questions import ProjectConfig
+from pipecat_cli.prompts.questions import ProjectConfig, supports_eval_transport
 from pipecat_cli.registry import ServiceRegistry
 
 
@@ -52,6 +52,7 @@ def validate_and_build_config(
     deploy_to_cloud: bool = True,
     enable_krisp: bool = False,
     observability: bool = False,
+    eval_transport: bool = True,
 ) -> ProjectConfig:
     """Validate all inputs and build a ProjectConfig.
 
@@ -268,7 +269,7 @@ def validate_and_build_config(
         elif t == "twilio_daily_sip_dialout":
             resolved_twilio_daily_sip_mode = "dial-out"
 
-    return ProjectConfig(
+    config = ProjectConfig(
         project_name=name,
         bot_type=bot_type,
         transports=resolved_transports,
@@ -287,10 +288,16 @@ def validate_and_build_config(
         video_output=video_output,
         recording=recording,
         transcription=transcription,
+        eval_transport=eval_transport,
         deploy_to_cloud=deploy_to_cloud,
         enable_krisp=enable_krisp,
         enable_observability=observability,
     )
+    # The eval transport only applies to cascade bots that use the match/case
+    # entry point; quietly ignore the flag for configurations that can't use it.
+    if config.eval_transport and not supports_eval_transport(config):
+        config.eval_transport = False
+    return config
 
 
 def load_config_from_file(path: Path) -> dict:
@@ -325,6 +332,7 @@ def config_to_json(config: ProjectConfig) -> str:
         "video_output": config.video_output,
         "recording": config.recording,
         "transcription": config.transcription,
+        "eval_transport": config.eval_transport,
         "deploy_to_cloud": config.deploy_to_cloud,
         "enable_krisp": config.enable_krisp,
         "enable_observability": config.enable_observability,

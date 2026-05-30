@@ -10,12 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Added an optional **headless text-eval transport** for cascade bots. When
-  enabled (a new question at the end of `pipecat init`, default yes), the
-  generated `bot.py` gains an `EvalRunnerArguments` case so you can converse with
-  the bot from the terminal — `uv run bot.py -t eval` — or drive it from an agent
-  via `pipecat.runner.eval.run_eval`, with no audio, client, or server. Offered
-  for cascade bots that use the match/case entry point (not the Daily PSTN /
-  Twilio+SIP flows). Requires a Pipecat version that includes the eval transport.
+  enabled (a new question at the end of `pipecat init`, default yes; or
+  `--eval-transport`/`--no-eval-transport` in non-interactive mode), the generated
+  `bot.py` gains an `EvalRunnerArguments` case so you can converse with the bot
+  from the terminal — `uv run bot.py -t eval` — or drive it from an agent via
+  `pipecat.runner.eval.run_eval`, with no audio, client, or server. Offered for
+  cascade bots that use the match/case entry point (not the Daily PSTN /
+  Twilio+SIP flows); the flag is quietly ignored for configurations that can't use
+  it. Requires a Pipecat version that includes the eval transport.
 
 ## [1.3.0] - 2026-05-29
 
