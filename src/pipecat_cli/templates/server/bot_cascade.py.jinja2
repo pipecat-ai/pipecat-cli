@@ -33,6 +33,10 @@ Run the bot using::
 
 {# Standard imports #}
 {{ imports|join('\n') }}
+{% if eval_transport %}
+from pipecat.runner.types import EvalRunnerArguments
+from pipecat.runner.utils import create_transport
+{% endif %}
 
 load_dotenv(override=True)
 
@@ -130,6 +134,13 @@ async def bot(runner_args: RunnerArguments):
             {% elif 'exotel' in transports %}
 {% include 'server/_blocks/bot_entry_exotel.jinja2' %}
             {% endif %}
+        {% endif %}
+        {% if eval_transport %}
+        case EvalRunnerArguments():
+            # Headless text eval (no audio, no client): drive this bot over stdin
+            # with `uv run bot.py -t eval`, or programmatically via
+            # `pipecat.runner.eval.run_eval`. create_transport builds the EvalTransport.
+            transport = await create_transport(runner_args, {})
         {% endif %}
         case _:
             logger.error(f"Unsupported runner arguments type: {type(runner_args)}")

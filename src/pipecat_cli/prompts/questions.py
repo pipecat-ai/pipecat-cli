@@ -98,6 +98,7 @@ class ProjectConfig:
     video_output: bool = False
     recording: bool = False
     transcription: bool = False
+    eval_transport: bool = False
 
     # Deployment
     deploy_to_cloud: bool = False
@@ -621,6 +622,25 @@ def ask_project_questions() -> ProjectConfig:
         ).ask()
         replace_question_with_answer(
             "Enable Krisp noise cancellation?", "Yes" if config.enable_krisp else "No"
+        )
+
+    # Question 9: Headless text-eval transport (cascade bots that use the
+    # match/case entry point — i.e. not the Daily PSTN / Twilio+SIP flows).
+    _pstn_sip = {
+        "daily_pstn_dialin",
+        "daily_pstn_dialout",
+        "twilio_daily_sip_dialin",
+        "twilio_daily_sip_dialout",
+    }
+    if config.mode == "cascade" and not (set(config.transports) & _pstn_sip):
+        config.eval_transport = questionary.confirm(
+            "Add a headless text-eval transport? (chat with your bot in the terminal "
+            "via `-t eval`, or drive it from an agent)",
+            default=True,
+            style=custom_style,
+        ).ask()
+        replace_question_with_answer(
+            "Add a headless text-eval transport?", "Yes" if config.eval_transport else "No"
         )
 
     return config

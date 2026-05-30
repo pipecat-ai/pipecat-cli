@@ -747,5 +747,40 @@ def test_invalid_service_combination():
     pass
 
 
+def test_eval_transport_option(temp_output_dir):
+    """eval_transport adds an EvalRunnerArguments case + imports to cascade bots."""
+    base = dict(
+        bot_type="web",
+        transports=["smallwebrtc"],
+        mode="cascade",
+        stt_service="deepgram_stt",
+        llm_service="openai_llm",
+        tts_service="cartesia_tts",
+    )
+
+    # Enabled: eval case + imports present, and bot.py is still valid Python.
+    on_path = temp_output_dir / "eval-on"
+    if on_path.exists():
+        shutil.rmtree(on_path)
+    ProjectGenerator(
+        ProjectConfig(project_name="eval-on", eval_transport=True, **base)
+    ).generate(output_dir=temp_output_dir)
+    bot_on = (on_path / "server" / "bot.py").read_text()
+    assert "case EvalRunnerArguments():" in bot_on
+    assert "from pipecat.runner.types import EvalRunnerArguments" in bot_on
+    assert "from pipecat.runner.utils import create_transport" in bot_on
+    ast.parse(bot_on)  # raises if the generated bot has a syntax error
+
+    # Disabled (default): nothing eval-related is emitted.
+    off_path = temp_output_dir / "eval-off"
+    if off_path.exists():
+        shutil.rmtree(off_path)
+    ProjectGenerator(
+        ProjectConfig(project_name="eval-off", eval_transport=False, **base)
+    ).generate(output_dir=temp_output_dir)
+    bot_off = (off_path / "server" / "bot.py").read_text()
+    assert "EvalRunnerArguments" not in bot_off
+
+
 if __name__ == "__main__":
     pytest.main([__file__, "-v"])

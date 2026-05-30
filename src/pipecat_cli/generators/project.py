@@ -274,6 +274,7 @@ class ProjectGenerator:
             "video_output": self.config.video_output,
             "recording": self.config.recording,
             "transcription": self.config.transcription,
+            "eval_transport": self.config.eval_transport,
             "enable_krisp": self.config.enable_krisp,
             "enable_observability": self.config.enable_observability,
             "service_configs": ServiceRegistry.SERVICE_CONFIGS,
