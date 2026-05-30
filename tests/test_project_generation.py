@@ -767,7 +767,11 @@ def test_eval_transport_option(temp_output_dir):
     ).generate(output_dir=temp_output_dir)
     bot_on = (on_path / "server" / "bot.py").read_text()
     assert "case EvalRunnerArguments():" in bot_on
-    assert "from pipecat.runner.types import EvalRunnerArguments" in bot_on
+    # EvalRunnerArguments is merged into the runner.types import (order-independent).
+    assert any(
+        line.startswith("from pipecat.runner.types import") and "EvalRunnerArguments" in line
+        for line in bot_on.splitlines()
+    )
     assert "from pipecat.runner.utils import create_transport" in bot_on
     ast.parse(bot_on)  # raises if the generated bot has a syntax error
 

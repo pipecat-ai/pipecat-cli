@@ -246,6 +246,7 @@ class ProjectGenerator:
             "recording": self.config.recording,
             "transcription": self.config.transcription,
             "observability": self.config.enable_observability,
+            "eval": self.config.eval_transport,
         }
 
         # Get imports

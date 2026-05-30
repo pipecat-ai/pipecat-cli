@@ -33,10 +33,6 @@ Run the bot using::
 
 {# Standard imports #}
 {{ imports|join('\n') }}
-{% if eval_transport %}
-from pipecat.runner.types import EvalRunnerArguments
-from pipecat.runner.utils import create_transport
-{% endif %}
 
 load_dotenv(override=True)
 

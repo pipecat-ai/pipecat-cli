@@ -240,6 +240,10 @@ FEATURE_IMPORTS = {
     "external_turn_strategies": [
         "from pipecat.turns.user_turn_strategies import ExternalUserTurnStrategies"
     ],
+    "eval": [
+        "from pipecat.runner.types import EvalRunnerArguments",
+        "from pipecat.runner.utils import create_transport",
+    ],
 }
 
 # Base imports always included in generated bot files

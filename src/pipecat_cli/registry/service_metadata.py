@@ -108,6 +108,7 @@ FEATURE_DEFINITIONS: dict[str, list[str]] = {
     ],
     "observability": ["WhiskerObserver", "TailObserver"],
     "external_turn_strategies": ["ExternalUserTurnStrategies"],
+    "eval": ["EvalRunnerArguments", "create_transport"],
 }
 
 

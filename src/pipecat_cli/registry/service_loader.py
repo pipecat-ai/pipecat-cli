@@ -268,6 +268,8 @@ class ServiceLoader:
             imports.update(ServiceRegistry.FEATURE_IMPORTS["transcription"])
         if features.get("observability"):
             imports.update(ServiceRegistry.FEATURE_IMPORTS["observability"])
+        if features.get("eval"):
+            imports.update(ServiceRegistry.FEATURE_IMPORTS["eval"])
 
         # Some STT services perform their own end-of-turn detection
         stt_value = services.get("stt", "")
