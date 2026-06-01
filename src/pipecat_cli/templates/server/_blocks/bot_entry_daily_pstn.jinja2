@@ -1,38 +1,7 @@
-{# Daily PSTN bot entry point (both dial-in and dial-out) #}
-{% if 'daily_pstn_dialin' in transports %}
-    try:
-        request = DailyDialinRequest.model_validate(runner_args.body)
-
-        daily_dialin_settings = DailyDialinSettings(
-            call_id=request.dialin_settings.call_id,
-            call_domain=request.dialin_settings.call_domain,
-        )
-
-        transport = DailyTransport(
-            runner_args.room_url,
-            runner_args.token,
-            "Daily PSTN Bot",
-            params=DailyParams(
-                api_key=request.daily_api_key,
-                api_url=request.daily_api_url,
-                dialin_settings=daily_dialin_settings,
-                audio_in_enabled=True,
-                {% if enable_krisp %}
-                audio_in_filter=krisp_filter,
-                {% endif %}
-                audio_out_enabled=True,
-            ),
-        )
-
-        # Log caller information if available
-        # You can use this to look up customer information to personalize the conversation
-        if request.dialin_settings.From:
-            logger.info(f"Handling call from: {request.dialin_settings.From}")
-
-        await run_bot(transport)
-{% endif %}
-{% if 'daily_pstn_dialout' in transports %}
-
+{# Daily PSTN dial-out bot entry point. server.py already created the room, so the
+   room URL/token and dial-out settings arrive in the request body (AgentRequest).
+   The transport is built by hand here; run_bot reads the dial-out settings from
+   runner_args.body. (Dial-in goes through the unified create_transport path.) #}
     try:
         request = AgentRequest.model_validate(runner_args.body)
 
@@ -50,11 +19,8 @@
             ),
         )
 
-        await run_bot(transport, request.dialout_settings)
-{% endif %}
+        await run_bot(transport, runner_args)
 
     except Exception as e:
         logger.error(f"Error running bot: {e}")
         raise e
-
-

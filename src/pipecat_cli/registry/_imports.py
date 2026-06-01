@@ -13,28 +13,16 @@ Source: scripts/imports/import_generator.py
 # Import statements mapping for services and transports
 IMPORTS = {
     # Transports - WebRTC
-    "daily": [
-        "from pipecat.runner.types import DailyRunnerArguments",
-        "from pipecat.transports.daily.transport import DailyTransport, DailyParams",
-    ],
-    "smallwebrtc": [
-        "from pipecat.runner.types import SmallWebRTCRunnerArguments",
-        "from pipecat.transports.base_transport import TransportParams",
-        "from pipecat.transports.smallwebrtc.connection import SmallWebRTCConnection",
-        "from pipecat.transports.smallwebrtc.transport import SmallWebRTCTransport",
-    ],
+    "daily": ["from pipecat.transports.daily.transport import DailyParams"],
+    "smallwebrtc": ["from pipecat.transports.base_transport import TransportParams"],
     "websocket": [
-        "from pipecat.runner.types import WebSocketRunnerArguments",
         "from pipecat.serializers.protobuf import ProtobufFrameSerializer",
-        "from pipecat.transports.websocket.fastapi import FastAPIWebsocketTransport, FastAPIWebsocketParams",
+        "from pipecat.transports.websocket.fastapi import FastAPIWebsocketParams",
     ],
     # Transports - Telephony
     "twilio": [
-        "from pipecat.runner.types import WebSocketRunnerArguments",
-        "from pipecat.serializers.twilio import TwilioFrameSerializer",
-        "from pipecat.transports.websocket.fastapi import FastAPIWebsocketTransport, FastAPIWebsocketParams",
+        "from pipecat.transports.websocket.fastapi import FastAPIWebsocketParams",
         "import aiohttp",
-        "from pipecat.runner.utils import parse_telephony_websocket",
     ],
     "twilio_daily_sip_dialin": [
         "from pipecat.transports.daily.transport import DailyParams, DailyTransport",
@@ -46,33 +34,15 @@ IMPORTS = {
         "from server_utils import AgentRequest, DialoutSettings",
         "from typing import Any, Optional",
     ],
-    "daily_pstn_dialin": [
-        "from pipecat.transports.daily.transport import DailyParams, DailyDialinSettings, DailyTransport",
-        "from pipecat.runner.types import DailyDialinRequest",
-    ],
+    "daily_pstn_dialin": ["from pipecat.transports.daily.transport import DailyParams"],
     "daily_pstn_dialout": [
         "from pipecat.transports.daily.transport import DailyParams, DailyTransport",
         "from server_utils import AgentRequest, DialoutSettings",
         "from typing import Any, Optional",
     ],
-    "telnyx": [
-        "from pipecat.runner.types import WebSocketRunnerArguments",
-        "from pipecat.serializers.telnyx import TelnyxFrameSerializer",
-        "from pipecat.transports.websocket.fastapi import FastAPIWebsocketTransport, FastAPIWebsocketParams",
-        "from pipecat.runner.utils import parse_telephony_websocket",
-    ],
-    "plivo": [
-        "from pipecat.runner.types import WebSocketRunnerArguments",
-        "from pipecat.serializers.plivo import PlivoFrameSerializer",
-        "from pipecat.transports.websocket.fastapi import FastAPIWebsocketTransport, FastAPIWebsocketParams",
-        "from pipecat.runner.utils import parse_telephony_websocket",
-    ],
-    "exotel": [
-        "from pipecat.runner.types import WebSocketRunnerArguments",
-        "from pipecat.serializers.exotel import ExotelFrameSerializer",
-        "from pipecat.transports.websocket.fastapi import FastAPIWebsocketTransport, FastAPIWebsocketParams",
-        "from pipecat.runner.utils import parse_telephony_websocket",
-    ],
+    "telnyx": ["from pipecat.transports.websocket.fastapi import FastAPIWebsocketParams"],
+    "plivo": ["from pipecat.transports.websocket.fastapi import FastAPIWebsocketParams"],
+    "exotel": ["from pipecat.transports.websocket.fastapi import FastAPIWebsocketParams"],
     # STT Services
     "assemblyai_stt": ["from pipecat.services.assemblyai.stt import AssemblyAISTTService"],
     "aws_transcribe_stt": ["from pipecat.services.aws.stt import AWSTranscribeSTTService"],
@@ -240,10 +210,7 @@ FEATURE_IMPORTS = {
     "external_turn_strategies": [
         "from pipecat.turns.user_turn_strategies import ExternalUserTurnStrategies"
     ],
-    "eval": [
-        "from pipecat.runner.types import EvalRunnerArguments",
-        "from pipecat.runner.utils import create_transport",
-    ],
+    "create_transport": ["from pipecat.runner.utils import create_transport"],
 }
 
 # Base imports always included in generated bot files

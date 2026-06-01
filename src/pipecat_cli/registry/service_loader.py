@@ -268,8 +268,20 @@ class ServiceLoader:
             imports.update(ServiceRegistry.FEATURE_IMPORTS["transcription"])
         if features.get("observability"):
             imports.update(ServiceRegistry.FEATURE_IMPORTS["observability"])
-        if features.get("eval"):
-            imports.update(ServiceRegistry.FEATURE_IMPORTS["eval"])
+
+        # Most bots build transports via create_transport, so import it whenever the
+        # bot uses that collapsed path. (The headless eval transport needs no import —
+        # `-t eval` builds it through create_transport.) Only dial-out and SIP keep a
+        # bespoke flow that constructs the transport by hand; Daily PSTN dial-in is
+        # collapsed and goes through create_transport like the rest.
+        _bespoke_transport = {
+            "daily_pstn_dialout",
+            "twilio_daily_sip_dialin",
+            "twilio_daily_sip_dialout",
+        }
+        transport_values = set(transport_list) if "transports" in services else set()
+        if transport_values and not (transport_values & _bespoke_transport):
+            imports.update(ServiceRegistry.FEATURE_IMPORTS["create_transport"])
 
         # Some STT services perform their own end-of-turn detection
         stt_value = services.get("stt", "")

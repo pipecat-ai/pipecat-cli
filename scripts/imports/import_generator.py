@@ -369,9 +369,9 @@ def _get_external_module_path(class_name: str) -> str | None:
 # a deprecated module. This mapping forces the correct module.
 _MODULE_OVERRIDES: dict[str, str] = {
     "LLMUserAggregatorParams": "pipecat.processors.aggregators.llm_response_universal",
-    # Eval transport symbols (explicit so regeneration doesn't depend on the
-    # searched source tree containing them — see the "eval" feature).
-    "EvalRunnerArguments": "pipecat.runner.types",
+    # Explicit so regeneration doesn't depend on the searched source tree containing it
+    # — see the "create_transport" feature. The collapsed bot() imports create_transport;
+    # the eval transport itself needs no import (built via -t eval / create_transport).
     "create_transport": "pipecat.runner.utils",
 }
 

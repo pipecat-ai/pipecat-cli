@@ -109,11 +109,6 @@ def init_command(
     observability: bool = typer.Option(
         False, "--observability/--no-observability", help="Enable observability"
     ),
-    eval_transport: bool = typer.Option(
-        True,
-        "--eval-transport/--no-eval-transport",
-        help="Add a headless text-eval transport (cascade bots; for `bot.py -t eval`)",
-    ),
     config: Path | None = typer.Option(
         None, "--config", "-c", help="JSON config file (triggers non-interactive mode)"
     ),
@@ -184,8 +179,6 @@ def init_command(
                 observability = observability or file_data.get(
                     "observability", file_data.get("enable_observability", False)
                 )
-                if "eval_transport" in file_data:
-                    eval_transport = file_data["eval_transport"]
 
             try:
                 project_config = validate_and_build_config(
@@ -209,7 +202,6 @@ def init_command(
                     deploy_to_cloud=deploy_to_cloud,
                     enable_krisp=enable_krisp,
                     observability=observability,
-                    eval_transport=eval_transport,
                 )
             except ConfigValidationError as e:
                 console.print(f"\n[red]{e}[/red]")

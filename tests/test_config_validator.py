@@ -121,39 +121,6 @@ class TestDefaults:
         )
         assert config.video_output is True
 
-    def _cascade_kwargs(self, **overrides):
-        kwargs = dict(
-            name="bot",
-            bot_type="web",
-            transport=["smallwebrtc"],
-            mode="cascade",
-            stt="deepgram_stt",
-            llm="openai_llm",
-            tts="cartesia_tts",
-        )
-        kwargs.update(overrides)
-        return kwargs
-
-    def test_eval_transport_default_true_for_cascade(self):
-        config = validate_and_build_config(**self._cascade_kwargs())
-        assert config.eval_transport is True
-
-    def test_eval_transport_can_be_disabled(self):
-        config = validate_and_build_config(**self._cascade_kwargs(eval_transport=False))
-        assert config.eval_transport is False
-
-    def test_eval_transport_clamped_off_for_realtime(self):
-        # Even with the flag on, realtime bots can't use the eval transport.
-        config = validate_and_build_config(
-            name="bot",
-            bot_type="web",
-            transport=["smallwebrtc"],
-            mode="realtime",
-            realtime="openai_realtime",
-            eval_transport=True,
-        )
-        assert config.eval_transport is False
-
 
 class TestTransportResolution:
     """Test transport name resolution."""

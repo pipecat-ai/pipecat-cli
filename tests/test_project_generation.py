@@ -747,43 +747,136 @@ def test_invalid_service_combination():
     pass
 
 
-def test_eval_transport_option(temp_output_dir):
-    """eval_transport adds an EvalRunnerArguments case + imports to cascade bots."""
-    base = dict(
-        bot_type="web",
-        transports=["smallwebrtc"],
-        mode="cascade",
-        stt_service="deepgram_stt",
-        llm_service="openai_llm",
-        tts_service="cartesia_tts",
+def test_collapsed_transport_construction(temp_output_dir):
+    """Standard cascade bots build transports via create_transport (no match/case).
+
+    The headless eval transport stays available via `-t eval` without any dict entry
+    or import — create_transport supplies EvalTransportParams() defaults — so the
+    generated bot should NOT carry an eval factory or an EvalTransportParams import."""
+    path = temp_output_dir / "collapsed"
+    if path.exists():
+        shutil.rmtree(path)
+    ProjectGenerator(
+        ProjectConfig(
+            project_name="collapsed",
+            bot_type="web",
+            transports=["smallwebrtc"],
+            mode="cascade",
+            stt_service="deepgram_stt",
+            llm_service="openai_llm",
+            tts_service="cartesia_tts",
+        )
+    ).generate(output_dir=temp_output_dir)
+    bot = (path / "server" / "bot.py").read_text()
+
+    # Unified path: a transport_params dict + create_transport, no per-transport match/case.
+    assert "transport_params = {" in bot
+    assert "await create_transport(runner_args, transport_params)" in bot
+    assert "match runner_args" not in bot
+    assert "parse_telephony_websocket" not in bot
+
+    # create_transport is imported; eval needs no factory entry or import.
+    assert "from pipecat.runner.utils import create_transport" in bot
+    assert '"eval": lambda' not in bot
+    assert "EvalTransportParams" not in bot
+
+    ast.parse(bot)  # raises if the generated bot has a syntax error
+
+
+def _gen_bot(temp_output_dir, name, **kwargs):
+    """Generate a telephony cascade bot and return its bot.py text."""
+    path = temp_output_dir / name
+    if path.exists():
+        shutil.rmtree(path)
+    ProjectGenerator(
+        ProjectConfig(
+            project_name=name,
+            bot_type="telephony",
+            mode="cascade",
+            stt_service="deepgram_stt",
+            llm_service="openai_llm",
+            tts_service="cartesia_tts",
+            **kwargs,
+        )
+    ).generate(output_dir=temp_output_dir)
+    return (path / "server" / "bot.py").read_text()
+
+
+def test_daily_pstn_dialin_uses_create_transport(temp_output_dir):
+    """Daily PSTN dial-in is collapsed onto the unified create_transport path.
+
+    Dial-in arrives as a typed DailyRunnerArguments and create_transport applies the
+    dial-in settings from the request body, so the bot should NOT build a DailyTransport
+    by hand or import the dial-in plumbing."""
+    bot = _gen_bot(
+        temp_output_dir, "din", transports=["daily_pstn_dialin"], daily_pstn_mode="dial-in"
     )
 
-    # Enabled: eval case + imports present, and bot.py is still valid Python.
-    on_path = temp_output_dir / "eval-on"
-    if on_path.exists():
-        shutil.rmtree(on_path)
-    ProjectGenerator(
-        ProjectConfig(project_name="eval-on", eval_transport=True, **base)
-    ).generate(output_dir=temp_output_dir)
-    bot_on = (on_path / "server" / "bot.py").read_text()
-    assert "case EvalRunnerArguments():" in bot_on
-    # EvalRunnerArguments is merged into the runner.types import (order-independent).
-    assert any(
-        line.startswith("from pipecat.runner.types import") and "EvalRunnerArguments" in line
-        for line in bot_on.splitlines()
-    )
-    assert "from pipecat.runner.utils import create_transport" in bot_on
-    ast.parse(bot_on)  # raises if the generated bot has a syntax error
+    # Collapsed path
+    assert 'transport_params = {' in bot
+    assert '"daily": lambda: DailyParams(' in bot
+    assert "await create_transport(runner_args, transport_params)" in bot
+    assert "await run_bot(transport, runner_args)" in bot
 
-    # Disabled (default): nothing eval-related is emitted.
-    off_path = temp_output_dir / "eval-off"
-    if off_path.exists():
-        shutil.rmtree(off_path)
+    # No hand-built transport / dial-in plumbing imports
+    assert "DailyTransport(" not in bot
+    assert "DailyDialinRequest" not in bot
+    assert "DailyDialinSettings" not in bot
+
+    ast.parse(bot)
+
+
+def test_dialout_and_sip_keep_bespoke_but_standard_run_bot(temp_output_dir):
+    """Dial-out and SIP stay bespoke (room/token from the body, transport built by
+    hand) but call the SAME standardized run_bot(transport, runner_args) — and the
+    old per-flow run_bot signatures are gone."""
+    scenarios = {
+        "dout": dict(transports=["daily_pstn_dialout"], daily_pstn_mode="dial-out"),
+        "sin": dict(transports=["twilio_daily_sip_dialin"], twilio_daily_sip_mode="dial-in"),
+        "sout": dict(transports=["twilio_daily_sip_dialout"], twilio_daily_sip_mode="dial-out"),
+    }
+    for name, kwargs in scenarios.items():
+        bot = _gen_bot(temp_output_dir, name, **kwargs)
+
+        # One standardized signature + call site everywhere
+        assert "async def run_bot(transport: BaseTransport, runner_args: RunnerArguments)" in bot
+        assert "await run_bot(transport, runner_args)" in bot
+        # Old run_bot signatures / call sites are gone (DialoutManager still takes
+        # dialout_settings — that's the helper, not run_bot).
+        assert "run_bot(\n        transport: BaseTransport, dialout_settings" not in bot
+        assert "run_bot(transport, request.dialout_settings)" not in bot
+        assert "run_bot(transport, request)" not in bot
+
+        # Still bespoke: transport built by hand from the request body
+        assert "DailyTransport(" in bot
+        assert "AgentRequest.model_validate(runner_args.body)" in bot
+
+        ast.parse(bot)
+
+
+def test_run_bot_signature_uniform_across_modes(temp_output_dir):
+    """Every generated bot — web, telephony, dial-out — shares one run_bot signature."""
+    path = temp_output_dir / "webrb"
+    if path.exists():
+        shutil.rmtree(path)
     ProjectGenerator(
-        ProjectConfig(project_name="eval-off", eval_transport=False, **base)
+        ProjectConfig(
+            project_name="webrb",
+            bot_type="web",
+            transports=["smallwebrtc"],
+            mode="cascade",
+            stt_service="deepgram_stt",
+            llm_service="openai_llm",
+            tts_service="cartesia_tts",
+        )
     ).generate(output_dir=temp_output_dir)
-    bot_off = (off_path / "server" / "bot.py").read_text()
-    assert "EvalRunnerArguments" not in bot_off
+    web = (path / "server" / "bot.py").read_text()
+    dout = _gen_bot(
+        temp_output_dir, "doutrb", transports=["daily_pstn_dialout"], daily_pstn_mode="dial-out"
+    )
+    sig = "async def run_bot(transport: BaseTransport, runner_args: RunnerArguments) -> None:"
+    assert sig in web
+    assert sig in dout
 
 
 if __name__ == "__main__":

@@ -98,7 +98,6 @@ class ProjectConfig:
     video_output: bool = False
     recording: bool = False
     transcription: bool = False
-    eval_transport: bool = False
 
     # Deployment
     deploy_to_cloud: bool = False
@@ -106,26 +105,6 @@ class ProjectConfig:
 
     # Observability
     enable_observability: bool = False
-
-
-# Transports whose entry point doesn't use the match/case block the eval case is
-# added to (they have their own Daily PSTN / Twilio+SIP server flows).
-_EVAL_UNSUPPORTED_TRANSPORTS = {
-    "daily_pstn_dialin",
-    "daily_pstn_dialout",
-    "twilio_daily_sip_dialin",
-    "twilio_daily_sip_dialout",
-}
-
-
-def supports_eval_transport(config: ProjectConfig) -> bool:
-    """Whether the headless eval transport can be added to this bot.
-
-    Eval is cascade-only (it needs the STT/TranscriptionFrame seam) and is wired
-    into the match/case entry point, which the Daily PSTN and Twilio+SIP flows
-    don't use.
-    """
-    return config.mode == "cascade" and not (set(config.transports) & _EVAL_UNSUPPORTED_TRANSPORTS)
 
 
 def ask_project_questions() -> ProjectConfig:
@@ -642,18 +621,6 @@ def ask_project_questions() -> ProjectConfig:
         ).ask()
         replace_question_with_answer(
             "Enable Krisp noise cancellation?", "Yes" if config.enable_krisp else "No"
-        )
-
-    # Question 9: Headless text-eval transport.
-    if supports_eval_transport(config):
-        config.eval_transport = questionary.confirm(
-            "Add a headless text-eval transport? (chat with your bot in the terminal "
-            "via `-t eval`, or drive it from an agent)",
-            default=True,
-            style=custom_style,
-        ).ask()
-        replace_question_with_answer(
-            "Add a headless text-eval transport?", "Yes" if config.eval_transport else "No"
         )
 
     return config

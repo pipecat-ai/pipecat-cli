@@ -1,4 +1,13 @@
 {# Main bot logic for realtime mode - uses indent_level variable passed from parent #}
+{% if 'twilio_daily_sip_dialin' in transports %}
+{{ "# SIP call details (sip_uri, call_sid) arrive in the request body" | indent(indent_level, first=True) }}
+{{ "request = AgentRequest.model_validate(runner_args.body)" | indent(indent_level, first=True) }}
+
+{% elif 'daily_pstn_dialout' in transports or 'twilio_daily_sip_dialout' in transports %}
+{{ "# Outbound call settings arrive in the request body" | indent(indent_level, first=True) }}
+{{ "dialout_settings = AgentRequest.model_validate(runner_args.body).dialout_settings" | indent(indent_level, first=True) }}
+
+{% endif %}
 {{ "# Realtime LLM service (handles STT, LLM, and TTS internally)" | indent(indent_level, first=True) }}
 {% if realtime_service and realtime_service in service_configs %}
 {{ service_configs[realtime_service] | indent(indent_level, first=True) }}
