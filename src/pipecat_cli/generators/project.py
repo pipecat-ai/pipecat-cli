@@ -367,8 +367,7 @@ class ProjectGenerator:
         # Get human-readable labels for all services
         all_transports = ServiceRegistry.WEBRTC_TRANSPORTS + ServiceRegistry.TELEPHONY_TRANSPORTS
 
-        # Get run commands and categorize transports
-        run_commands = self._get_run_commands()
+        # Categorize transports for the run instructions
         telephony_transports = {"twilio", "telnyx", "plivo", "exotel"}
         webrtc_transports = {"smallwebrtc", "daily"}
         has_telephony = any(t in telephony_transports for t in self.config.transports)
@@ -408,7 +407,6 @@ class ProjectGenerator:
             "generate_client": self.config.generate_client,
             "client_framework": self.config.client_framework,
             "client_server": self.config.client_server,
-            "run_commands": run_commands,
             "has_telephony": has_telephony,
             "has_webrtc": has_webrtc,
             "daily_pstn_mode": self.config.daily_pstn_mode,
@@ -483,9 +481,6 @@ class ProjectGenerator:
                 )
             return
 
-        # Determine run command based on transport
-        run_commands = self._get_run_commands()
-
         # Client setup
         if self.config.generate_client:
             console.print("\n  [bold]Client setup:[/bold]")
@@ -502,47 +497,20 @@ class ProjectGenerator:
         console.print("  • Create .env file: [bold cyan]cp .env.example .env[/bold cyan]")
         console.print("  • [bold]Edit .env and add your API keys[/bold]")
 
-        # Categorize transports
+        # Every standard transport runs the same way: `uv run bot.py`. The runner
+        # serves all transports and the caller selects which one — a web/mobile client
+        # picks its transport when it connects, and a telephony provider connects to
+        # /ws. Telephony additionally needs a public tunnel so the provider can reach
+        # the bot.
         telephony_transports = {"twilio", "telnyx", "plivo", "exotel"}
-        webrtc_transports = {"smallwebrtc", "daily"}
-
         has_telephony = any(t in telephony_transports for t in self.config.transports)
-        has_webrtc = any(t in webrtc_transports for t in self.config.transports)
 
-        # Get categorized commands
-        webrtc_cmds = [cmd for cmd in run_commands if cmd["label"] in ["SmallWebRTC", "Daily"]]
-        telephony_cmds = [
-            cmd for cmd in run_commands if cmd["label"] in ["Twilio", "Telnyx", "Plivo", "Exotel"]
-        ]
-
-        if has_telephony and has_webrtc:
-            # Mixed: show both local and production workflows
-            console.print("  • Run your bot:\n")
-            console.print("     [bold]For local development:[/bold]")
-            for cmd in webrtc_cmds:
-                console.print(f"       • {cmd['label']}: [bold cyan]{cmd['command']}[/bold cyan]")
-            console.print("\n     [bold]For telephony deployment:[/bold]")
-            console.print("       • Run ngrok: [bold cyan]ngrok http 7860[/bold cyan]")
-            console.print("       • Run bot:")
-            for cmd in telephony_cmds:
-                console.print(f"         • {cmd['label']}: [bold cyan]{cmd['command']}[/bold cyan]")
-        elif has_telephony:
-            # Telephony only
-            console.print("  • Run ngrok tunnel: [bold cyan]ngrok http 7860[/bold cyan]")
-            console.print("  • Run your bot:")
-            for cmd in run_commands:
-                if cmd["label"]:
-                    console.print(f"     • {cmd['label']}: [bold cyan]{cmd['command']}[/bold cyan]")
-                else:
-                    console.print(f"     [bold cyan]{cmd['command']}[/bold cyan]")
-        else:
-            # WebRTC only
-            console.print("  • Run your bot:")
-            for cmd in run_commands:
-                if cmd["label"]:
-                    console.print(f"     • {cmd['label']}: [bold cyan]{cmd['command']}[/bold cyan]")
-                else:
-                    console.print(f"     [bold cyan]{cmd['command']}[/bold cyan]")
+        console.print("  • Run your bot: [bold cyan]uv run bot.py[/bold cyan]")
+        if has_telephony:
+            console.print(
+                "  • Expose it for telephony: [bold cyan]ngrok http 7860[/bold cyan], then point "
+                "your provider's webhook at [bold cyan]wss://<your-ngrok-host>/ws[/bold cyan]"
+            )
 
         # Add cloud deployment info if applicable
         if self.config.deploy_to_cloud:
@@ -551,29 +519,6 @@ class ProjectGenerator:
             )
         else:
             console.print("\n[dim]See README.md for detailed setup instructions.[/dim]\n")
-
-    def _get_run_commands(self) -> list[dict[str, str]]:
-        """Get transport-specific run commands with labels."""
-        commands = []
-
-        for transport in self.config.transports:
-            if transport == "smallwebrtc":
-                commands.append({"label": "SmallWebRTC", "command": "uv run bot.py"})
-            elif transport == "daily":
-                commands.append({"label": "Daily", "command": "uv run bot.py --transport daily"})
-            elif transport in {"twilio", "telnyx", "plivo", "exotel"}:
-                commands.append(
-                    {
-                        "label": transport.title(),
-                        "command": f"uv run bot.py --transport {transport} --proxy your_url.ngrok.io",
-                    }
-                )
-
-        # If no specific commands, default to basic run
-        if not commands:
-            commands.append({"label": "", "command": "uv run bot.py"})
-
-        return commands
 
     def _generate_client(self, client_path: Path) -> None:
         """Generate client application files."""

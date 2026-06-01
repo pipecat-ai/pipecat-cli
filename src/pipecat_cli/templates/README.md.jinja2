@@ -80,40 +80,22 @@ A Pipecat AI voice agent built with {% if mode == 'cascade' %}a cascade pipeline
 
 4. **Run the bot**:
 
-{% if has_telephony and has_webrtc %}
-   **For local development:**
-   {% for cmd in run_commands %}
-   {%- if cmd.label in ["SmallWebRTC", "Daily"] %}
-   - {{ cmd.label }}: `{{ cmd.command }}`
-   {% endif %}
-   {%- endfor %}
+   ```bash
+   uv run bot.py
+   ```
 
-   **For telephony deployment:**
-   - Run ngrok: `ngrok http 7860`
-   - Run bot:
-   {% for cmd in run_commands %}
-   {%- if cmd.label in ["Twilio", "Telnyx", "Plivo", "Exotel"] %}
-     - {{ cmd.label }}: `{{ cmd.command }}`
-   {% endif %}
-   {%- endfor %}
-{% elif has_telephony %}
-   - Run ngrok tunnel: `ngrok http 7860`
-   - Run your bot:
-   {% for cmd in run_commands %}
-   {%- if cmd.label %}
-     - {{ cmd.label }}: `{{ cmd.command }}`
-   {% else %}
-     - `{{ cmd.command }}`
-   {% endif %}
-   {%- endfor %}
-{% else %}
-   {% for cmd in run_commands %}
-   {%- if cmd.label %}
-   - {{ cmd.label }}: `{{ cmd.command }}`
-   {% else %}
-   - `{{ cmd.command }}`
-   {% endif %}
-   {%- endfor %}
+   The runner serves every transport; the caller selects which one (a web/mobile
+   client picks its transport when it connects; a telephony provider connects to
+   `/ws`).
+{% if has_telephony %}
+
+   For telephony, expose the bot with a public tunnel and point your provider's
+   webhook at it:
+
+   ```bash
+   ngrok http 7860
+   # then set the provider's webhook to wss://<your-ngrok-host>/ws
+   ```
 {% endif %}
 {% endif %}
 {% if generate_client %}
