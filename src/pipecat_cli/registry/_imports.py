@@ -33,7 +33,7 @@ IMPORTS = {
     "twilio_daily_sip_dialout": [
         "from pipecat.transports.daily.transport import DailyParams, DailyTransport",
         "from server_utils import AgentRequest, DialoutSettings",
-        "from typing import Any, Optional",
+        "from typing import Any",
     ],
     "daily_pstn_dialin": [
         "from pipecat.transports.daily.transport import DailyParams",
@@ -42,7 +42,7 @@ IMPORTS = {
     "daily_pstn_dialout": [
         "from pipecat.transports.daily.transport import DailyParams, DailyTransport",
         "from server_utils import AgentRequest, DialoutSettings",
-        "from typing import Any, Optional",
+        "from typing import Any",
     ],
     "telnyx": ["from pipecat.transports.websocket.fastapi import FastAPIWebsocketParams"],
     "plivo": ["from pipecat.transports.websocket.fastapi import FastAPIWebsocketParams"],
@@ -203,10 +203,10 @@ FEATURE_IMPORTS = {
     ],
     "runner": [
         "from dotenv import load_dotenv",
-        "from pipecat.frames.frames import LLMRunFrame",
         "from pipecat.runner.types import RunnerArguments",
         "from pipecat.transports.base_transport import BaseTransport",
     ],
+    "llm_run_frame": ["from pipecat.frames.frames import LLMRunFrame"],
     "observability": [
         "from pipecat_tail.observer import TailObserver",
         "from pipecat_whisker import WhiskerObserver",

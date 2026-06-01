@@ -47,7 +47,7 @@ async def on_first_participant_joined(transport, participant):
 
 @transport.event_handler("on_client_disconnected")
 async def on_client_disconnected(transport, client):
-    logger.info(f"Client disconnected")
+    logger.info("Client disconnected")
     await worker.cancel()
 
 @transport.event_handler("on_dialin_error")
@@ -78,12 +78,12 @@ async def on_dialout_error(transport, data: Any):
     if dialout_manager.should_retry():
         await dialout_manager.attempt_dialout()
     else:
-        logger.error(f"No more retries allowed, stopping bot.")
+        logger.error("No more retries allowed, stopping bot.")
         await worker.cancel()
 
 @transport.event_handler("on_client_disconnected")
 async def on_client_disconnected(transport, client):
-    logger.info(f"Client disconnected")
+    logger.info("Client disconnected")
     await worker.cancel()
 {% endmacro %}
 
@@ -148,12 +148,12 @@ async def on_dialout_error(transport, data: Any):
     if dialout_manager.should_retry():
         await dialout_manager.attempt_dialout()
     else:
-        logger.error(f"No more retries allowed, stopping bot.")
+        logger.error("No more retries allowed, stopping bot.")
         await worker.cancel()
 
 @transport.event_handler("on_client_disconnected")
 async def on_client_disconnected(transport, client):
-    logger.info(f"Client disconnected")
+    logger.info("Client disconnected")
     await worker.cancel()
 {% endmacro %}
 

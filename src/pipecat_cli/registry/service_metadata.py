@@ -102,10 +102,12 @@ FEATURE_DEFINITIONS: dict[str, list[str]] = {
     "context": ["LLMContext", "LLMContextAggregatorPair", "LLMUserAggregatorParams"],
     "runner": [
         "load_dotenv",
-        "LLMRunFrame",
         "RunnerArguments",
         "BaseTransport",
     ],
+    # Queued on connect to kick off the conversation. Dial-out bots wait for the
+    # callee to answer/speak first, so they don't import or use it.
+    "llm_run_frame": ["LLMRunFrame"],
     "observability": ["WhiskerObserver", "TailObserver"],
     "external_turn_strategies": ["ExternalUserTurnStrategies"],
     # Imported on the standard (non-PSTN/SIP) transport path: the collapsed bot()
@@ -191,7 +193,7 @@ class ServiceRegistry:
             class_name=["DailyParams", "DailyTransport"],
             additional_imports=[
                 "from server_utils import AgentRequest, DialoutSettings",
-                "from typing import Any, Optional",
+                "from typing import Any",
             ],
         ),
         ServiceDefinition(
@@ -212,7 +214,7 @@ class ServiceRegistry:
             class_name=["DailyParams", "DailyTransport"],
             additional_imports=[
                 "from server_utils import AgentRequest, DialoutSettings",
-                "from typing import Any, Optional",
+                "from typing import Any",
             ],
         ),
         ServiceDefinition(

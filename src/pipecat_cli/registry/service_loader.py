@@ -283,6 +283,12 @@ class ServiceLoader:
         if transport_values and not (transport_values & _bespoke_transport):
             imports.update(ServiceRegistry.FEATURE_IMPORTS["create_transport"])
 
+        # LLMRunFrame kicks off the conversation on connect. Dial-out bots wait for the
+        # callee instead, so they neither queue nor import it.
+        _dialout_transports = {"daily_pstn_dialout", "twilio_daily_sip_dialout"}
+        if not (transport_values & _dialout_transports):
+            imports.update(ServiceRegistry.FEATURE_IMPORTS["llm_run_frame"])
+
         # Some STT services perform their own end-of-turn detection
         stt_value = services.get("stt", "")
         if ServiceLoader.uses_external_turn_detection(stt_value):

@@ -114,6 +114,27 @@ def assert_server_ruff_clean(server_path):
     )
 
 
+def assert_server_ruff_lint_clean(server_path):
+    """Assert generated Python under server_path is free of Pyflakes lint errors.
+
+    Runs ``ruff check --select F`` (the same bundled binary used for formatting):
+    no unused imports, no f-strings without placeholders, no undefined/redefined
+    names, etc. The generator only runs ``ruff check --select I`` (import sorting),
+    so this is the guard that the templates produce genuinely clean code.
+    """
+    from ruff.__main__ import find_ruff_bin
+
+    result = subprocess.run(
+        [find_ruff_bin(), "check", "--select", "F", str(server_path)],
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0, (
+        f"Generated Python under {server_path} has lint errors:\n"
+        f"{result.stdout}{result.stderr}"
+    )
+
+
 # Test configurations for different transport types
 TEST_CONFIGS = [
     # WebRTC Transports - Cascade
@@ -223,7 +244,7 @@ TEST_CONFIGS = [
         "mode": "cascade",
         "stt_service": "assemblyai_stt",
         "llm_service": "groq_llm",
-        "tts_service": "playht_tts",
+        "tts_service": "rime_tts",
     },
     # More realtime services
     {
@@ -472,6 +493,10 @@ def test_project_generation(config_data, temp_output_dir):
     # step used to silently no-op when `ruff` was not on PATH, shipping the raw
     # (mis-indented, unsorted-imports) template output.
     assert_server_ruff_clean(project_path / "server")
+
+    # Generated Python must also be Pyflakes-clean (no unused imports, no
+    # placeholder-less f-strings, etc.) — the generator only sorts imports.
+    assert_server_ruff_lint_clean(project_path / "server")
 
     # Verify bot.py structure
     bot_content = bot_file.read_text()
@@ -784,7 +809,11 @@ def test_collapsed_transport_construction(temp_output_dir):
 
 
 def _gen_bot(temp_output_dir, name, **kwargs):
-    """Generate a telephony cascade bot and return its bot.py text."""
+    """Generate a telephony cascade bot and return its bot.py text.
+
+    Also asserts the generated server is formatting- and Pyflakes-clean, so the
+    dial-in/dial-out/SIP bots (not covered by TEST_CONFIGS) are lint-guarded too.
+    """
     path = temp_output_dir / name
     if path.exists():
         shutil.rmtree(path)
@@ -799,6 +828,8 @@ def _gen_bot(temp_output_dir, name, **kwargs):
             **kwargs,
         )
     ).generate(output_dir=temp_output_dir)
+    assert_server_ruff_clean(path / "server")
+    assert_server_ruff_lint_clean(path / "server")
     return (path / "server" / "bot.py").read_text()
 
 

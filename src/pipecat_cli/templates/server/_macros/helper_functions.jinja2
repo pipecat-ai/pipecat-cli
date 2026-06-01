@@ -113,7 +113,7 @@ class DialoutManager:
         self,
         transport: BaseTransport,
         dialout_settings: DialoutSettings,
-        max_retries: Optional[int] = 5,
+        max_retries: int | None = 5,
     ):
         self._transport = transport
         {% if 'twilio_daily_sip_dialout' in transports %}
