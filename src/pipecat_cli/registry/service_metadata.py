@@ -169,10 +169,10 @@ class ServiceRegistry:
             value="twilio",
             label="Twilio",
             package="pipecat-ai[websocket]",
-            # create_transport sets the serializer; only params are needed. aiohttp is
-            # kept for the optional get_call_info() personalization helper.
+            # create_transport sets the serializer; only params are needed. aiohttp and
+            # BaseModel are kept for the get_call_info() / CallInfo personalization helper.
             class_name=["FastAPIWebsocketParams"],
-            additional_imports=["import aiohttp"],
+            additional_imports=["import aiohttp", "from pydantic import BaseModel"],
         ),
         ServiceDefinition(
             value="twilio_daily_sip_dialin",
@@ -200,8 +200,10 @@ class ServiceRegistry:
             package="pipecat-ai[daily]",
             # Dial-in uses the unified create_transport path: it arrives as a typed
             # DailyRunnerArguments and create_transport applies the dial-in settings
-            # from the request body. Only DailyParams is needed here.
+            # from the request body. DailyDialinRequest is used by the optional dial-in
+            # personalization block.
             class_name=["DailyParams"],
+            additional_imports=["from pipecat.runner.types import DailyDialinRequest"],
         ),
         ServiceDefinition(
             value="daily_pstn_dialout",

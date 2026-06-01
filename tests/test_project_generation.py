@@ -807,7 +807,7 @@ def test_daily_pstn_dialin_uses_create_transport(temp_output_dir):
 
     Dial-in arrives as a typed DailyRunnerArguments and create_transport applies the
     dial-in settings from the request body, so the bot should NOT build a DailyTransport
-    by hand or import the dial-in plumbing."""
+    by hand. It still parses DailyDialinRequest for the optional personalization block."""
     bot = _gen_bot(
         temp_output_dir, "din", transports=["daily_pstn_dialin"], daily_pstn_mode="dial-in"
     )
@@ -818,10 +818,35 @@ def test_daily_pstn_dialin_uses_create_transport(temp_output_dir):
     assert "await create_transport(runner_args, transport_params)" in bot
     assert "await run_bot(transport, runner_args)" in bot
 
-    # No hand-built transport / dial-in plumbing imports
+    # create_transport builds the transport — no hand-built DailyTransport / settings.
     assert "DailyTransport(" not in bot
-    assert "DailyDialinRequest" not in bot
     assert "DailyDialinSettings" not in bot
+
+    # Active, guarded personalization using the typed DailyDialinRequest.
+    assert "from pipecat.runner.types import DailyDialinRequest" in bot
+    assert 'isinstance(runner_args.body, dict) and "dialin_settings" in runner_args.body' in bot
+    assert "DailyDialinRequest.model_validate(runner_args.body)" in bot
+    assert "request.dialin_settings.From" in bot
+
+    ast.parse(bot)
+
+
+def test_twilio_active_personalization_uses_call_info(temp_output_dir):
+    """Twilio bots ship active personalization matching the examples: a typed CallInfo
+    + get_call_info, read via attribute access (not commented, not dict .get)."""
+    bot = _gen_bot(temp_output_dir, "tw", transports=["twilio"])
+
+    # Typed helper (CallInfo model, not a dict)
+    assert "class CallInfo(BaseModel):" in bot
+    assert "async def get_call_info(call_sid: str | None) -> CallInfo | None:" in bot
+    assert "from pydantic import BaseModel" in bot
+
+    # Active (uncommented) personalization with attribute access
+    assert "call_data = runner_args.call_data" in bot
+    assert "call_info = await get_call_info(call_data.call_id) if call_data else None" in bot
+    assert "call_info.from_number" in bot
+    assert "call_info.get(" not in bot  # no dict-style access
+    assert "None under -t eval" not in bot  # no eval mention in the snippet
 
     ast.parse(bot)
 

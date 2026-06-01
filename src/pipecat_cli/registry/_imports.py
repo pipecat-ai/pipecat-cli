@@ -23,6 +23,7 @@ IMPORTS = {
     "twilio": [
         "from pipecat.transports.websocket.fastapi import FastAPIWebsocketParams",
         "import aiohttp",
+        "from pydantic import BaseModel",
     ],
     "twilio_daily_sip_dialin": [
         "from pipecat.transports.daily.transport import DailyParams, DailyTransport",
@@ -34,7 +35,10 @@ IMPORTS = {
         "from server_utils import AgentRequest, DialoutSettings",
         "from typing import Any, Optional",
     ],
-    "daily_pstn_dialin": ["from pipecat.transports.daily.transport import DailyParams"],
+    "daily_pstn_dialin": [
+        "from pipecat.transports.daily.transport import DailyParams",
+        "from pipecat.runner.types import DailyDialinRequest",
+    ],
     "daily_pstn_dialout": [
         "from pipecat.transports.daily.transport import DailyParams, DailyTransport",
         "from server_utils import AgentRequest, DialoutSettings",
