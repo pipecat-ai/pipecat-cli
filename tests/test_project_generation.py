@@ -773,11 +773,7 @@ def test_invalid_service_combination():
 
 
 def test_collapsed_transport_construction(temp_output_dir):
-    """Standard cascade bots build transports via create_transport (no match/case).
-
-    The headless eval transport stays available via `-t eval` without any dict entry
-    or import — create_transport supplies EvalTransportParams() defaults — so the
-    generated bot should NOT carry an eval factory or an EvalTransportParams import."""
+    """Standard cascade bots build transports via create_transport (no match/case)."""
     path = temp_output_dir / "collapsed"
     if path.exists():
         shutil.rmtree(path)
@@ -800,10 +796,8 @@ def test_collapsed_transport_construction(temp_output_dir):
     assert "match runner_args" not in bot
     assert "parse_telephony_websocket" not in bot
 
-    # create_transport is imported; eval needs no factory entry or import.
+    # create_transport is imported.
     assert "from pipecat.runner.utils import create_transport" in bot
-    assert '"eval": lambda' not in bot
-    assert "EvalTransportParams" not in bot
 
     ast.parse(bot)  # raises if the generated bot has a syntax error
 
@@ -877,7 +871,6 @@ def test_twilio_active_personalization_uses_call_info(temp_output_dir):
     assert "call_info = await get_call_info(call_data.call_id) if call_data else None" in bot
     assert "call_info.from_number" in bot
     assert "call_info.get(" not in bot  # no dict-style access
-    assert "None under -t eval" not in bot  # no eval mention in the snippet
 
     ast.parse(bot)
 

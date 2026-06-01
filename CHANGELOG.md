@@ -7,17 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
+### Changed
 
-- Added an optional **headless text-eval transport** for cascade bots. When
-  enabled (a new question at the end of `pipecat init`, default yes; or
-  `--eval-transport`/`--no-eval-transport` in non-interactive mode), the generated
-  `bot.py` gains an `EvalRunnerArguments` case so you can converse with the bot
-  from the terminal — `uv run bot.py -t eval` — or drive it from an agent via
-  `pipecat.runner.eval.run_eval`, with no audio, client, or server. Offered for
-  cascade bots that use the match/case entry point (not the Daily PSTN /
-  Twilio+SIP flows); the flag is quietly ignored for configurations that can't use
-  it. Requires a Pipecat version that includes the eval transport.
+- Generated bots now configure their transport through a single
+  `create_transport(runner_args, transport_params)` call instead of per-transport
+  `match`/`case` boilerplate, building on Pipecat's feature-complete
+  `create_transport`. Only Daily PSTN dial-out and Twilio+SIP keep a bespoke flow.
+  Telephony bots also ship **active** caller personalization (typed `CallData` /
+  `CallInfo` attribute access) matching the Pipecat examples.
+
+- Simplified the generated run instructions to just `uv run bot.py` for every
+  transport (the dev runner serves all transports and the caller selects one), with
+  a short ngrok/webhook note for telephony.
 
 ## [1.3.0] - 2026-05-29
 

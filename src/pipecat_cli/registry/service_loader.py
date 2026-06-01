@@ -270,10 +270,9 @@ class ServiceLoader:
             imports.update(ServiceRegistry.FEATURE_IMPORTS["observability"])
 
         # Most bots build transports via create_transport, so import it whenever the
-        # bot uses that collapsed path. (The headless eval transport needs no import —
-        # `-t eval` builds it through create_transport.) Only dial-out and SIP keep a
-        # bespoke flow that constructs the transport by hand; Daily PSTN dial-in is
-        # collapsed and goes through create_transport like the rest.
+        # bot uses that collapsed path. Only dial-out and SIP keep a bespoke flow that
+        # constructs the transport by hand; Daily PSTN dial-in is collapsed and goes
+        # through create_transport like the rest.
         _bespoke_transport = {
             "daily_pstn_dialout",
             "twilio_daily_sip_dialin",

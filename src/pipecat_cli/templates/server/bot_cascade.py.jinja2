@@ -94,9 +94,7 @@ async def bot(runner_args: RunnerArguments):
     {% else %}
     {# Single, unified path: create_transport builds the right transport from the
        runner_args type. You supply only the params; serializers and telephony parsing
-       are handled for you. The headless behavioral-eval transport (`uv run bot.py -t
-       eval`) is always available too — create_transport supplies its defaults, so it
-       needs no entry here. Add an "eval" factory only to customize EvalTransportParams. #}
+       are handled for you. #}
     transport_params = {
         {% if 'daily' in transports or 'daily_pstn_dialin' in transports %}
         "daily": lambda: DailyParams(

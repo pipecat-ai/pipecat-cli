@@ -111,8 +111,7 @@ FEATURE_DEFINITIONS: dict[str, list[str]] = {
     "observability": ["WhiskerObserver", "TailObserver"],
     "external_turn_strategies": ["ExternalUserTurnStrategies"],
     # Imported on the standard (non-PSTN/SIP) transport path: the collapsed bot()
-    # calls create_transport. The headless eval transport needs no import — `-t eval`
-    # builds it through create_transport, which supplies EvalTransportParams() defaults.
+    # calls create_transport. Dial-out and SIP construct their transports by hand.
     "create_transport": ["create_transport"],
 }
 
