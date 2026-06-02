@@ -3140,7 +3140,6 @@ dev = [
     { name = "pytest-cov", specifier = "~=7.0.0" },
     { name = "setuptools", specifier = "~=78.1.1" },
     { name = "setuptools-scm", specifier = "~=8.3.1" },
-    { name = "tomli", marker = "python_full_version < '3.11'", specifier = ">=2.0.0" },
 ]
 
 [[package]]

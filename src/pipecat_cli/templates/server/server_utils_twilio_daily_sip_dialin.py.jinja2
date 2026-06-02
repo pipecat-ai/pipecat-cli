@@ -128,7 +128,7 @@ async def start_bot_production(agent_request: AgentRequest, session: aiohttp.Cli
                 status_code=500,
                 detail=f"Failed to start bot via Pipecat Cloud: {error_text}",
             )
-        logger.debug(f"Bot started successfully via Pipecat Cloud")
+        logger.debug("Bot started successfully via Pipecat Cloud")
 
 
 async def start_bot_local(agent_request: AgentRequest, session: aiohttp.ClientSession):
@@ -162,5 +162,5 @@ async def start_bot_local(agent_request: AgentRequest, session: aiohttp.ClientSe
                 status_code=500,
                 detail=f"Failed to start bot via local /start endpoint: {error_text}",
             )
-        logger.debug(f"Bot started successfully via local /start endpoint")
+        logger.debug("Bot started successfully via local /start endpoint")
 

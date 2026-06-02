@@ -15,11 +15,7 @@
             ),
         )
 
-{% if 'twilio_daily_sip_dialout' in transports %}
-        await run_bot(transport, request.dialout_settings)
-{% else %}
-        await run_bot(transport, request)
-{% endif %}
+        await run_bot(transport, runner_args)
 
     except Exception as e:
         logger.error(f"Error running bot: {e}")

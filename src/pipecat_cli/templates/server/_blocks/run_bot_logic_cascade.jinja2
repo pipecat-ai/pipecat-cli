@@ -1,4 +1,13 @@
 {# Main bot logic for cascade mode - uses indent_level variable passed from parent #}
+{% if 'twilio_daily_sip_dialin' in transports %}
+{{ "# SIP call details (sip_uri, call_sid) arrive in the request body" | indent(indent_level, first=True) }}
+{{ "request = AgentRequest.model_validate(runner_args.body)" | indent(indent_level, first=True) }}
+
+{% elif 'daily_pstn_dialout' in transports or 'twilio_daily_sip_dialout' in transports %}
+{{ "# Outbound call settings arrive in the request body" | indent(indent_level, first=True) }}
+{{ "dialout_settings = AgentRequest.model_validate(runner_args.body).dialout_settings" | indent(indent_level, first=True) }}
+
+{% endif %}
 {{ "# Speech-to-Text service" | indent(indent_level, first=True) }}
 {% if stt_service and stt_service in service_configs %}
 {{ ("stt = " ~ service_configs[stt_service]) | indent(indent_level, first=True) }}

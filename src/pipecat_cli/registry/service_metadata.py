@@ -102,12 +102,17 @@ FEATURE_DEFINITIONS: dict[str, list[str]] = {
     "context": ["LLMContext", "LLMContextAggregatorPair", "LLMUserAggregatorParams"],
     "runner": [
         "load_dotenv",
-        "LLMRunFrame",
         "RunnerArguments",
         "BaseTransport",
     ],
+    # Queued on connect to kick off the conversation. Dial-out bots wait for the
+    # callee to answer/speak first, so they don't import or use it.
+    "llm_run_frame": ["LLMRunFrame"],
     "observability": ["WhiskerObserver", "TailObserver"],
     "external_turn_strategies": ["ExternalUserTurnStrategies"],
+    # Imported on the standard (non-PSTN/SIP) transport path: the collapsed bot()
+    # calls create_transport. Dial-out and SIP construct their transports by hand.
+    "create_transport": ["create_transport"],
 }
 
 
@@ -142,29 +147,20 @@ class ServiceRegistry:
             value="daily",
             label="Daily (WebRTC)",
             package="pipecat-ai[daily]",
-            class_name=["DailyTransport", "DailyParams", "DailyRunnerArguments"],
+            # Bots build transports via create_transport(); only the params are needed.
+            class_name=["DailyParams"],
         ),
         ServiceDefinition(
             value="smallwebrtc",
             label="SmallWebRTC",
             package="pipecat-ai[webrtc]",
-            class_name=[
-                "SmallWebRTCTransport",
-                "TransportParams",
-                "SmallWebRTCConnection",
-                "SmallWebRTCRunnerArguments",
-            ],
+            class_name=["TransportParams"],
         ),
         ServiceDefinition(
             value="websocket",
             label="WebSocket",
             package="pipecat-ai[websocket]",
-            class_name=[
-                "FastAPIWebsocketTransport",
-                "FastAPIWebsocketParams",
-                "WebSocketRunnerArguments",
-                "ProtobufFrameSerializer",
-            ],
+            class_name=["FastAPIWebsocketParams", "ProtobufFrameSerializer"],
         ),
     ]
 
@@ -174,16 +170,10 @@ class ServiceRegistry:
             value="twilio",
             label="Twilio",
             package="pipecat-ai[websocket]",
-            class_name=[
-                "FastAPIWebsocketTransport",
-                "FastAPIWebsocketParams",
-                "TwilioFrameSerializer",
-                "WebSocketRunnerArguments",
-            ],
-            additional_imports=[
-                "import aiohttp",
-                "from pipecat.runner.utils import parse_telephony_websocket",
-            ],
+            # create_transport sets the serializer; only params are needed. aiohttp and
+            # BaseModel are kept for the get_call_info() / CallInfo personalization helper.
+            class_name=["FastAPIWebsocketParams"],
+            additional_imports=["import aiohttp", "from pydantic import BaseModel"],
         ),
         ServiceDefinition(
             value="twilio_daily_sip_dialin",
@@ -202,17 +192,19 @@ class ServiceRegistry:
             class_name=["DailyParams", "DailyTransport"],
             additional_imports=[
                 "from server_utils import AgentRequest, DialoutSettings",
-                "from typing import Any, Optional",
+                "from typing import Any",
             ],
         ),
         ServiceDefinition(
             value="daily_pstn_dialin",
             label="Daily PSTN (Dial-in)",
             package="pipecat-ai[daily]",
-            class_name=["DailyParams", "DailyDialinSettings", "DailyTransport"],
-            additional_imports=[
-                "from pipecat.runner.types import DailyDialinRequest",
-            ],
+            # Dial-in uses the unified create_transport path: it arrives as a typed
+            # DailyRunnerArguments and create_transport applies the dial-in settings
+            # from the request body. DailyDialinRequest is used by the optional dial-in
+            # personalization block.
+            class_name=["DailyParams"],
+            additional_imports=["from pipecat.runner.types import DailyDialinRequest"],
         ),
         ServiceDefinition(
             value="daily_pstn_dialout",
@@ -221,50 +213,26 @@ class ServiceRegistry:
             class_name=["DailyParams", "DailyTransport"],
             additional_imports=[
                 "from server_utils import AgentRequest, DialoutSettings",
-                "from typing import Any, Optional",
+                "from typing import Any",
             ],
         ),
         ServiceDefinition(
             value="telnyx",
             label="Telnyx",
             package="pipecat-ai[websocket]",
-            class_name=[
-                "FastAPIWebsocketTransport",
-                "FastAPIWebsocketParams",
-                "TelnyxFrameSerializer",
-                "WebSocketRunnerArguments",
-            ],
-            additional_imports=[
-                "from pipecat.runner.utils import parse_telephony_websocket",
-            ],
+            class_name=["FastAPIWebsocketParams"],
         ),
         ServiceDefinition(
             value="plivo",
             label="Plivo",
             package="pipecat-ai[websocket]",
-            class_name=[
-                "FastAPIWebsocketTransport",
-                "FastAPIWebsocketParams",
-                "PlivoFrameSerializer",
-                "WebSocketRunnerArguments",
-            ],
-            additional_imports=[
-                "from pipecat.runner.utils import parse_telephony_websocket",
-            ],
+            class_name=["FastAPIWebsocketParams"],
         ),
         ServiceDefinition(
             value="exotel",
             label="Exotel",
             package="pipecat-ai[websocket]",
-            class_name=[
-                "FastAPIWebsocketTransport",
-                "FastAPIWebsocketParams",
-                "ExotelFrameSerializer",
-                "WebSocketRunnerArguments",
-            ],
-            additional_imports=[
-                "from pipecat.runner.utils import parse_telephony_websocket",
-            ],
+            class_name=["FastAPIWebsocketParams"],
         ),
     ]
 

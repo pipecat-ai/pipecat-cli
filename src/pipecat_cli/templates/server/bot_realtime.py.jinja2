@@ -41,31 +41,16 @@ load_dotenv(override=True)
 {{ helpers.dialout_manager_class(transports) }}
 {% endif %}
 
-{% if 'daily_pstn_dialout' in transports or 'twilio_daily_sip_dialout' in transports %}
-async def run_bot(
-    transport: BaseTransport, dialout_settings: DialoutSettings
-) -> None:
-    """Run the voice bot for an outbound call.
-
-    Sets up the bot pipeline with STT, LLM, and TTS services, then initiates
-    the dialout and handles the conversation with retry logic.
+async def run_bot(transport: BaseTransport, runner_args: RunnerArguments) -> None:
+    """Run the voice bot for this session.
 
     Args:
-        transport: Daily transport for the call
-        dialout_settings: Phone number and optional caller ID for the outbound call
+        transport: The transport for this session, built by ``create_transport``
+            (or by hand for the dial-out/SIP flows).
+        runner_args: Runner session arguments. Carries the request ``body``
+            (e.g. dial-out settings, SIP call details) and ``session_id``; the
+            standard web/telephony pipelines don't need it.
     """
-{% elif 'twilio_daily_sip_dialin' in transports %}
-async def run_bot(transport: BaseTransport, request: AgentRequest) -> None:
-    """Run the voice bot with the given parameters.
-
-    Args:
-        transport: The Daily transport instance
-        request: The agent request containing the call details
-    """
-{% else %}
-async def run_bot(transport: BaseTransport):
-    """Main bot logic."""
-{% endif %}
     logger.info("Starting bot")
 
 {% if needs_session %}
@@ -90,45 +75,95 @@ async def bot(runner_args: RunnerArguments):
         krisp_filter = None
 
     {% endif %}
-    {# Bot entry point - use match/case for clean transport selection #}
-    {% if 'daily_pstn_dialin' in transports or 'daily_pstn_dialout' in transports %}
-    {# Daily PSTN has its own special flow with server.py, so it doesn't use match/case #}
+    {# Bot entry point. Dial-out and SIP keep a bespoke flow (room/token + dial-out
+       settings arrive in the request body, built by server.py); everything else —
+       including Daily PSTN dial-in — goes through the unified create_transport path. #}
+    {% if 'daily_pstn_dialout' in transports %}
+    {# Daily PSTN dial-out has its own special flow with server.py. #}
 {% include 'server/_blocks/bot_entry_daily_pstn.jinja2' %}
     {% elif 'twilio_daily_sip_dialin' in transports or 'twilio_daily_sip_dialout' in transports %}
     {# Twilio + Daily SIP has its own special flow with server.py, so it doesn't use match/case #}
 {% include 'server/_blocks/bot_entry_twilio_daily_sip.jinja2' %}
     {% else %}
-    transport = None
-
-    {# For other transports, use match/case on runner_args type #}
-    match runner_args:
-        {% if 'daily' in transports %}
-        case DailyRunnerArguments():
-{% include 'server/_blocks/bot_entry_daily_webrtc.jinja2' %}
+    {# Single, unified path: create_transport builds the right transport from the
+       runner_args type. You supply only the params; serializers and telephony parsing
+       are handled for you. #}
+    transport_params = {
+        {% if 'daily' in transports or 'daily_pstn_dialin' in transports %}
+        "daily": lambda: DailyParams(
+            audio_in_enabled=True,
+            {% if enable_krisp %}audio_in_filter=krisp_filter,{% endif %}
+            audio_out_enabled=True,
+            {% if video_input %}video_in_enabled=True,{% endif %}
+            {% if video_output %}
+            video_out_enabled=True,
+            video_out_is_live=True,
+            video_out_width=1024,
+            video_out_height=768,
+            {% endif %}
+        ),
         {% endif %}
         {% if 'smallwebrtc' in transports %}
-        case SmallWebRTCRunnerArguments():
-{% include 'server/_blocks/bot_entry_smallwebrtc.jinja2' %}
-        {% endif %}
-        {% if 'twilio' in transports or 'telnyx' in transports or 'plivo' in transports or 'exotel' in transports or 'websocket' in transports %}
-        case WebSocketRunnerArguments():
-            {% if 'websocket' in transports %}
-{% include 'server/_blocks/bot_entry_websocket.jinja2' %}
-            {% elif 'twilio' in transports %}
-{% include 'server/_blocks/bot_entry_twilio.jinja2' %}
-            {% elif 'telnyx' in transports %}
-{% include 'server/_blocks/bot_entry_telnyx.jinja2' %}
-            {% elif 'plivo' in transports %}
-{% include 'server/_blocks/bot_entry_plivo.jinja2' %}
-            {% elif 'exotel' in transports %}
-{% include 'server/_blocks/bot_entry_exotel.jinja2' %}
+        "webrtc": lambda: TransportParams(
+            audio_in_enabled=True,
+            {% if enable_krisp %}audio_in_filter=krisp_filter,{% endif %}
+            audio_out_enabled=True,
+            {% if video_input %}video_in_enabled=True,{% endif %}
+            {% if video_output %}
+            video_out_is_live=True,
+            video_out_width=1024,
+            video_out_height=768,
             {% endif %}
+        ),
         {% endif %}
-        case _:
-            logger.error(f"Unsupported runner arguments type: {type(runner_args)}")
-            return
+        {% if 'websocket' in transports %}
+        "websocket": lambda: FastAPIWebsocketParams(
+            audio_in_enabled=True,
+            {% if enable_krisp %}audio_in_filter=krisp_filter,{% endif %}
+            audio_out_enabled=True,
+            add_wav_header=False,
+            serializer=ProtobufFrameSerializer(),
+        ),
+        {% endif %}
+        {% for provider in ['twilio', 'telnyx', 'plivo', 'exotel'] if provider in transports %}
+        # create_transport sets the {{ provider }} serializer and add_wav_header automatically.
+        "{{ provider }}": lambda: FastAPIWebsocketParams(
+            audio_in_enabled=True,
+            {% if enable_krisp %}audio_in_filter=krisp_filter,{% endif %}
+            audio_out_enabled=True,
+        ),
+        {% endfor %}
+    }
 
-    await run_bot(transport)
+    transport = await create_transport(runner_args, transport_params)
+
+    {% if 'twilio' in transports %}
+    # OPTIONAL personalization: create_transport parsed the Twilio websocket, so the
+    # call data is on runner_args.call_data. Look up the caller via the Twilio REST API
+    # to personalize the conversation (e.g. fetch customer info from your own backend).
+    call_data = runner_args.call_data
+    call_info = await get_call_info(call_data.call_id) if call_data else None
+    if call_info:
+        logger.info(f"Call from: {call_info.from_number} to: {call_info.to_number}")
+    {% elif 'telnyx' in transports %}
+    # OPTIONAL personalization: the parsed handshake is on runner_args.call_data. Use
+    # the caller's number to personalize the conversation (e.g. look up a customer).
+    call_data = runner_args.call_data
+    if call_data:
+        logger.info(f"From number: {call_data.from_number}")
+    {% elif 'daily_pstn_dialin' in transports %}
+    # OPTIONAL personalization: create_transport already applied the dial-in settings;
+    # the parsed request lets you see which number called / was dialed (e.g. to look up
+    # a customer or pick a prompt).
+    if isinstance(runner_args.body, dict) and "dialin_settings" in runner_args.body:
+        request = DailyDialinRequest.model_validate(runner_args.body)
+        if request.dialin_settings.From:
+            logger.info(f"Handling call from: {request.dialin_settings.From}")
+        if request.dialin_settings.To:
+            logger.info(f"Handling call to: {request.dialin_settings.To}")
+    {% endif %}
+
+    await run_bot(transport, runner_args)
     {% endif %}
 
 

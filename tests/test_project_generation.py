@@ -39,10 +39,7 @@ def validate_python_syntax(file_path):
 
 def validate_pyproject_toml(file_path):
     """Validate that pyproject.toml is valid TOML and has required fields."""
-    try:
-        import tomllib  # Python 3.11+
-    except ImportError:
-        import tomli as tomllib  # Fallback for older Python
+    import tomllib
 
     with open(file_path, "rb") as f:
         data = tomllib.load(f)
@@ -110,6 +107,27 @@ def assert_server_ruff_clean(server_path):
     )
     assert result.returncode == 0, (
         f"Generated Python under {server_path} is not Ruff-formatted:\n"
+        f"{result.stdout}{result.stderr}"
+    )
+
+
+def assert_server_ruff_lint_clean(server_path):
+    """Assert generated Python under server_path is free of Pyflakes lint errors.
+
+    Runs ``ruff check --select F`` (the same bundled binary used for formatting):
+    no unused imports, no f-strings without placeholders, no undefined/redefined
+    names, etc. The generator only runs ``ruff check --select I`` (import sorting),
+    so this is the guard that the templates produce genuinely clean code.
+    """
+    from ruff.__main__ import find_ruff_bin
+
+    result = subprocess.run(
+        [find_ruff_bin(), "check", "--select", "F", str(server_path)],
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0, (
+        f"Generated Python under {server_path} has lint errors:\n"
         f"{result.stdout}{result.stderr}"
     )
 
@@ -223,7 +241,7 @@ TEST_CONFIGS = [
         "mode": "cascade",
         "stt_service": "assemblyai_stt",
         "llm_service": "groq_llm",
-        "tts_service": "playht_tts",
+        "tts_service": "rime_tts",
     },
     # More realtime services
     {
@@ -472,6 +490,10 @@ def test_project_generation(config_data, temp_output_dir):
     # step used to silently no-op when `ruff` was not on PATH, shipping the raw
     # (mis-indented, unsorted-imports) template output.
     assert_server_ruff_clean(project_path / "server")
+
+    # Generated Python must also be Pyflakes-clean (no unused imports, no
+    # placeholder-less f-strings, etc.) — the generator only sorts imports.
+    assert_server_ruff_lint_clean(project_path / "server")
 
     # Verify bot.py structure
     bot_content = bot_file.read_text()
@@ -745,6 +767,162 @@ def test_invalid_service_combination():
     # This test would check validation logic if we add it
     # For now, we rely on the interactive prompts to guide users
     pass
+
+
+def test_collapsed_transport_construction(temp_output_dir):
+    """Standard cascade bots build transports via create_transport (no match/case)."""
+    path = temp_output_dir / "collapsed"
+    if path.exists():
+        shutil.rmtree(path)
+    ProjectGenerator(
+        ProjectConfig(
+            project_name="collapsed",
+            bot_type="web",
+            transports=["smallwebrtc"],
+            mode="cascade",
+            stt_service="deepgram_stt",
+            llm_service="openai_llm",
+            tts_service="cartesia_tts",
+        )
+    ).generate(output_dir=temp_output_dir)
+    bot = (path / "server" / "bot.py").read_text()
+
+    # Unified path: a transport_params dict + create_transport, no per-transport match/case.
+    assert "transport_params = {" in bot
+    assert "await create_transport(runner_args, transport_params)" in bot
+    assert "match runner_args" not in bot
+    assert "parse_telephony_websocket" not in bot
+
+    # create_transport is imported.
+    assert "from pipecat.runner.utils import create_transport" in bot
+
+    ast.parse(bot)  # raises if the generated bot has a syntax error
+
+
+def _gen_bot(temp_output_dir, name, **kwargs):
+    """Generate a telephony cascade bot and return its bot.py text.
+
+    Also asserts the generated server is formatting- and Pyflakes-clean, so the
+    dial-in/dial-out/SIP bots (not covered by TEST_CONFIGS) are lint-guarded too.
+    """
+    path = temp_output_dir / name
+    if path.exists():
+        shutil.rmtree(path)
+    ProjectGenerator(
+        ProjectConfig(
+            project_name=name,
+            bot_type="telephony",
+            mode="cascade",
+            stt_service="deepgram_stt",
+            llm_service="openai_llm",
+            tts_service="cartesia_tts",
+            **kwargs,
+        )
+    ).generate(output_dir=temp_output_dir)
+    assert_server_ruff_clean(path / "server")
+    assert_server_ruff_lint_clean(path / "server")
+    return (path / "server" / "bot.py").read_text()
+
+
+def test_daily_pstn_dialin_uses_create_transport(temp_output_dir):
+    """Daily PSTN dial-in is collapsed onto the unified create_transport path.
+
+    Dial-in arrives as a typed DailyRunnerArguments and create_transport applies the
+    dial-in settings from the request body, so the bot should NOT build a DailyTransport
+    by hand. It still parses DailyDialinRequest for the optional personalization block."""
+    bot = _gen_bot(
+        temp_output_dir, "din", transports=["daily_pstn_dialin"], daily_pstn_mode="dial-in"
+    )
+
+    # Collapsed path
+    assert 'transport_params = {' in bot
+    assert '"daily": lambda: DailyParams(' in bot
+    assert "await create_transport(runner_args, transport_params)" in bot
+    assert "await run_bot(transport, runner_args)" in bot
+
+    # create_transport builds the transport — no hand-built DailyTransport / settings.
+    assert "DailyTransport(" not in bot
+    assert "DailyDialinSettings" not in bot
+
+    # Active, guarded personalization using the typed DailyDialinRequest.
+    assert "from pipecat.runner.types import DailyDialinRequest" in bot
+    assert 'isinstance(runner_args.body, dict) and "dialin_settings" in runner_args.body' in bot
+    assert "DailyDialinRequest.model_validate(runner_args.body)" in bot
+    assert "request.dialin_settings.From" in bot
+
+    ast.parse(bot)
+
+
+def test_twilio_active_personalization_uses_call_info(temp_output_dir):
+    """Twilio bots ship active personalization matching the examples: a typed CallInfo
+    + get_call_info, read via attribute access (not commented, not dict .get)."""
+    bot = _gen_bot(temp_output_dir, "tw", transports=["twilio"])
+
+    # Typed helper (CallInfo model, not a dict)
+    assert "class CallInfo(BaseModel):" in bot
+    assert "async def get_call_info(call_sid: str | None) -> CallInfo | None:" in bot
+    assert "from pydantic import BaseModel" in bot
+
+    # Active (uncommented) personalization with attribute access
+    assert "call_data = runner_args.call_data" in bot
+    assert "call_info = await get_call_info(call_data.call_id) if call_data else None" in bot
+    assert "call_info.from_number" in bot
+    assert "call_info.get(" not in bot  # no dict-style access
+
+    ast.parse(bot)
+
+
+def test_dialout_and_sip_keep_bespoke_but_standard_run_bot(temp_output_dir):
+    """Dial-out and SIP stay bespoke (room/token from the body, transport built by
+    hand) but call the SAME standardized run_bot(transport, runner_args) — and the
+    old per-flow run_bot signatures are gone."""
+    scenarios = {
+        "dout": dict(transports=["daily_pstn_dialout"], daily_pstn_mode="dial-out"),
+        "sin": dict(transports=["twilio_daily_sip_dialin"], twilio_daily_sip_mode="dial-in"),
+        "sout": dict(transports=["twilio_daily_sip_dialout"], twilio_daily_sip_mode="dial-out"),
+    }
+    for name, kwargs in scenarios.items():
+        bot = _gen_bot(temp_output_dir, name, **kwargs)
+
+        # One standardized signature + call site everywhere
+        assert "async def run_bot(transport: BaseTransport, runner_args: RunnerArguments)" in bot
+        assert "await run_bot(transport, runner_args)" in bot
+        # Old run_bot signatures / call sites are gone (DialoutManager still takes
+        # dialout_settings — that's the helper, not run_bot).
+        assert "run_bot(\n        transport: BaseTransport, dialout_settings" not in bot
+        assert "run_bot(transport, request.dialout_settings)" not in bot
+        assert "run_bot(transport, request)" not in bot
+
+        # Still bespoke: transport built by hand from the request body
+        assert "DailyTransport(" in bot
+        assert "AgentRequest.model_validate(runner_args.body)" in bot
+
+        ast.parse(bot)
+
+
+def test_run_bot_signature_uniform_across_modes(temp_output_dir):
+    """Every generated bot — web, telephony, dial-out — shares one run_bot signature."""
+    path = temp_output_dir / "webrb"
+    if path.exists():
+        shutil.rmtree(path)
+    ProjectGenerator(
+        ProjectConfig(
+            project_name="webrb",
+            bot_type="web",
+            transports=["smallwebrtc"],
+            mode="cascade",
+            stt_service="deepgram_stt",
+            llm_service="openai_llm",
+            tts_service="cartesia_tts",
+        )
+    ).generate(output_dir=temp_output_dir)
+    web = (path / "server" / "bot.py").read_text()
+    dout = _gen_bot(
+        temp_output_dir, "doutrb", transports=["daily_pstn_dialout"], daily_pstn_mode="dial-out"
+    )
+    sig = "async def run_bot(transport: BaseTransport, runner_args: RunnerArguments) -> None:"
+    assert sig in web
+    assert sig in dout
 
 
 if __name__ == "__main__":

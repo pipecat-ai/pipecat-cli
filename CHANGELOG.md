@@ -5,6 +5,21 @@ All notable changes to **Pipecat** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Changed
+
+- Generated bots now configure their transport through a single
+  `create_transport(runner_args, transport_params)` call instead of per-transport
+  `match`/`case` boilerplate, building on Pipecat's feature-complete
+  `create_transport`. Only Daily PSTN dial-out and Twilio+SIP keep a bespoke flow.
+  Telephony bots also ship **active** caller personalization (typed `CallData` /
+  `CallInfo` attribute access) matching the Pipecat examples.
+
+- Simplified the generated run instructions to just `uv run bot.py` for every
+  transport (the dev runner serves all transports and the caller selects one), with
+  a short ngrok/webhook note for telephony.
+
 ## [1.3.0] - 2026-05-29
 
 ### Added

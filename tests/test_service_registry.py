@@ -146,13 +146,16 @@ class TestServiceLoader:
         assert transport.package == "pipecat-ai[websocket]"
 
     def test_websocket_transport_imports(self):
-        """WebSocket transport imports the FastAPI transport and Protobuf serializer."""
+        """WebSocket transport imports the params + Protobuf serializer.
+
+        Bots build the transport via create_transport(), so only the params class
+        (and the serializer the factory sets) are imported — not the transport class
+        or the runner-args type.
+        """
         imports = ServiceLoader.get_service_import("websocket")
         assert imports is not None
         joined = "\n".join(imports)
-        assert "FastAPIWebsocketTransport" in joined
         assert "FastAPIWebsocketParams" in joined
-        assert "WebSocketRunnerArguments" in joined
         assert "ProtobufFrameSerializer" in joined
 
     @pytest.mark.parametrize(

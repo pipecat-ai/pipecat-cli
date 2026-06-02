@@ -268,7 +268,7 @@ def validate_and_build_config(
         elif t == "twilio_daily_sip_dialout":
             resolved_twilio_daily_sip_mode = "dial-out"
 
-    return ProjectConfig(
+    config = ProjectConfig(
         project_name=name,
         bot_type=bot_type,
         transports=resolved_transports,
@@ -291,6 +291,7 @@ def validate_and_build_config(
         enable_krisp=enable_krisp,
         enable_observability=observability,
     )
+    return config
 
 
 def load_config_from_file(path: Path) -> dict:

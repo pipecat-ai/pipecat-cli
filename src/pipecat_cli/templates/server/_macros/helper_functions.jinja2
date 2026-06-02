@@ -46,21 +46,31 @@ audio_buffer = AudioBufferProcessor()
 {# Twilio call info helper function #}
 {% macro get_call_info_function() %}
 
-async def get_call_info(call_sid: str) -> dict:
-    """Fetch call information from Twilio REST API using aiohttp.
+class CallInfo(BaseModel):
+    """Caller details fetched from the Twilio REST API."""
+
+    from_number: str | None = None
+    to_number: str | None = None
+
+
+async def get_call_info(call_sid: str | None) -> CallInfo | None:
+    """Fetch call information from the Twilio REST API using aiohttp.
 
     Args:
-        call_sid: The Twilio call SID
+        call_sid: The Twilio call SID (e.g. call_data.call_id), or None.
 
     Returns:
-        Dictionary containing call information including from_number, to_number, status, etc.
+        A CallInfo with the caller's numbers, or None if it couldn't be fetched.
     """
+    if not call_sid:
+        return None
+
     account_sid = os.getenv("TWILIO_ACCOUNT_SID")
     auth_token = os.getenv("TWILIO_AUTH_TOKEN")
 
     if not account_sid or not auth_token:
         logger.warning("Missing Twilio credentials, cannot fetch call info")
-        return {}
+        return None
 
     url = f"https://api.twilio.com/2010-04-01/Accounts/{account_sid}/Calls/{call_sid}.json"
 
@@ -73,20 +83,15 @@ async def get_call_info(call_sid: str) -> dict:
                 if response.status != 200:
                     error_text = await response.text()
                     logger.error(f"Twilio API error ({response.status}): {error_text}")
-                    return {}
+                    return None
 
                 data = await response.json()
 
-                call_info = {
-                    "from_number": data.get("from"),
-                    "to_number": data.get("to"),
-                }
-
-                return call_info
+                return CallInfo(from_number=data.get("from"), to_number=data.get("to"))
 
     except Exception as e:
         logger.error(f"Error fetching call info from Twilio: {e}")
-        return {}
+        return None
 {% endmacro %}
 
 {# DialoutManager class for dial-out (Daily PSTN and Twilio + Daily SIP) #}
@@ -108,7 +113,7 @@ class DialoutManager:
         self,
         transport: BaseTransport,
         dialout_settings: DialoutSettings,
-        max_retries: Optional[int] = 5,
+        max_retries: int | None = 5,
     ):
         self._transport = transport
         {% if 'twilio_daily_sip_dialout' in transports %}
