@@ -39,10 +39,7 @@ def validate_python_syntax(file_path):
 
 def validate_pyproject_toml(file_path):
     """Validate that pyproject.toml is valid TOML and has required fields."""
-    try:
-        import tomllib  # Python 3.11+
-    except ImportError:
-        import tomli as tomllib  # Fallback for older Python
+    import tomllib
 
     with open(file_path, "rb") as f:
         data = tomllib.load(f)
