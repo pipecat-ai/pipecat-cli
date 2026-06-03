@@ -20,6 +20,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   transport (the dev runner serves all transports and the caller selects one), with
   a short ngrok/webhook note for telephony.
 
+### Fixed
+
+- Corrected the generated `HeyGenVideoService` configuration to match the current
+  Pipecat API. It now passes `service_type=ServiceType.LIVE_AVATAR` and builds the
+  session with `LiveAvatarNewSessionRequest`, replacing the removed
+  `NewSessionRequest` / `AvatarQuality` imports and their `version` / `quality`
+  arguments.
+
 ## [1.3.0] - 2026-05-29
 
 ### Added
