@@ -20,6 +20,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   transport (the dev runner serves all transports and the caller selects one), with
   a short ngrok/webhook note for telephony.
 
+- Bumped client template dependencies:
+  - `@pipecat-ai/client-js` to 1.11.0 across the vanilla-js-vite, react-vite,
+    and react-nextjs templates.
+  - `"@pipecat-ai/daily-transport"` to 1.6.6 across the vanilla-js-vite,
+    react-vite, and react-nextjs templates.
+  - `"@pipecat-ai/small-webrtc-transport"` to 1.10.4 across the vanilla-js-vite,
+    react-vite, and react-nextjs templates.
+  - `"@pipecat-ai/websocket-transport"` to 1.6.7 across the vanilla-js-vite,
+    react-vite, and react-nextjs templates.
+
 ### Fixed
 
 - Corrected the generated `HeyGenVideoService` configuration to match the current
