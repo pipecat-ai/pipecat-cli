@@ -1,5 +1,21 @@
 # Pipecat CLI
 
+> [!IMPORTANT]
+> **This repository is archived.** The Pipecat CLI now ships with
+> [Pipecat](https://github.com/pipecat-ai/pipecat): `pipecat init` has moved into
+> the `pipecat-ai` package as the optional `[cli]` extra. This is the final
+> release of `pipecat-ai-cli`, and the repository is no longer maintained.
+>
+> Install the CLI from Pipecat instead:
+>
+> ```bash
+> uv tool install "pipecat-ai[cli]"
+> ```
+>
+> Your `pipecat init` / `pc init` commands are unchanged. `pipecat cloud` and
+> `pipecat tail` still work as co-installed plugins, e.g.
+> `uv tool install "pipecat-ai[cli]" --with pipecatcloud`.
+
 A complete toolkit for building, deploying, and monitoring [Pipecat](https://github.com/pipecat-ai/pipecat) AI voice agents.
 
 - **Scaffold** new projects with `pipecat init`
