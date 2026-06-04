@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `pc init` now accepts an optional target directory. Passing a path — for
+  example `pc init .` — scaffolds the project **directly into that directory**
+  instead of nesting it under a `<project-name>/` subfolder (the same convention
+  as `npm create vite@latest .`). The project name defaults to the target
+  directory's basename, and `--name` still overrides it. Omitting the argument
+  keeps the existing behavior, so this is non-breaking.
+
 ### Changed
 
 - Generated bots now configure their transport through a single
