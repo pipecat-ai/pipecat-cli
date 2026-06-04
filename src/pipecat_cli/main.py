@@ -12,7 +12,7 @@ from importlib.metadata import version
 import typer
 from rich.console import Console
 
-from pipecat_cli.commands.init import init_app
+from pipecat_cli.commands.init import init_command
 
 app = typer.Typer(
     name="pipecat",
@@ -22,8 +22,9 @@ app = typer.Typer(
 
 console = Console()
 
-# Register commands
-app.add_typer(init_app, name="init", help="Initialize a new Pipecat project")
+# Register commands. `init` is a plain command (not a sub-Typer group) so it can take an
+# optional positional target path followed by options (e.g. `pc init . --bot-type web`).
+app.command("init", help="Initialize a new Pipecat project")(init_command)
 
 # Load pipecat-cli extensions.
 extensions = []
@@ -37,6 +38,7 @@ extensions.sort(key=lambda x: x[0].lower())
 # Add extensions.
 for name, extension in extensions:
     app.add_typer(extension, name=name)
+
 
 def version_callback(value: bool):
     """Print version and exit."""
@@ -63,6 +65,7 @@ def main(
 ):
     """Pipecat CLI - Build AI voice agents with ease."""
     pass
+
 
 if __name__ == "__main__":
     app()
