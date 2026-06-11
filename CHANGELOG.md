@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `pc init` can now scaffold **behavioral evals** (Pipecat's `pipecat.evals`
+  framework, pipecat-ai/pipecat#4655). For cascade bots on standard transports the
+  wizard asks "Include behavioral evals?" (default yes); non-interactive runs use
+  `--evals/--no-evals` or an `"evals"` key in `--config` JSON. When enabled, the
+  generated bot exposes an `eval` transport (`uv run bot.py -t eval`), the project
+  ships `server/evals/scenario.yaml` (judge: OpenAI when the bot's LLM is OpenAI,
+  otherwise local Ollama), and the pipecat dependency gains the `cli` extra so
+  `uv run pipecat eval run evals/scenario.yaml` works. Requires the pipecat
+  release after 1.3.0.
+
 - `pc init` now accepts an optional target directory. Passing a path — for
   example `pc init .` — scaffolds the project **directly into that directory**
   instead of nesting it under a `<project-name>/` subfolder (the same convention
