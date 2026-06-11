@@ -57,6 +57,29 @@ def replace_question_with_answer(question: str, answer: str | list[str]):
     console.print(f"[green]✔[/green] {question} [cyan]{answer_str}[/cyan]")
 
 
+# Transports that support behavioral evals: the unified create_transport path,
+# where the generated bot can expose a transport_params["eval"] entry. The
+# realtime mode and the Daily PSTN / Twilio+Daily SIP bespoke flows are excluded.
+EVALS_ELIGIBLE_TRANSPORTS = {
+    "daily",
+    "smallwebrtc",
+    "websocket",
+    "twilio",
+    "telnyx",
+    "plivo",
+    "exotel",
+}
+
+
+def evals_eligible(mode: str | None, transports: list[str]) -> bool:
+    """Whether behavioral evals can be scaffolded for this mode/transport combo."""
+    return (
+        mode == "cascade"
+        and bool(transports)
+        and all(t in EVALS_ELIGIBLE_TRANSPORTS for t in transports)
+    )
+
+
 @dataclass
 class ProjectConfig:
     """Configuration for a Pipecat project."""
@@ -105,6 +128,9 @@ class ProjectConfig:
 
     # Observability
     enable_observability: bool = False
+
+    # Behavioral evals (cascade mode + standard transports only)
+    enable_evals: bool = False
 
 
 def ask_project_questions(default_name: str | None = None) -> ProjectConfig:
@@ -484,6 +510,7 @@ def ask_project_questions(default_name: str | None = None) -> ProjectConfig:
         replace_question_with_answer("Realtime service:", realtime_label)
 
     # Question 6: Feature customization gate
+    can_use_evals = evals_eligible(config.mode, config.transports)
     console.print("\n[bold]Default feature settings:[/bold]")
     console.print("  • Audio recording: [dim]No[/dim]")
     console.print("  • Transcription logging: [dim]No[/dim]")
@@ -494,6 +521,8 @@ def ask_project_questions(default_name: str | None = None) -> ProjectConfig:
         console.print("  • Video input: [dim]No[/dim]")
         console.print("  • Video output: [dim]No[/dim]")
     console.print("  • Observability: [dim]No[/dim]")
+    if can_use_evals:
+        console.print("  • Behavioral evals: [green]Yes[/green] [dim](recommended)[/dim]")
 
     customize_features = questionary.confirm(
         "Customize feature settings?",
@@ -598,6 +627,17 @@ def ask_project_questions(default_name: str | None = None) -> ProjectConfig:
         replace_question_with_answer(
             "Enable observability?", "Yes" if config.enable_observability else "No"
         )
+
+        # Question 6h: Behavioral evals (cascade + standard transports only)
+        if can_use_evals:
+            config.enable_evals = questionary.confirm(
+                "Include behavioral evals?",
+                default=True,
+                style=custom_style,
+            ).ask()
+            replace_question_with_answer(
+                "Include behavioral evals?", "Yes" if config.enable_evals else "No"
+            )
     else:
         # Apply default feature settings
         config.video_service = None
@@ -606,6 +646,7 @@ def ask_project_questions(default_name: str | None = None) -> ProjectConfig:
         config.recording = False
         config.transcription = False
         config.enable_observability = False
+        config.enable_evals = can_use_evals
 
     # Question 7: Pipecat Cloud deployment
     config.deploy_to_cloud = questionary.confirm(

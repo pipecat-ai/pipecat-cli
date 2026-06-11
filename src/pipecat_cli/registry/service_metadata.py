@@ -113,6 +113,9 @@ FEATURE_DEFINITIONS: dict[str, list[str]] = {
     # Imported on the standard (non-PSTN/SIP) transport path: the collapsed bot()
     # calls create_transport. Dial-out and SIP construct their transports by hand.
     "create_transport": ["create_transport"],
+    # Behavioral evals: the generated bot exposes `-t eval` via an explicit
+    # transport_params["eval"] -> WebsocketServerParams entry (pipecat-ai/pipecat#4655).
+    "evals": ["WebsocketServerParams"],
 }
 
 

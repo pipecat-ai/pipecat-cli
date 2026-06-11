@@ -1,0 +1,38 @@
+# Behavioral eval scenario for {{ project_name }}.
+#
+# Run it in two terminals (both from server/):
+#   1. uv run bot.py -t eval
+#   2. uv run pipecat eval run evals/scenario.yaml
+#
+# Each turn optionally sends a `user:` message, then asserts `expect:` events in
+# order (response, llm_started, llm_response, function_call, user_transcription).
+# Expectations support `within_ms` (latency budget), `text_contains` (substring),
+# and `eval` (a natural-language criterion graded by the judge LLM below).
+name: {{ project_name | replace('-', '_') }}_smoke
+
+judge:
+  eval:
+{% if llm_service in ['openai_llm', 'openai_responses_llm'] %}
+    service: openai  # uses OPENAI_API_KEY from your .env
+    model: gpt-4o
+    # Or run the judge locally with Ollama (https://ollama.com, then `ollama pull gemma2:9b`):
+    # service: ollama
+    # model: gemma2:9b
+{% else %}
+    service: ollama  # local judge: install Ollama (https://ollama.com), then `ollama pull gemma2:9b`
+    model: gemma2:9b
+    # Or use OpenAI as the judge (requires OPENAI_API_KEY in your .env):
+    # service: openai
+    # model: gpt-4o
+{% endif %}
+
+turns:
+  # Wait for the bot's on-connect greeting before speaking.
+  - expect:
+      - event: response
+        eval: "the bot opens the conversation in some way (a greeting, an introduction, or an offer to help)"
+
+  - user: "What is the capital of France?"
+    expect:
+      - event: response
+        eval: "the response says the capital of France is Paris"

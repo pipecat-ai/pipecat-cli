@@ -140,6 +140,13 @@ async def bot(runner_args: RunnerArguments):
             audio_out_enabled=True,
         ),
         {% endfor %}
+        {% if enable_evals %}
+        # Behavioral evals: run `uv run bot.py -t eval`, then `pipecat eval run` connects here.
+        "eval": lambda: WebsocketServerParams(
+            audio_in_enabled=True,
+            audio_out_enabled=True,
+        ),
+        {% endif %}
     }
 
     transport = await create_transport(runner_args, transport_params)

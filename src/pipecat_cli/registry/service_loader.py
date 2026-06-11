@@ -268,6 +268,8 @@ class ServiceLoader:
             imports.update(ServiceRegistry.FEATURE_IMPORTS["transcription"])
         if features.get("observability"):
             imports.update(ServiceRegistry.FEATURE_IMPORTS["observability"])
+        if features.get("evals"):
+            imports.update(ServiceRegistry.FEATURE_IMPORTS["evals"])
 
         # Most bots build transports via create_transport, so import it whenever the
         # bot uses that collapsed path. Only dial-out and SIP keep a bespoke flow that

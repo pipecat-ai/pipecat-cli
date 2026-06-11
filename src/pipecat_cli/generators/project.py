@@ -167,6 +167,10 @@ class ProjectGenerator:
         # 3. Generate .env.example (in server/)
         self._generate_env_example(server_path)
 
+        # 3b. Generate evals/scenario.yaml (in server/, if enabled)
+        if self.config.enable_evals:
+            self._generate_evals(server_path)
+
         # 4. Generate .gitignore (at root)
         self._generate_gitignore(project_path)
 
@@ -285,6 +289,7 @@ class ProjectGenerator:
             "recording": self.config.recording,
             "transcription": self.config.transcription,
             "observability": self.config.enable_observability,
+            "evals": self.config.enable_evals,
         }
 
         # Get imports
@@ -315,6 +320,7 @@ class ProjectGenerator:
             "transcription": self.config.transcription,
             "enable_krisp": self.config.enable_krisp,
             "enable_observability": self.config.enable_observability,
+            "enable_evals": self.config.enable_evals,
             "service_configs": ServiceRegistry.SERVICE_CONFIGS,
             "daily_pstn_mode": self.config.daily_pstn_mode,
             "twilio_daily_sip_mode": self.config.twilio_daily_sip_mode,
@@ -346,6 +352,11 @@ class ProjectGenerator:
 
         # Extract all required extras
         extras = ServiceLoader.extract_extras_for_services(services)
+
+        if self.config.enable_evals:
+            # `pipecat eval` (and python -m pipecat.evals) imports typer/rich from the
+            # cli extra.
+            extras.add("cli")
 
         # Build the pipecat-ai dependency string
         # No version constraint - will use latest from PyPI
@@ -381,6 +392,18 @@ class ProjectGenerator:
 
         content = template.render(**context)
         (project_path / ".env.example").write_text(content, encoding="utf-8")
+
+    def _generate_evals(self, project_path: Path) -> None:
+        """Generate evals/scenario.yaml for the behavioral eval harness."""
+        template = self.env.get_template("server/evals/scenario.yaml.jinja2")
+
+        content = template.render(
+            project_name=self.config.project_name,
+            llm_service=self.config.llm_service,
+        )
+        evals_dir = project_path / "evals"
+        evals_dir.mkdir(exist_ok=True)
+        (evals_dir / "scenario.yaml").write_text(content, encoding="utf-8")
 
     def _generate_gitignore(self, project_path: Path) -> None:
         """Generate .gitignore file."""
@@ -442,6 +465,7 @@ class ProjectGenerator:
             "transcription": self.config.transcription,
             "enable_krisp": self.config.enable_krisp,
             "enable_observability": self.config.enable_observability,
+            "enable_evals": self.config.enable_evals,
             "deploy_to_cloud": self.config.deploy_to_cloud,
             "generate_client": self.config.generate_client,
             "client_framework": self.config.client_framework,
@@ -552,6 +576,11 @@ class ProjectGenerator:
         has_telephony = any(t in telephony_transports for t in self.config.transports)
 
         console.print("  • Run your bot: [bold cyan]uv run bot.py[/bold cyan]")
+        if self.config.enable_evals:
+            console.print(
+                "  • Run evals: [bold cyan]uv run bot.py -t eval[/bold cyan], then in another "
+                "terminal [bold cyan]uv run pipecat eval run evals/scenario.yaml[/bold cyan]"
+            )
         if has_telephony:
             console.print(
                 "  • Expose it for telephony: [bold cyan]ngrok http 7860[/bold cyan], then point "

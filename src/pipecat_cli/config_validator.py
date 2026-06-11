@@ -9,7 +9,7 @@
 import json
 from pathlib import Path
 
-from pipecat_cli.prompts.questions import ProjectConfig
+from pipecat_cli.prompts.questions import EVALS_ELIGIBLE_TRANSPORTS, ProjectConfig
 from pipecat_cli.registry import ServiceRegistry
 
 
@@ -52,6 +52,7 @@ def validate_and_build_config(
     deploy_to_cloud: bool = True,
     enable_krisp: bool = False,
     observability: bool = False,
+    evals: bool = False,
 ) -> ProjectConfig:
     """Validate all inputs and build a ProjectConfig.
 
@@ -232,6 +233,15 @@ def validate_and_build_config(
         errors.append("--video-output is only available for web bots")
     if enable_krisp and not deploy_to_cloud:
         errors.append("--enable-krisp requires --deploy-to-cloud")
+    if evals:
+        if mode == "realtime":
+            errors.append("--evals is only available in cascade mode")
+        ineligible = [t for t in resolved_transports if t not in EVALS_ELIGIBLE_TRANSPORTS]
+        if ineligible:
+            errors.append(
+                f"--evals is not supported with transport(s): {', '.join(ineligible)}. "
+                f"Supported: {', '.join(sorted(EVALS_ELIGIBLE_TRANSPORTS))}"
+            )
 
     # --- Daily PSTN mode without matching transport ---
     if daily_pstn_mode and transport and "daily_pstn" not in transport:
@@ -290,6 +300,7 @@ def validate_and_build_config(
         deploy_to_cloud=deploy_to_cloud,
         enable_krisp=enable_krisp,
         enable_observability=observability,
+        enable_evals=evals,
     )
     return config
 
@@ -329,5 +340,6 @@ def config_to_json(config: ProjectConfig) -> str:
         "deploy_to_cloud": config.deploy_to_cloud,
         "enable_krisp": config.enable_krisp,
         "enable_observability": config.enable_observability,
+        "enable_evals": config.enable_evals,
     }
     return json.dumps(data, indent=2)

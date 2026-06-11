@@ -1,0 +1,28 @@
+## Testing your bot (evals)
+
+This project includes a behavioral eval scenario (`server/evals/scenario.yaml`). It
+drives a text conversation with your bot and uses an LLM judge to check the replies.
+
+1. **Run the bot with the eval transport** (terminal 1, from `server/`):
+
+   ```bash
+   uv run bot.py -t eval
+   ```
+
+2. **Run the scenario** (terminal 2, from `server/`):
+
+   ```bash
+   uv run pipecat eval run evals/scenario.yaml
+   ```
+
+{% if llm_service in ['openai_llm', 'openai_responses_llm'] %}
+The judge uses OpenAI (`OPENAI_API_KEY` from your `.env`).
+{% else %}
+The judge runs locally via [Ollama](https://ollama.com). Install it and pull the
+model first (`ollama pull gemma2:9b`), or switch the scenario's judge to OpenAI.
+{% endif %}
+
+Edit `evals/scenario.yaml` to add turns and checks for your own use case. See the
+[Pipecat evals docs](https://docs.pipecat.ai) for the full scenario format,
+including audio-mode scenarios and function call assertions.
+

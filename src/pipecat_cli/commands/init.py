@@ -110,6 +110,12 @@ def init_command(
     observability: bool = typer.Option(
         False, "--observability/--no-observability", help="Enable observability"
     ),
+    evals: bool = typer.Option(
+        False,
+        "--evals/--no-evals",
+        help="Include behavioral evals (eval transport + scenario; cascade mode with "
+        "standard transports only)",
+    ),
     config: Path | None = typer.Option(
         None, "--config", "-c", help="JSON config file (triggers non-interactive mode)"
     ),
@@ -208,6 +214,7 @@ def init_command(
                 observability = observability or file_data.get(
                     "observability", file_data.get("enable_observability", False)
                 )
+                evals = evals or file_data.get("evals", file_data.get("enable_evals", False))
 
             try:
                 project_config = validate_and_build_config(
@@ -231,6 +238,7 @@ def init_command(
                     deploy_to_cloud=deploy_to_cloud,
                     enable_krisp=enable_krisp,
                     observability=observability,
+                    evals=evals,
                 )
             except ConfigValidationError as e:
                 console.print(f"\n[red]{e}[/red]")

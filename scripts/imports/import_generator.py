@@ -372,6 +372,9 @@ _MODULE_OVERRIDES: dict[str, str] = {
     # Explicit so regeneration doesn't depend on the searched source tree containing it
     # — see the "create_transport" feature. The collapsed bot() imports create_transport.
     "create_transport": "pipecat.runner.utils",
+    # The eval transport entry uses WebsocketServerParams from the websocket *server*
+    # module (NOT .fastapi, which the 'websocket'/telephony transports use).
+    "WebsocketServerParams": "pipecat.transports.websocket.server",
 }
 
 
