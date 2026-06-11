@@ -110,8 +110,8 @@ def init_command(
     observability: bool = typer.Option(
         False, "--observability/--no-observability", help="Enable observability"
     ),
-    evals: bool = typer.Option(
-        False,
+    evals: bool | None = typer.Option(
+        None,
         "--evals/--no-evals",
         help="Include behavioral evals (eval transport + scenario; cascade mode with "
         "standard transports only)",
@@ -214,7 +214,10 @@ def init_command(
                 observability = observability or file_data.get(
                     "observability", file_data.get("enable_observability", False)
                 )
-                evals = evals or file_data.get("evals", file_data.get("enable_evals", False))
+                # Tri-state: an explicit --evals/--no-evals always beats the file value;
+                # the file only applies when the flag was omitted.
+                if evals is None:
+                    evals = file_data.get("evals", file_data.get("enable_evals", False))
 
             try:
                 project_config = validate_and_build_config(
@@ -238,7 +241,7 @@ def init_command(
                     deploy_to_cloud=deploy_to_cloud,
                     enable_krisp=enable_krisp,
                     observability=observability,
-                    evals=evals,
+                    evals=bool(evals),
                 )
             except ConfigValidationError as e:
                 console.print(f"\n[red]{e}[/red]")
