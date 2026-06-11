@@ -400,6 +400,71 @@ class TestCrossFieldConstraints:
             )
         assert any("video-input" in e.lower() or "video input" in e.lower() for e in exc_info.value.errors)
 
+    def test_evals_with_realtime_mode_rejected(self):
+        with pytest.raises(ConfigValidationError) as exc_info:
+            validate_and_build_config(
+                name="bot",
+                bot_type="web",
+                transport=["daily"],
+                mode="realtime",
+                realtime="openai_realtime",
+                evals=True,
+            )
+        assert any("--evals is only available in cascade mode" in e for e in exc_info.value.errors)
+
+    def test_evals_with_daily_pstn_rejected(self):
+        with pytest.raises(ConfigValidationError) as exc_info:
+            validate_and_build_config(
+                name="bot",
+                bot_type="telephony",
+                transport=["daily_pstn"],
+                daily_pstn_mode="dial-in",
+                mode="cascade",
+                stt="deepgram_stt",
+                llm="openai_llm",
+                tts="cartesia_tts",
+                evals=True,
+            )
+        assert any(
+            "--evals is not supported with transport(s): daily_pstn_dialin" in e
+            for e in exc_info.value.errors
+        )
+
+    def test_evals_with_twilio_daily_sip_rejected(self):
+        with pytest.raises(ConfigValidationError) as exc_info:
+            validate_and_build_config(
+                name="bot",
+                bot_type="telephony",
+                transport=["twilio_daily_sip"],
+                twilio_daily_sip_mode="dial-out",
+                mode="cascade",
+                stt="deepgram_stt",
+                llm="openai_llm",
+                tts="cartesia_tts",
+                evals=True,
+            )
+        assert any(
+            "--evals is not supported with transport(s): twilio_daily_sip_dialout" in e
+            for e in exc_info.value.errors
+        )
+
+    def test_evals_error_collected_with_others(self):
+        """Evals errors co-report with other validation errors."""
+        with pytest.raises(ConfigValidationError) as exc_info:
+            validate_and_build_config(
+                name="bot",
+                bot_type="web",
+                transport=["daily"],
+                mode="realtime",
+                realtime="openai_realtime",
+                evals=True,
+                enable_krisp=True,
+                deploy_to_cloud=False,
+            )
+        errors = exc_info.value.errors
+        assert any("--evals" in e for e in errors)
+        assert any("krisp" in e.lower() for e in errors)
+
     def test_telephony_transport_for_web_rejected(self):
         with pytest.raises(ConfigValidationError) as exc_info:
             validate_and_build_config(
@@ -755,6 +820,7 @@ class TestConfigToJson:
             video_input=True,
             video_output=True,
             observability=True,
+            evals=True,
         )
         json_str = config_to_json(config)
         data = json.loads(json_str)
@@ -763,6 +829,7 @@ class TestConfigToJson:
         assert data["video_input"] is True
         assert data["video_output"] is True
         assert data["enable_observability"] is True
+        assert data["enable_evals"] is True
 
 
 class TestFeatureFlags:
@@ -784,6 +851,7 @@ class TestFeatureFlags:
             observability=True,
             enable_krisp=True,
             deploy_to_cloud=True,
+            evals=True,
         )
         assert config.recording is True
         assert config.transcription is True
@@ -792,6 +860,7 @@ class TestFeatureFlags:
         assert config.enable_observability is True
         assert config.enable_krisp is True
         assert config.deploy_to_cloud is True
+        assert config.enable_evals is True
 
     def test_all_features_disabled(self):
         config = validate_and_build_config(

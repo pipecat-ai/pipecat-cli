@@ -5,6 +5,7 @@ import shutil
 import subprocess
 
 import pytest
+import yaml
 
 from pipecat_cli.generators.project import ProjectGenerator
 from pipecat_cli.prompts.questions import ProjectConfig
@@ -223,6 +224,28 @@ TEST_CONFIGS = [
         "llm_service": "openai_llm",
         "tts_service": "cartesia_tts",
         "enable_observability": True,
+    },
+    # With behavioral evals (OpenAI LLM -> openai judge)
+    {
+        "name": "daily-with-evals",
+        "bot_type": "web",
+        "transports": ["daily"],
+        "mode": "cascade",
+        "stt_service": "deepgram_stt",
+        "llm_service": "openai_llm",
+        "tts_service": "cartesia_tts",
+        "enable_evals": True,
+    },
+    # With behavioral evals (non-OpenAI LLM -> ollama judge)
+    {
+        "name": "twilio-with-evals",
+        "bot_type": "telephony",
+        "transports": ["twilio"],
+        "mode": "cascade",
+        "stt_service": "deepgram_stt",
+        "llm_service": "anthropic_llm",
+        "tts_service": "cartesia_tts",
+        "enable_evals": True,
     },
     # More telephony providers
     {
@@ -446,6 +469,7 @@ def test_project_generation(config_data, temp_output_dir):
         deploy_to_cloud=config_data.get("deploy_to_cloud", False),
         enable_krisp=config_data.get("enable_krisp", False),
         enable_observability=config_data.get("enable_observability", False),
+        enable_evals=config_data.get("enable_evals", False),
     )
 
     # Generate project
@@ -571,6 +595,39 @@ def test_project_generation(config_data, temp_output_dir):
         # Video service should be initialized in bot.py
         assert "video" in bot_content.lower(), "video service variable should be present"
 
+    # Verify behavioral evals scaffolding
+    readme_content = (project_path / "README.md").read_text()
+    if config.enable_evals:
+        scenario_file = project_path / "server" / "evals" / "scenario.yaml"
+        assert scenario_file.exists(), "server/evals/scenario.yaml should exist"
+        scenario = yaml.safe_load(scenario_file.read_text())
+        assert {"name", "judge", "turns"} <= set(scenario), (
+            "scenario.yaml should have name, judge, and turns"
+        )
+        # Judge follows the project LLM: openai when the bot uses OpenAI, else local ollama.
+        expected_judge = (
+            "openai" if config.llm_service in ("openai_llm", "openai_responses_llm") else "ollama"
+        )
+        assert scenario["judge"]["eval"]["service"] == expected_judge
+
+        # bot.py exposes the eval transport
+        assert '"eval": lambda: WebsocketServerParams(' in bot_content
+        assert "from pipecat.transports.websocket.server import WebsocketServerParams" in (
+            bot_content
+        )
+
+        # pipecat eval needs the cli extra; README documents the workflow
+        pipecat_dep_line = next(
+            line for line in pyproject_content.splitlines() if "pipecat-ai[" in line
+        )
+        pipecat_extras = pipecat_dep_line.split("[")[1].split("]")[0].split(",")
+        assert "cli" in pipecat_extras, "evals projects need pipecat's cli extra"
+        assert "## Testing your bot (evals)" in readme_content
+    else:
+        assert not (project_path / "server" / "evals").exists()
+        assert '"eval": lambda' not in bot_content
+        assert "## Testing your bot (evals)" not in readme_content
+
 
 @pytest.mark.slow
 @pytest.mark.parametrize(
@@ -603,6 +660,7 @@ def test_project_installable(config_data, temp_output_dir):
         deploy_to_cloud=config_data.get("deploy_to_cloud", False),
         enable_krisp=config_data.get("enable_krisp", False),
         enable_observability=config_data.get("enable_observability", False),
+        enable_evals=config_data.get("enable_evals", False),
     )
 
     # Generate project
