@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> **This repository is archived.** Pipecat CLI has been integrated directly into [Pipecat](https://github.com/pipecat-ai/pipecat). [Visit the docs](https://docs.pipecat.ai/api-reference/cli/overview) to get started.
+
 # Pipecat CLI
 
 A complete toolkit for building, deploying, and monitoring [Pipecat](https://github.com/pipecat-ai/pipecat) AI voice agents.
